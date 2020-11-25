@@ -1,8 +1,6 @@
 package de.beachboys;
 
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Day01 implements Day {
 

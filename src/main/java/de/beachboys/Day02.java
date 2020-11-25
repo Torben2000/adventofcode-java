@@ -14,8 +14,8 @@ public class Day02 implements Day {
 
         runLogic(list);
 
-        System.out.println("Complete list + " + list.toString());
-        return list.get(0) + "";
+        System.out.println("Complete list " + list.toString());
+        return list.stream().map(x -> x + "").collect(Collectors.joining(","));
     }
 
     private void runLogic(List<Integer> list) {
