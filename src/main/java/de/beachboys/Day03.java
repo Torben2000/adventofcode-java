@@ -15,7 +15,7 @@ public class Day03 implements Day {
 
         for (String coord : crossings) {
             String[] val = coord.split("x");
-            int dist = Math.abs(Integer.valueOf(val[0])) + Math.abs(Integer.valueOf(val[1]));
+            int dist = Math.abs(Integer.parseInt(val[0])) + Math.abs(Integer.parseInt(val[1]));
             returnValue = Math.min(returnValue, dist);
         }
 
@@ -57,7 +57,7 @@ public class Day03 implements Day {
         int distCounter = 0;
         for (String command : wire) {
             String dir = command.substring(0, 1);
-            int length = Integer.valueOf(command.substring(1));
+            int length = Integer.parseInt(command.substring(1));
             for (int i = 0; i < length; i++) {
                 distCounter ++;
                 switch (dir) {

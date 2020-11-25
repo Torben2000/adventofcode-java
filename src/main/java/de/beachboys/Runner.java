@@ -61,7 +61,7 @@ public class Runner {
             con.addRequestProperty("Cookie", "session=" + BROWSER_SESSION);
             try (BufferedInputStream in = new BufferedInputStream(con.getInputStream());
                 FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/" + getInputFileName())) {
-                byte dataBuffer[] = new byte[1024];
+                byte[] dataBuffer = new byte[1024];
                 int bytesRead;
                 while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                     fileOutputStream.write(dataBuffer, 0, bytesRead);
@@ -79,7 +79,7 @@ public class Runner {
     private static List<String> loadInputLines(){
         String fileName = getInputFileName();
 
-        try(BufferedReader r = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(fileName)))){
+        try(BufferedReader r = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(fileName))))){
             return r.lines().collect(toList());
         } catch(IOException e){
             throw new UncheckedIOException(e);
@@ -91,7 +91,6 @@ public class Runner {
         if(CURRENT_DAY < 10) {
             paddedDay = "0" + CURRENT_DAY;
         }
-        String fileName = "day" + paddedDay + ".txt";
-        return fileName;
+        return "day" + paddedDay + ".txt";
     }
 }
