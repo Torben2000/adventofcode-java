@@ -7,10 +7,8 @@ import java.util.stream.Collectors;
 
 public class Day02 implements Day {
 
-    public String part1(List<String> input) {
-        String realInput = input.get(0);
-        String[] stringArray = realInput.split(",");
-        List<Integer> list = Arrays.stream(stringArray).map(Integer::valueOf).collect(Collectors.toList());
+    public Object part1(List<String> input) {
+        List<Integer> list = Util.parseIntCsv(input.get(0));
 
         runLogic(list);
 
@@ -48,11 +46,9 @@ public class Day02 implements Day {
         }
     }
 
-    public String part2(List<String> input) {
-        String realInput = input.get(0);
-        String[] stringArray = realInput.split(",");
-        List<Integer> list = Arrays.stream(stringArray).map(Integer::valueOf).collect(Collectors.toList());
-        List<Integer> listNew = list;
+    public Object part2(List<String> input) {
+        List<Integer> list = Util.parseIntCsv(input.get(0));
+        List<Integer> listNew;
         for (int i = 0; i<100; i++) {
             for (int j = 0; j< 100; j++) {
                 listNew = new ArrayList<>(list);
@@ -61,9 +57,10 @@ public class Day02 implements Day {
                 try {
                     runLogic(listNew);
                     if (listNew.get(0) == 19690720) {
-                        return (listNew.get(1)*100+listNew.get(2)) + "";
+                        return (listNew.get(1)*100+listNew.get(2));
                     }
                 } catch (Exception e) {
+                    // no handling
                 }
 
             }

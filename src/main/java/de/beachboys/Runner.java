@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 public class Runner {
 
     public static int CURRENT_YEAR = 2019;
-    public static int CURRENT_DAY = 4;
+    public static int CURRENT_DAY = 1;
     public static int CURRENT_PART = 2;
     // use the session id from your browser session (long hex string)
     public static String BROWSER_SESSION = "secret";
@@ -28,7 +28,7 @@ public class Runner {
 
     public static void main(String[] args) {
         System.out.println("Current day: " + CURRENT_DAY + ", current part: " + CURRENT_PART);
-        Function<List<String>, String> currentPart;
+        Function<List<String>, Object> currentPart;
         if (CURRENT_PART == 1) {
             currentPart = DAYS.get(CURRENT_DAY)::part1;
         } else {
@@ -41,7 +41,7 @@ public class Runner {
             switch (input) {
                 case "q":
                     System.exit(0);
-                     break;
+                    break;
                 case "d":
                     downloadInput();
                     break;

@@ -28,14 +28,14 @@ public class Day02Test {
 
     @ParameterizedTest
     @MethodSource("provideTestDataForPart1")
-    public void testPart1(List<String> input, String expected){
-        Assertions.assertEquals(expected, day.part1(input));
+    public void testPart1(List<String> input, Object expected){
+        Assertions.assertEquals(expected.toString(), day.part1(input).toString());
     }
 
 //    @ParameterizedTest
 //    @MethodSource("provideTestDataForPart2")
-//    public void testPart2(List<String> input, String expected){
-//        Assertions.assertEquals(expected, day.part2(input));
+//    public void testPart2(List<String> input, Object expected){
+//        Assertions.assertEquals(expected.toString(), day.part2(input).toString());
 //    }
 
 }

@@ -5,19 +5,17 @@ import java.util.*;
 public class Day04 implements Day {
 
     @Override
-    public String part1(List<String> input) {
-        String[] splitString = input.get(0).split("-");
-        int startValue = Integer.parseInt(splitString[0]);
-        int endValue = Integer.parseInt(splitString[1]);
+    public Object part1(List<String> input) {
+        List<Integer> splitInput = Util.parseToIntList(input.get(0), "-");
         int counter = 0;
-        for (int i = startValue; i <= endValue; i++) {
+        for (int i = splitInput.get(0); i <= splitInput.get(1); i++) {
             int[] digits = getDigits(i);
             if (hasAdjacentNumbers(digits) && doesNotDecrease(digits)) {
                 counter++;
             }
         }
 
-        return counter + "";
+        return counter;
     }
 
     private int[] getDigits(int i) {
@@ -50,18 +48,16 @@ public class Day04 implements Day {
     }
 
     @Override
-    public String part2(List<String> input) {
-        String[] splitString = input.get(0).split("-");
-        int startValue = Integer.parseInt(splitString[0]);
-        int endValue = Integer.parseInt(splitString[1]);
+    public Object part2(List<String> input) {
+        List<Integer> splitInput = Util.parseToIntList(input.get(0), "-");
         int counter = 0;
-        for (int i = startValue; i <= endValue; i++) {
+        for (int i = splitInput.get(0); i <= splitInput.get(1); i++) {
             int[] digits = getDigits(i);
             if (hasAdjacentNumbers2(digits) && doesNotDecrease(digits)) {
                 counter++;
             }
         }
 
-        return counter + "";
+        return counter;
     }
 }

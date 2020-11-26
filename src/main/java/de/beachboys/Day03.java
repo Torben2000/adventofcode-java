@@ -1,57 +1,57 @@
 package de.beachboys;
 
+import org.javatuples.Pair;
+
 import java.util.*;
 
 public class Day03 implements Day {
 
-    private Map<String, Integer> wire1Dist = new HashMap<>();
-    private Map<String, Integer> wire2Dist = new HashMap<>();
+    private final Map<Pair<Integer, Integer>, Integer> wire1Dist = new HashMap<>();
+    private final Map<Pair<Integer, Integer>, Integer> wire2Dist = new HashMap<>();
 
     @Override
-    public String part1(List<String> input) {
-        Set<String> crossings = getCrossings(input);
+    public Object part1(List<String> input) {
+        Set<Pair<Integer, Integer>> crossings = getCrossings(input);
 
         int returnValue = Integer.MAX_VALUE;
 
-        for (String coord : crossings) {
-            String[] val = coord.split("x");
-            int dist = Math.abs(Integer.parseInt(val[0])) + Math.abs(Integer.parseInt(val[1]));
+        for (Pair<Integer, Integer> coord : crossings) {
+            int dist = Math.abs(coord.getValue0()) + Math.abs(coord.getValue1());
             returnValue = Math.min(returnValue, dist);
         }
 
-        return returnValue + "";
+        return returnValue;
     }
 
     @Override
-    public String part2(List<String> input) {
-        Set<String> crossings = getCrossings(input);
+    public Object part2(List<String> input) {
+        Set<Pair<Integer, Integer>> crossings = getCrossings(input);
 
         int returnValue = Integer.MAX_VALUE;
 
-        for (String coord : crossings) {
-            String[] val = coord.split("x");
+        for (Pair<Integer, Integer> coord : crossings) {
             int dist = wire1Dist.get(coord) + wire2Dist.get(coord);
             returnValue = Math.min(returnValue, dist);
         }
 
-        return returnValue + "";
+        return returnValue;
     }
 
-    private Set<String> getCrossings(List<String> input) {
+    private Set<Pair<Integer, Integer>> getCrossings(List<String> input) {
         wire1Dist.clear();
         wire2Dist.clear();
-        List<String> wire1 = Arrays.asList(input.get(0).split(","));
-        List<String> wire2 = Arrays.asList(input.get(1).split(","));
+        List<String> wire1 = Util.parseCsv(input.get(0));
+        List<String> wire2 = Util.parseCsv(input.get(1));
 
-        Set<String> coordinatesWire1 = getWireSet(wire1, wire1Dist);
-        Set<String> coordinatesWire2 = getWireSet(wire2, wire2Dist);
+        Set<Pair<Integer, Integer>> coordinatesWire1 = getWireSet(wire1, wire1Dist);
+        Set<Pair<Integer, Integer>> coordinatesWire2 = getWireSet(wire2, wire2Dist);
 
         coordinatesWire1.retainAll(coordinatesWire2);
         return coordinatesWire1;
     }
 
-    private Set<String> getWireSet(List<String> wire, Map<String, Integer> wireDist) {
-        Set<String> coordinatesWire1 = new HashSet<>();
+    private Set<Pair<Integer, Integer>> getWireSet(List<String> wire, Map<Pair<Integer, Integer>, Integer> wireDist) {
+        Set<Pair<Integer, Integer>> coordinatesWire1 = new HashSet<>();
         int x = 0;
         int y = 0;
         int distCounter = 0;
@@ -74,9 +74,10 @@ public class Day03 implements Day {
                         x++;
                         break;
                 }
-                coordinatesWire1.add(x + "x" + y);
-                if (!wireDist.containsKey(x + "x" + y)) {
-                    wireDist.put(x + "x" + y, distCounter);
+                Pair<Integer, Integer> coord = Pair.with(x, y);
+                coordinatesWire1.add(coord);
+                if (!wireDist.containsKey(coord)) {
+                    wireDist.put(coord, distCounter);
                 }
             }
         }

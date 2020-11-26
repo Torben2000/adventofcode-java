@@ -4,12 +4,12 @@ import java.util.List;
 
 public class Day01 implements Day {
 
-    public String part1(List<String> input) {
-        return Integer.valueOf(input.stream().mapToInt(Integer::valueOf).map(x -> x / 3 - 2).reduce(0, Integer::sum)).toString();
+    public Object part1(List<String> input) {
+        return input.stream().mapToInt(Integer::valueOf).map(x -> x / 3 - 2).reduce(0, Integer::sum);
     }
 
-    public String part2(List<String> input) {
-        return Integer.valueOf(input.stream().mapToInt(Integer::valueOf).map(this::calculateFuel).reduce(0, Integer::sum)).toString();
+    public Object part2(List<String> input) {
+        return input.stream().mapToInt(Integer::valueOf).map(this::calculateFuel).reduce(0, Integer::sum);
     }
 
     private int calculateFuel(int i) {
