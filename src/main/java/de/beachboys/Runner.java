@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 public class Runner {
 
     public static int CURRENT_YEAR = 2019;
-    public static int CURRENT_DAY = 3;
+    public static int CURRENT_DAY = 4;
     public static int CURRENT_PART = 2;
     // use the session id from your browser session (long hex string)
     public static String BROWSER_SESSION = "secret";
@@ -23,6 +23,7 @@ public class Runner {
         DAYS.put(1, new Day01());
         DAYS.put(2, new Day02());
         DAYS.put(3, new Day03());
+        DAYS.put(4, new Day04());
     }
 
     public static void main(String[] args) {
