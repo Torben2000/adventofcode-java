@@ -2,8 +2,9 @@ package de.beachboys;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 
@@ -11,11 +12,12 @@ import static java.util.stream.Collectors.toList;
 
 public class Runner {
 
-    public static int CURRENT_YEAR = 2019;
-    public static int CURRENT_DAY = 1;
-    public static int CURRENT_PART = 2;
+    private static int CURRENT_YEAR = 2019;
+    private static int CURRENT_DAY = 1;
+    private static int CURRENT_PART = 1;
     // use the session id from your browser session (long hex string)
-    public static String BROWSER_SESSION = "secret";
+    private static String BROWSER_SESSION = "secret";
+    private static final String DATA_FOLDER = "c:/temp/";
 
     public static final Map<Integer, Day> DAYS = new HashMap<>();
 
@@ -57,11 +59,12 @@ public class Runner {
 
     private static void downloadInput() {
         try {
+            Files.createDirectories(Paths.get(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/"));
             HttpURLConnection con = (HttpURLConnection) new URL("https://adventofcode.com/" + CURRENT_YEAR + "/day/" + CURRENT_DAY + "/input").openConnection();
             con.setRequestMethod("GET");
             con.addRequestProperty("Cookie", "session=" + BROWSER_SESSION);
             try (BufferedInputStream in = new BufferedInputStream(con.getInputStream());
-                FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/" + getInputFileName())) {
+                FileOutputStream fileOutputStream = new FileOutputStream(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/" + getInputFileName())) {
                 byte[] dataBuffer = new byte[1024];
                 int bytesRead;
                 while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
@@ -78,9 +81,8 @@ public class Runner {
     }
 
     private static List<String> loadInputLines(){
-        String fileName = getInputFileName();
-
-        try(BufferedReader r = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(fileName))))){
+        String fileNameWithPath = DATA_FOLDER + "aoc" + CURRENT_YEAR + "/" + getInputFileName();
+        try(BufferedReader r = new BufferedReader((new FileReader(fileNameWithPath)))){
             return r.lines().collect(toList());
         } catch(IOException e){
             throw new UncheckedIOException(e);
