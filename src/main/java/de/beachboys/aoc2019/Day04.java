@@ -1,4 +1,7 @@
-package de.beachboys;
+package de.beachboys.aoc2019;
+
+import de.beachboys.Day;
+import de.beachboys.Util;
 
 import java.util.*;
 
