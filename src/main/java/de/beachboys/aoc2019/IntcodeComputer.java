@@ -1,12 +1,14 @@
 package de.beachboys.aoc2019;
 
+import de.beachboys.IOHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class IntcodeComputer {
 
-    public void runLogic(List<Integer> list) {
+    public void runLogic(List<Integer> list, IOHelper io) {
         int currentIndex = 0;
         int opcode;
         while(true) {
@@ -31,13 +33,12 @@ public class IntcodeComputer {
                     break;
                 case 3:
                     Scanner in = new Scanner(System.in);
-                    System.out.println("Input needed");
-                    String input = in.nextLine();
-                    list.set(list.get(currentIndex + 1), Integer.parseInt(input));
+                    list.set(list.get(currentIndex + 1), Integer.parseInt(io.getInput("Input needed")));
                     currentIndex += 2;
                     break;
                 case 4:
-                    System.out.println("output: " + getValue(list, currentIndex + 1, getMode(modes, 1)));
+                    io.logDebug("output:");
+                    io.logInfo(getValue(list, currentIndex + 1, getMode(modes, 1)));
                     currentIndex += 2;
                     break;
                 case 5:
@@ -68,7 +69,7 @@ public class IntcodeComputer {
                     } else {
                         list.set(list.get(currentIndex + 3), 0);
                     }
-                currentIndex += 4;
+                    currentIndex += 4;
                     break;
                 default:
             }

@@ -4,14 +4,14 @@ import de.beachboys.Day;
 
 import java.util.List;
 
-public class Day16 implements Day {
+public class Day16 extends Day {
 
     public Object part1(List<String> input) {
         return "part1result";
     }
 
     public Object part2(List<String> input) {
-        return "part2result";
+        return 2;
     }
 
 }

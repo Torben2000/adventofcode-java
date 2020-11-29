@@ -4,7 +4,7 @@ import de.beachboys.Day;
 
 import java.util.List;
 
-public class Day01 implements Day {
+public class Day01 extends Day {
 
     public Object part1(List<String> input) {
         return input.stream().mapToInt(Integer::valueOf).map(x -> x / 3 - 2).reduce(0, Integer::sum);

@@ -5,7 +5,7 @@ import de.beachboys.Util;
 
 import java.util.*;
 
-public class Day04 implements Day {
+public class Day04 extends Day {
 
     @Override
     public Object part1(List<String> input) {

@@ -4,53 +4,21 @@ import de.beachboys.Day;
 import de.beachboys.Util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Day02 implements Day {
+public class Day02 extends Day {
 
-    private IntcodeComputer computer = new IntcodeComputer();
+    private final IntcodeComputer computer = new IntcodeComputer();
 
     public Object part1(List<String> input) {
         List<Integer> list = Util.parseIntCsv(input.get(0));
 
-        computer.runLogic(list);
+        computer.runLogic(list, io);
 
-        System.out.println("Complete list " + list.toString());
+        io.logDebug("Complete list " + list.toString());
         return list.stream().map(x -> x + "").collect(Collectors.joining(","));
     }
-
-    private void runLogic(List<Integer> list) {
-        int currentIndex = 0;
-
-        int opcode = 0;
-        while(opcode != 99) {
-            opcode = list.get(currentIndex);
-            switch (opcode) {
-                case 99:
-                    //
-                    break;
-                case 1:
-                    int result = list.get(list.get(currentIndex + 1)) + list.get(list.get(currentIndex + 2));
-                    int setIndex = list.get(currentIndex + 3);
-                    if (setIndex < list.size()) {
-                        list.set(setIndex, result);
-                    }
-                    break;
-                case 2:
-                    int result2 = list.get(list.get(currentIndex + 1)) * list.get(list.get(currentIndex + 2));
-                    int setIndex2 = list.get(currentIndex + 3);
-                    if (setIndex2 < list.size()) {
-                        list.set(setIndex2, result2);
-                    }
-                    break;
-                default:
-            }
-            currentIndex += 4;
-        }
-    }
-
     public Object part2(List<String> input) {
         List<Integer> list = Util.parseIntCsv(input.get(0));
         List<Integer> listNew;
@@ -60,7 +28,7 @@ public class Day02 implements Day {
                 listNew.set(1, i);
                 listNew.set(2, j);
                 try {
-                    runLogic(listNew);
+                    computer.runLogic(listNew, io);
                     if (listNew.get(0) == 19690720) {
                         return (listNew.get(1)*100+listNew.get(2));
                     }

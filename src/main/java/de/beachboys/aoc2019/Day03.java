@@ -6,7 +6,7 @@ import org.javatuples.Pair;
 
 import java.util.*;
 
-public class Day03 implements Day {
+public class Day03 extends Day {
 
     private final Map<Pair<Integer, Integer>, Integer> wire1Dist = new HashMap<>();
     private final Map<Pair<Integer, Integer>, Integer> wire2Dist = new HashMap<>();

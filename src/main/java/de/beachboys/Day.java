@@ -2,10 +2,12 @@ package de.beachboys;
 
 import java.util.List;
 
-public interface Day {
+public abstract class Day {
 
-    Object part1(List<String> input);
+    public IOHelper io = new IOHelper();
 
-    Object part2(List<String> input);
+    public abstract Object part1(List<String> input);
+
+    public abstract Object part2(List<String> input);
 
 }

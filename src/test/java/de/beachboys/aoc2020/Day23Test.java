@@ -1,40 +1,41 @@
 package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
-import org.junit.jupiter.api.Assertions;
+import de.beachboys.DayTest;
+import de.beachboys.IOHelper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.List;
+import org.junit.jupiter.params.provider.MethodSource;import java.util.List;
 import java.util.stream.Stream;
 
-public class Day23Test {
+public class Day23Test extends DayTest {
 
     private final Day day = new Day23();
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), 1)
+                Arguments.of(List.of("inputlines"), "part1result", null)
+
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), "expected")
+                Arguments.of(List.of("inputlines"), 2, null)
+
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideTestDataForPart1")
-    public void testPart1(List<String> input, Object expected){
-        Assertions.assertEquals(expected.toString(), day.part1(input).toString());
+    public void testPart1(List<String> input, Object expected, IOHelper io) {
+        testPart1(this.day, input, expected, io);
     }
 
     @ParameterizedTest
     @MethodSource("provideTestDataForPart2")
-    public void testPart2(List<String> input, Object expected) {
-        Assertions.assertEquals(expected.toString(), day.part2(input).toString());
+    public void testPart2(List<String> input, Object expected, IOHelper io) {
+        testPart2(this.day, input, expected, io);
     }
 
 }
