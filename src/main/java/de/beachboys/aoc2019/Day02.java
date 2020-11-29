@@ -10,10 +10,12 @@ import java.util.stream.Collectors;
 
 public class Day02 implements Day {
 
+    private IntcodeComputer computer = new IntcodeComputer();
+
     public Object part1(List<String> input) {
         List<Integer> list = Util.parseIntCsv(input.get(0));
 
-        runLogic(list);
+        computer.runLogic(list);
 
         System.out.println("Complete list " + list.toString());
         return list.stream().map(x -> x + "").collect(Collectors.joining(","));
