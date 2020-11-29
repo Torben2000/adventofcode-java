@@ -18,8 +18,8 @@ import static java.util.stream.Collectors.toList;
 public class Runner {
 
     private static int CURRENT_YEAR = 2019;
-    private static int CURRENT_DAY = 5;
-    private static int CURRENT_PART = 1;
+    private static int CURRENT_DAY = 6;
+    private static int CURRENT_PART = 2;
     // use the session id from your browser session (long hex string)
     private static String BROWSER_SESSION = "secret";
     private static final String DATA_FOLDER = "c:/temp/";
