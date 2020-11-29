@@ -8,8 +8,14 @@ import java.util.Scanner;
 
 public class IntcodeComputer {
 
-    public void runLogic(List<Integer> list, IOHelper io) {
-        int currentIndex = 0;
+    private int lastOutput = 0;
+
+    public int runLogic(List<Integer> list, IOHelper io) {
+        return runLogic(list, io, false, 0);
+    }
+
+    public int runLogic(List<Integer> list, IOHelper io, boolean loopMode, int startIndex) {
+        int currentIndex = startIndex;
         int opcode;
         while(true) {
             opcode = list.get(currentIndex);
@@ -22,7 +28,7 @@ public class IntcodeComputer {
             }
             switch (modes.get(0)) {
                 case 99:
-                    return;
+                    return -1;
                 case 1:
                     list.set(list.get(currentIndex + 3), getValue(list, currentIndex + 1, getMode(modes, 1)) + getValue(list, currentIndex + 2, getMode(modes, 2)));
                     currentIndex += 4;
@@ -38,8 +44,13 @@ public class IntcodeComputer {
                     break;
                 case 4:
                     io.logDebug("output:");
-                    io.logInfo(getValue(list, currentIndex + 1, getMode(modes, 1)));
+                    int output = getValue(list, currentIndex + 1, getMode(modes, 1));
+                    io.logInfo(output);
+                    this.lastOutput = output;
                     currentIndex += 2;
+                    if (loopMode) {
+                        return currentIndex;
+                    }
                     break;
                 case 5:
                     if (getValue(list, currentIndex + 1, getMode(modes, 1)) != 0) {
@@ -88,4 +99,7 @@ public class IntcodeComputer {
         }
     }
 
+    public int getLastOutput() {
+        return lastOutput;
+    }
 }
