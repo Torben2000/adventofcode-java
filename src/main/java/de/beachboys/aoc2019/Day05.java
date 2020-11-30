@@ -13,7 +13,7 @@ public class Day05 extends Day {
     private IntcodeComputer computer = new IntcodeComputer();
 
     public Object part1(List<String> input) {
-        List<Integer> list = Util.parseIntCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.get(0));
 
         computer.runLogic(list, io);
 

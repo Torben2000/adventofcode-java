@@ -36,6 +36,6 @@ public class IOHelperForTests extends IOHelper {
             Assertions.fail("Output provided, but not tested for index " + outputIndex);
         }
         outputIndex++;
-        Assertions.assertEquals(outputs.get(outputIndex - 1), infoText.toString());
+        Assertions.assertEquals(outputs.get(outputIndex - 1).toString(), infoText.toString());
     }
 }

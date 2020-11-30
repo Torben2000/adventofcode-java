@@ -12,7 +12,7 @@ public class Day02 extends Day {
     private final IntcodeComputer computer = new IntcodeComputer();
 
     public Object part1(List<String> input) {
-        List<Integer> list = Util.parseIntCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.get(0));
 
         computer.runLogic(list, io);
 
@@ -20,10 +20,10 @@ public class Day02 extends Day {
         return list.stream().map(x -> x + "").collect(Collectors.joining(","));
     }
     public Object part2(List<String> input) {
-        List<Integer> list = Util.parseIntCsv(input.get(0));
-        List<Integer> listNew;
-        for (int i = 0; i<100; i++) {
-            for (int j = 0; j< 100; j++) {
+        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> listNew;
+        for (long i = 0; i<100; i++) {
+            for (long j = 0; j< 100; j++) {
                 listNew = new ArrayList<>(list);
                 listNew.set(1, i);
                 listNew.set(2, j);

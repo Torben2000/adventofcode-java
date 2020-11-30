@@ -19,7 +19,7 @@ public class Day07 extends Day {
     public Object part1(List<String> input) {
         inputList = new ArrayList<>(List.of("", "", "", "", "", "", "", "", "", "", "", ""));
         inputIndex = 0;
-        List<Integer> list = Util.parseIntCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.get(0));
 
         IOHelper io = new IOHelper() {
             @Override
@@ -28,7 +28,7 @@ public class Day07 extends Day {
             }
         };
 
-        int max = 0;
+        long max = 0;
         for (int a1 = 0; a1 < 5; a1++) {
             for (int a2 = 0; a2 < 5; a2++) {
                 if (a1 == a2) {
@@ -67,7 +67,7 @@ public class Day07 extends Day {
     public Object part2(List<String> input) {
         inputList = new ArrayList<>(List.of("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
         inputIndex = 0;
-        List<Integer> list = Util.parseIntCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.get(0));
 
         IOHelper io = new IOHelper() {
             @Override
@@ -77,7 +77,7 @@ public class Day07 extends Day {
 
         };
 
-        int max = 0;
+        long max = 0;
         for (int a1 = 5; a1 < 10; a1++) {
             for (int a2 = 5; a2 < 10; a2++) {
                 if (a1 == a2) {
@@ -97,7 +97,7 @@ public class Day07 extends Day {
                             }
                             setInitialInput(a1, a2, a3, a4, a5);
 
-                            List<List<Integer>> inputLists = new ArrayList<>();
+                            List<List<Long>> inputLists = new ArrayList<>();
                             List<Integer> startIndexes = new ArrayList<>();
                             for (int i = 0; i < 5; i++) {
                                 inputLists.add(new ArrayList<>(list));
