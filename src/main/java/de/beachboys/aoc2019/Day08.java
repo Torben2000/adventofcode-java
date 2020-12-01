@@ -1,6 +1,7 @@
 package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
+import de.beachboys.Util;
 import org.javatuples.Triplet;
 
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class Day08 extends Day {
             }
         }
 
-        return formatImage(imageString);
+        return Util.formatImage(imageString, width, height, Map.of("1", "*"));
     }
 
     private void setImageDimensionsFromUserInput() {
@@ -84,14 +85,4 @@ public class Day08 extends Day {
             height = Integer.parseInt(heightAsInput);
         }
     }
-
-    private String formatImage(String imageString) {
-        StringBuilder returnValue = new StringBuilder();
-        for (int i = 0; i < height; i++) {
-            returnValue.append(imageString, i*width, (i+1)*width);
-            returnValue.append("\n");
-        }
-        return returnValue.toString();
-    }
-
 }
