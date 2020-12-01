@@ -19,7 +19,7 @@ public class Day09 extends Day {
     }
 
     public Object part2(List<String> input) {
-        return 2;
+        return part1(input);
     }
 
 }
