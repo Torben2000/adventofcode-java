@@ -1,6 +1,7 @@
 # Advent of Code 2020
-##Disclaimer
-Code might be ugly as it is just there to solve the puzzles of https://adventofcode.com/. :-)
+
+## Disclaimer
+Code might be ugly as it is just there to solve the puzzles of https://adventofcode.com/. :wink:
 
 ## What is in here (besides the implemented puzzle solutions)
 - General framework for every day incl. unit tests
