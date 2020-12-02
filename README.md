@@ -16,6 +16,7 @@
 - Tuples (Pair, Triplet, ...)
 - Simple CSV parsing (to String/int/long)
 - Painting of 2D ASCII images with a few different input possibilities
+- Math util functions for least common multiple and greatest common divisor
 - Support of multiple years
 
 The general structure is based on https://github.com/dave-burke/advent-of-code-java-starter/
