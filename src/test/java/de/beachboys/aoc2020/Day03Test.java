@@ -14,14 +14,34 @@ public class Day03Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), "part1result", null)
+                Arguments.of(List.of("..##.......",
+                        "#...#...#..",
+                        ".#....#..#.",
+                        "..#.#...#.#",
+                        ".#...##..#.",
+                        "..#.##.....",
+                        ".#.#.#....#",
+                        ".#........#",
+                        "#.##...#...",
+                        "#...##....#",
+                        ".#..#...#.#"), 7, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), 2, null)
+                Arguments.of(List.of("..##.......",
+                        "#...#...#..",
+                        ".#....#..#.",
+                        "..#.#...#.#",
+                        ".#...##..#.",
+                        "..#.##.....",
+                        ".#.#.#....#",
+                        ".#........#",
+                        "#.##...#...",
+                        "#...##....#",
+                        ".#..#...#.#"), 336, null)
 
         );
     }
