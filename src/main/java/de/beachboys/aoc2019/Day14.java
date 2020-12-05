@@ -13,25 +13,44 @@ public class Day14 extends Day {
 
     private final Map<String, Reaction> reactions = new HashMap<>();
 
-    private final Map<String, Long> requirements = new HashMap<>();
-
     public Object part1(List<String> input) {
         buildReactionMap(input);
-
-        return calculateOrePerFuel();
+        return calculateRequiredOre(1);
     }
 
-    private Long calculateOrePerFuel() {
-        requirements.put("FUEL", 1L);
+    public Object part2(List<String> input) {
+        buildReactionMap(input);
+        long totalOre = 1000000000000L;
+        long minFuel = totalOre / calculateRequiredOre(1);
+        long maxFuel = minFuel * 2;
+
+        while (maxFuel - minFuel > 1) {
+            long testFuel = (minFuel + maxFuel) / 2;
+            long orePerTestFuel = calculateRequiredOre(testFuel);
+            if (orePerTestFuel <= totalOre) {
+                minFuel = testFuel;
+            } else {
+                maxFuel = testFuel;
+            }
+        }
+        return minFuel;
+    }
+
+    private Long calculateRequiredOre(long fuelAmount) {
+        HashMap<String, Long> requirementsMap = new HashMap<>();
+        requirementsMap.put("FUEL", fuelAmount);
         while (true) {
-            String chemical = requirements.keySet().stream().filter(key -> !"ORE".equals(key) && requirements.get(key) > 0).findFirst().orElse("ORE");
+            String chemical = requirementsMap.keySet().stream().filter(key -> !"ORE".equals(key) && requirementsMap.get(key) > 0).findFirst().orElse("ORE");
             if ("ORE".equals(chemical)) {
-                return requirements.getOrDefault("ORE", 0L);
+                return requirementsMap.getOrDefault("ORE", 0L);
             }
             Reaction reaction = reactions.get(chemical);
-            requirements.put(chemical, requirements.getOrDefault(chemical, 0L) - reaction.output.getValue0());
+            long requirements = requirementsMap.getOrDefault(chemical, 0L);
+            long factor = (long) Math.ceil((double) requirements / reaction.output.getValue0());
+
+            requirementsMap.put(chemical, requirements - factor * reaction.output.getValue0());
             for (Pair<Long, String> inputChemical: reaction.input) {
-                requirements.put(inputChemical.getValue1(), requirements.getOrDefault(inputChemical.getValue1(), 0L) + inputChemical.getValue0());
+                requirementsMap.put(inputChemical.getValue1(), Math.addExact(requirementsMap.getOrDefault(inputChemical.getValue1(), 0L), factor * inputChemical.getValue0()));
             }
         }
     }
@@ -50,11 +69,6 @@ public class Day14 extends Day {
         String[] splitChemical = chemicalString.split(" ");
         return Pair.with(Long.valueOf(splitChemical[0]), splitChemical[1]);
     }
-
-    public Object part2(List<String> input) {
-        return 2;
-    }
-
     private static class Reaction {
         public final Pair<Long, String> output;
         public final List<Pair<Long, String>> input;
