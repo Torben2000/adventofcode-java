@@ -10,6 +10,7 @@ public class IntcodeComputer {
 
     private long lastOutput = 0;
     private long relBaseOffset = 0;
+    private boolean killSwitch = false;
 
     public int runLogic(List<Long> list, IOHelper io) {
         return runLogic(list, io, false, 0);
@@ -18,7 +19,7 @@ public class IntcodeComputer {
     public int runLogic(List<Long> list, IOHelper io, boolean loopMode, int startIndex) {
         int currentIndex = startIndex;
         long opcode;
-        while(true) {
+        while(!killSwitch) {
             opcode = list.get(currentIndex);
             List<Long> modes = new ArrayList<>();
             modes.add(opcode % 100);
@@ -90,6 +91,7 @@ public class IntcodeComputer {
                 default:
             }
         }
+        return -2;
     }
 
     private void setValue(List<Long> list, int index, long value, long mode) {
@@ -130,5 +132,9 @@ public class IntcodeComputer {
 
     public long getLastOutput() {
         return lastOutput;
+    }
+
+    public void setKillSwitch(boolean killSwitch) {
+        this.killSwitch = killSwitch;
     }
 }
