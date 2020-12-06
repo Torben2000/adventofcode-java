@@ -14,14 +14,42 @@ public class Day06Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), "part1result", null)
+                Arguments.of(List.of("abc",
+                        "",
+                        "a",
+                        "b",
+                        "c",
+                        "",
+                        "ab",
+                        "ac",
+                        "",
+                        "a",
+                        "a",
+                        "a",
+                        "a",
+                        "",
+                        "b"), 11, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), 2, null)
+                Arguments.of(List.of("abc",
+                        "",
+                        "a",
+                        "b",
+                        "c",
+                        "",
+                        "ab",
+                        "ac",
+                        "",
+                        "a",
+                        "a",
+                        "a",
+                        "a",
+                        "",
+                        "b"), 6, null)
 
         );
     }
