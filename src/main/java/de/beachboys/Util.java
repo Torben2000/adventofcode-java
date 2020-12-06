@@ -3,8 +3,10 @@ package de.beachboys;
 import org.javatuples.Pair;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class Util {
@@ -33,12 +35,17 @@ public final class Util {
         return parseToLongList(input, ",");
     }
 
-    public static String paintMap(Map<Pair<Integer, Integer>, String> colorMap, Map<String, String> valuesToPaint) {
+    public static String paintMap(Map<Pair<Integer, Integer>, String> map) {
+        Map<String, String> valuesToPaint = map.values().stream().distinct().collect(Collectors.toMap(Function.identity(), Function.identity()));
+        return paintMap(map, valuesToPaint);
+    }
+
+    public static String paintMap(Map<Pair<Integer, Integer>, String> map, Map<String, String> valuesToPaint) {
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
         int maxY = Integer.MIN_VALUE;
-        for (Pair<Integer, Integer> point : colorMap.keySet()) {
+        for (Pair<Integer, Integer> point : map.keySet()) {
             minX = Math.min(minX, point.getValue0());
             minY = Math.min(minY, point.getValue1());
             maxX = Math.max(maxX, point.getValue0());
@@ -48,9 +55,9 @@ public final class Util {
         int height = maxY - minY + 1;
         StringBuilder imageString = new StringBuilder();
         imageString.append(" ".repeat(width*height));
-        for (Pair<Integer, Integer> point : colorMap.keySet()) {
+        for (Pair<Integer, Integer> point : map.keySet()) {
             int index = width * (point.getValue1() - minY) + (point.getValue0() - minX);
-            imageString.replace(index, index + 1, colorMap.get(point));
+            imageString.replace(index, index + 1, map.get(point));
         }
         return formatImage(imageString.toString(), width, height, valuesToPaint);
     }
@@ -76,6 +83,21 @@ public final class Util {
             returnValue.append("\n");
         }
         return returnValue.toString();
+    }
+
+    public static Map<Pair<Integer, Integer>, String> buildImageMap(String imageWithLineBreaks) {
+        return buildImageMap(parseToList(imageWithLineBreaks, "\n"));
+    }
+
+    public static Map<Pair<Integer, Integer>, String> buildImageMap(List<String> imageLines) {
+        Map<Pair<Integer, Integer>, String> map = new HashMap<>();
+        for (int j = 0; j < imageLines.size(); j++) {
+            String line = imageLines.get(j);
+            for (int i = 0; i < line.length(); i++) {
+                map.put(Pair.with(i, j), line.substring(i, i + 1));
+            }
+        }
+        return map;
     }
 
     public static long greatestCommonDivisor(long long1, long long2) {
