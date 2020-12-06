@@ -8,17 +8,23 @@ import java.util.function.Consumer;
 public class Day16 extends Day {
 
     public Object part1(List<String> input) {
-        return calculateResult(input.get(0), 0, this::recalculateDigitsPart1);
+        return calculateResult(input.get(0), 0);
     }
 
     public Object part2(List<String> input) {
         String numbers = input.get(0).repeat(10000);
         int offset = Integer.parseInt(numbers.substring(0, 7));
-        return calculateResult(numbers, offset, this::recalculateDigitsPart2);
+        return calculateResult(numbers, offset);
     }
 
-    private String calculateResult(String numbers, int offset, Consumer<int[]> recalculationLogic) {
+    private String calculateResult(String numbers, int offset) {
         int numberOfPhases = Integer.parseInt(io.getInput("Number of phases"));
+        Consumer<int[]> recalculationLogic;
+        if (offset >= numbers.length() / 2) {
+            recalculationLogic = this::recalculateDigitsFastButOnlyCorrectForSecondHalf;
+        } else {
+            recalculationLogic = this::recalculateDigitsSlowButCorrect;
+        }
         for (int i = 0; i < numberOfPhases; i++) {
             numbers = runPhase(numbers, recalculationLogic);
         }
@@ -31,7 +37,7 @@ public class Day16 extends Day {
         return getNumberString(digits);
     }
 
-    private void recalculateDigitsPart1(int[] digits) {
+    private void recalculateDigitsSlowButCorrect(int[] digits) {
         for (int i = 0; i < digits.length; i++) {
             int currentValue = 0;
             for (int j = i; j < digits.length; j++) {
@@ -54,10 +60,9 @@ public class Day16 extends Day {
         throw new IllegalArgumentException();
     }
 
-    private void recalculateDigitsPart2(int[] digits) {
-        // Magic that I only get partially...but it works
+    private void recalculateDigitsFastButOnlyCorrectForSecondHalf(int[] digits) {
         int currentValue = 0;
-        for (int i = digits.length - 1; i >= 0; i--) {
+        for (int i = digits.length - 1; i >= digits.length / 2; i--) {
             currentValue += digits[i];
             currentValue %= 10;
             digits[i] = currentValue;
