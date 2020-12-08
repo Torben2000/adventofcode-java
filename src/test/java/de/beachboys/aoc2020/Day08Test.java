@@ -14,14 +14,30 @@ public class Day08Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), "part1result", null)
+                Arguments.of(List.of("nop +0",
+                        "acc +1",
+                        "jmp +4",
+                        "acc +3",
+                        "jmp -3",
+                        "acc -99",
+                        "acc +1",
+                        "jmp -4",
+                        "acc +6"), 5, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), 2, null)
+                Arguments.of(List.of("nop +0",
+                        "acc +1",
+                        "jmp +4",
+                        "acc +3",
+                        "jmp -3",
+                        "acc -99",
+                        "acc +1",
+                        "jmp -4",
+                        "acc +6"), 8, null)
 
         );
     }
