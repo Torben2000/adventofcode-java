@@ -1,7 +1,13 @@
 package de.beachboys;
 
 import org.javatuples.Pair;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.nio.DefaultAttribute;
+import org.jgrapht.nio.dot.DOTExporter;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -109,5 +115,19 @@ public final class Util {
 
     public static long leastCommonMultiple(long long1, long long2) {
         return long1 * (long2 / greatestCommonDivisor(long1, long2));
+    }
+
+    public static String printGraph(Graph<String, DefaultWeightedEdge> graph, Map<String, String> replacements) {
+        DOTExporter<String, DefaultWeightedEdge> exporter = new DOTExporter<>(v -> {
+            String vertexId = v;
+            for (Map.Entry<String, String> replacement : replacements.entrySet()) {
+                vertexId = vertexId.replace(replacement.getKey(), replacement.getValue());
+            }
+            return vertexId;
+        });
+        exporter.setEdgeAttributeProvider(e -> Map.of("label", DefaultAttribute.createAttribute(graph.getEdgeWeight(e))));
+        Writer writer = new StringWriter();
+        exporter.exportGraph(graph, writer);
+        return writer.toString();
     }
 }
