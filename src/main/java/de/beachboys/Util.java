@@ -189,7 +189,7 @@ public final class Util {
     }
 
 
-    public static String printGraph(Graph<String, DefaultWeightedEdge> graph, Map<String, String> replacements) {
+    public static String printGraphAsDOT(Graph<String, DefaultWeightedEdge> graph, Map<String, String> replacements) {
         DOTExporter<String, DefaultWeightedEdge> exporter = new DOTExporter<>(v -> {
             String vertexId = v;
             for (Map.Entry<String, String> replacement : replacements.entrySet()) {

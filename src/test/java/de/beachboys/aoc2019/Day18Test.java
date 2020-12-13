@@ -50,7 +50,36 @@ public class Day18Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), 2, null)
+                Arguments.of(List.of("#######",
+                        "#a.#Cd#",
+                        "##...##",
+                        "##.@.##",
+                        "##...##",
+                        "#cB#Ab#",
+                        "#######"), 8, null),
+                Arguments.of(List.of("###############",
+                        "#d.ABC.#.....a#",
+                        "######...######",
+                        "######.@.######",
+                        "######...######",
+                        "#b.....#.....c#",
+                        "###############"), 24, null),
+                Arguments.of(List.of("#############",
+                        "#DcBa.#.GhKl#",
+                        "#.###...#I###",
+                        "#e#d#.@.#j#k#",
+                        "###C#...###J#",
+                        "#fEbA.#.FgHi#",
+                        "#############"), 32, null),
+                Arguments.of(List.of("#############",
+                        "#g#f.D#..h#l#",
+                        "#F###e#E###.#",
+                        "#dCba...BcIJ#",
+                        "#####.@.#####",
+                        "#nK.L...G...#",
+                        "#M###N#H###.#",
+                        "#o#m..#i#jk.#",
+                        "#############"), 72, null)
 
         );
     }
