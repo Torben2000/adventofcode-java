@@ -14,14 +14,26 @@ public class Day13Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), "part1result", null)
+                Arguments.of(List.of("939",
+                        "7,13,x,x,59,x,31,19"), 295, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), 2, null)
+                Arguments.of(List.of("939",
+                        "7,13,x,x,59,x,31,19"), 1068781, null),
+                Arguments.of(List.of("939",
+                        "17,x,13,19"), 3417, null),
+                Arguments.of(List.of("939",
+                        "67,7,59,61"), 754018, null),
+                Arguments.of(List.of("939",
+                        "67,x,7,59,61"), 779210, null),
+                Arguments.of(List.of("939",
+                        "67,7,x,59,61"), 1261476, null),
+                Arguments.of(List.of("939",
+                        "1789,37,47,1889"), 1202161486, null)
 
         );
     }

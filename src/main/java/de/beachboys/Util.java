@@ -117,6 +117,78 @@ public final class Util {
         return long1 * (long2 / greatestCommonDivisor(long1, long2));
     }
 
+    /**
+     * Based on
+     * https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
+     */
+    public static long modInverse(long a, long m)
+    {
+        long m0 = m;
+        long y = 0;
+        long x = 1;
+
+        if (m == 1) {
+            return 0;
+        }
+
+        while (a > 1) {
+            // q is quotient
+            long q = a / m;
+
+            long t = m;
+
+            // m is remainder now, process
+            // same as Euclid's algo
+            m = a % m;
+            a = t;
+            t = y;
+
+            // Update x and y
+            y = x - q * y;
+            x = t;
+        }
+
+        // Make x positive
+        if (x < 0) {
+            x += m0;
+        }
+
+        return x;
+    }
+
+    public static long chineseRemainderTheorem(List<Pair<Long, Long>> numbersAndRemainders) {
+        long[] numbers = new long[numbersAndRemainders.size()];
+        long[] remainders = new long[numbersAndRemainders.size()];
+        for (int i = 0; i < numbersAndRemainders.size(); i++) {
+            Pair<Long, Long> numberAndRemainder = numbersAndRemainders.get(i);
+            numbers[i] = numberAndRemainder.getValue0();
+            remainders[i] = numberAndRemainder.getValue1();
+        }
+
+        return chineseRemainderTheorem(numbers, remainders);
+    }
+
+    /**
+     * Based on
+     * https://www.geeksforgeeks.org/chinese-remainder-theorem-set-2-implementation/
+     */
+    private static long chineseRemainderTheorem(long[] numbers, long[] remainders) {
+        long product = 1;
+        for (long number : numbers) {
+            product *= number;
+        }
+
+        long result = 0;
+        for (int i = 0; i < numbers.length; i++) {
+            long partialProduct = product / numbers[i];
+            result += remainders[i] * modInverse(partialProduct, numbers[i]) * partialProduct;
+        }
+
+        // the normal algorithm just returns (result % product)...but somehow we need it...
+        return product - (result % product);
+    }
+
+
     public static String printGraph(Graph<String, DefaultWeightedEdge> graph, Map<String, String> replacements) {
         DOTExporter<String, DefaultWeightedEdge> exporter = new DOTExporter<>(v -> {
             String vertexId = v;
