@@ -1,6 +1,7 @@
 package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
+import de.beachboys.GraphConstructionHelper;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
@@ -27,7 +28,6 @@ public class Day18 extends Day {
 
     public static final String ROOT = "@";
     public static final String WALL = "#";
-    private int crossingCounter = 0;
 
     private int minSteps = Integer.MAX_VALUE;
 
@@ -68,10 +68,13 @@ public class Day18 extends Day {
     private void buildGraphsAndInitialQueueForPart1(Map<Pair<Integer, Integer>, String> map, Set<String> allKeys, Pair<Integer, Integer> start) {
         int graphId = 0;
         Graph<String, DefaultWeightedEdge> graph = getGraph(graphId);
+
         if (Pair.with(40, 40).equals(start)) {
-            buildGraphForInputWithSpecialCenter(graph, map);
+            GraphConstructionHelper helper = new GraphConstructionHelper(map);
+            buildGraphForInputWithSpecialCenter(graph, map, helper);
         } else {
-            buildGraph(graph, map, start, findPossibleNextSteps(map, start, null), null, 0);
+            graph = Util.buildGraphFromMap(map, start);
+            graphs.put(graphId, graph);
         }
         simplifyGraph(graphId);
         io.logDebug(Util.printGraphAsDOT(graph, Map.of(ROOT, "root")));
@@ -84,16 +87,16 @@ public class Day18 extends Day {
         Map<Integer, String> initialNodeMap = Map.of(0, ROOT, 1, ROOT, 2, ROOT, 3, ROOT);
 
         for (int graphId = 0; graphId < 4; graphId++) {
-            Graph<String, DefaultWeightedEdge> graph = getGraph(graphId);
             Pair<Integer, Integer> startPosition = startPositions.get(graphId);
-            buildGraph(graph, map, startPosition, findPossibleNextSteps(map, startPosition, null), null, 0);
+            Graph<String, DefaultWeightedEdge> graph = Util.buildGraphFromMap(map, startPosition);
+            graphs.put(graphId, graph);
             simplifyGraph(graphId);
             io.logDebug(Util.printGraphAsDOT(graph, Map.of(ROOT, "root")));
             addQueueItem(initialNodeMap, graphId, 0, new HashSet<>(allKeys));
         }
     }
 
-    private void buildGraphForInputWithSpecialCenter(Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map) {
+    private void buildGraphForInputWithSpecialCenter(Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map, GraphConstructionHelper helper) {
         Pair<Integer, Integer> topLeft = Pair.with(39, 39);
         Pair<Integer, Integer> topCenter = Pair.with(40, 39);
         Pair<Integer, Integer> topRight = Pair.with(41, 39);
@@ -103,20 +106,20 @@ public class Day18 extends Day {
         Pair<Integer, Integer> bottomCenter = Pair.with(40, 41);
         Pair<Integer, Integer> bottomRight = Pair.with(41, 41);
 
-        String topLeftVertex = buildGraph(graph, map, topLeft, findPossibleNextSteps(map, topLeft, Set.of(topCenter, centerLeft)), null, 0);
-        String topRightVertex = buildGraph(graph, map, topRight, findPossibleNextSteps(map, topRight, Set.of(topCenter, centerRight)), null, 0);
-        String bottomLeftVertex = buildGraph(graph, map, bottomLeft, findPossibleNextSteps(map, bottomLeft, Set.of(centerLeft, bottomCenter)), null, 0);
-        String bottomRightVertex = buildGraph(graph, map, bottomRight, findPossibleNextSteps(map, bottomRight, Set.of(centerRight, bottomCenter)), null, 0);
+        String topLeftVertex = Util.buildGraph(graph, map, topLeft, Util.findPossibleNextSteps(map, topLeft, Set.of(topCenter, centerLeft), helper), null, 0, helper);
+        String topRightVertex = Util.buildGraph(graph, map, topRight, Util.findPossibleNextSteps(map, topRight, Set.of(topCenter, centerRight), helper), null, 0, helper);
+        String bottomLeftVertex = Util.buildGraph(graph, map, bottomLeft, Util.findPossibleNextSteps(map, bottomLeft, Set.of(centerLeft, bottomCenter), helper), null, 0, helper);
+        String bottomRightVertex = Util.buildGraph(graph, map, bottomRight, Util.findPossibleNextSteps(map, bottomRight, Set.of(centerRight, bottomCenter), helper), null, 0, helper);
 
         graph.addVertex(ROOT);
-        addEdge(graph, ROOT, topLeftVertex, 2);
-        addEdge(graph, ROOT, topRightVertex, 2);
-        addEdge(graph, ROOT, bottomRightVertex, 2);
-        addEdge(graph, ROOT, bottomLeftVertex, 2);
-        addEdge(graph, topLeftVertex, topRightVertex, 2);
-        addEdge(graph, topRightVertex, bottomRightVertex, 2);
-        addEdge(graph, bottomRightVertex, bottomLeftVertex, 2);
-        addEdge(graph, bottomLeftVertex, topLeftVertex, 2);
+        Util.addEdge(graph, ROOT, topLeftVertex, 2);
+        Util.addEdge(graph, ROOT, topRightVertex, 2);
+        Util.addEdge(graph, ROOT, bottomRightVertex, 2);
+        Util.addEdge(graph, ROOT, bottomLeftVertex, 2);
+        Util.addEdge(graph, topLeftVertex, topRightVertex, 2);
+        Util.addEdge(graph, topRightVertex, bottomRightVertex, 2);
+        Util.addEdge(graph, bottomRightVertex, bottomLeftVertex, 2);
+        Util.addEdge(graph, bottomLeftVertex, topLeftVertex, 2);
     }
 
     private Map<Integer, Pair<Integer, Integer>> manipulateMapForPart2(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> start) {
@@ -221,54 +224,6 @@ public class Day18 extends Day {
         return neededKeys.stream().noneMatch(missingKeys::contains);
     }
 
-    private String buildGraph(Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> nodePosition, List<Pair<Integer, Integer>> nextSteps, String parentNode, int distanceToParent) {
-        String newNodeName;
-        if (".".equals(map.get(nodePosition))) {
-            newNodeName = "crossing" + crossingCounter++;
-        } else {
-            newNodeName = map.get(nodePosition);
-        }
-        graph.addVertex(newNodeName);
-        if (parentNode != null) {
-            addEdge(graph, parentNode, newNodeName, distanceToParent + 1);
-        }
-        for (Pair<Integer, Integer> nextStep : nextSteps) {
-            int stepCounter = 0;
-            Pair<Integer, Integer> previousPosition = nodePosition;
-            Pair<Integer, Integer> currentPosition = nextStep;
-
-            while (true) {
-                List<Pair<Integer, Integer>> nextNextSteps = findPossibleNextSteps(map, currentPosition, Set.of(previousPosition));
-                if (map.get(currentPosition).matches("[A-za-z]") || nextNextSteps.size() > 1) {
-                    buildGraph(graph, map, currentPosition, nextNextSteps, newNodeName, stepCounter);
-                    break;
-                } else if (nextNextSteps.size() == 1) {
-                    stepCounter++;
-                    previousPosition = currentPosition;
-                    currentPosition = nextNextSteps.get(0);
-                } else {
-                    break;
-                }
-            }
-        }
-        return newNodeName;
-    }
-
-    private List<Pair<Integer, Integer>> findPossibleNextSteps(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> start, Set<Pair<Integer, Integer>> sources) {
-        return List.of(Pair.with(start.getValue0(), start.getValue1() - 1),
-                Pair.with(start.getValue0(), start.getValue1() + 1),
-                Pair.with(start.getValue0() - 1, start.getValue1()),
-                Pair.with(start.getValue0() + 1, start.getValue1()))
-                .stream()
-                .filter(pos -> (sources == null || !sources.contains(pos)) && map.get(pos) != null && !WALL.equals(map.get(pos)))
-                .collect(Collectors.toList());
-    }
-
-    private void addEdge(Graph<String, DefaultWeightedEdge> graph, String from, String to, int weight) {
-        graph.addEdge(from, to);
-        graph.setEdgeWeight(from, to, weight);
-    }
-
     private void simplifyGraph(Integer graphId) {
         removeDeadEndsFromGraph(graphId);
         removeCrossingsWithNoUse(graphId);
@@ -310,7 +265,7 @@ public class Day18 extends Day {
             if (edges.size() == 2) {
                 for (DefaultWeightedEdge e : edges) {
                     newWeight += graph.getEdgeWeight(e);
-                    String target = getOtherVertex(graph, e, vertex);
+                    String target = Util.getOtherVertex(graph, e, vertex);
                     verticesToConnect.add(target);
                 }
                 graph.addEdge(verticesToConnect.get(0), verticesToConnect.get(1));
@@ -318,14 +273,6 @@ public class Day18 extends Day {
                 graph.removeVertex(vertex);
             }
         }
-    }
-
-    private String getOtherVertex(Graph<String, DefaultWeightedEdge> graph, DefaultWeightedEdge edge, String vertex) {
-        String target = graph.getEdgeTarget(edge);
-        if (vertex.equals(target)) {
-            target = graph.getEdgeSource(edge);
-        }
-        return target;
     }
 
     private boolean isCrossing(String imageValue) {

@@ -3,15 +3,13 @@ package de.beachboys;
 import org.javatuples.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -188,6 +186,67 @@ public final class Util {
         return product - (result % product);
     }
 
+    public static Graph<String, DefaultWeightedEdge> buildGraphFromMap(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> startPosition) {
+        return buildGraphFromMap(map, startPosition, new GraphConstructionHelper(map));
+    }
+
+    public static Graph<String, DefaultWeightedEdge> buildGraphFromMap(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> startPosition, GraphConstructionHelper helper) {
+        Graph<String, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+        Util.buildGraph(graph, map, startPosition, Util.findPossibleNextSteps(map, startPosition, null, helper), null, 0, helper);
+        return graph;
+    }
+
+    public static String buildGraph(Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> nodePosition, List<Pair<Integer, Integer>> nextSteps, String parentNode, int distanceToParent, GraphConstructionHelper helper) {
+        String newNodeName = helper.getNodeName(nodePosition);
+        graph.addVertex(newNodeName);
+        if (parentNode != null) {
+            if (graph.containsEdge(parentNode, newNodeName)) {
+                //don't create existing edges
+                return newNodeName;
+            }
+            addEdge(graph, parentNode, newNodeName, distanceToParent + 1);
+        }
+        for (Pair<Integer, Integer> nextStep : nextSteps) {
+            int stepCounter = 0;
+            Pair<Integer, Integer> previousPosition = nodePosition;
+            Pair<Integer, Integer> currentPosition = nextStep;
+
+            while (true) {
+                List<Pair<Integer, Integer>> nextNextSteps = findPossibleNextSteps(map, currentPosition, Set.of(previousPosition), helper);
+                if (helper.createNodeForPosition(currentPosition) || nextNextSteps.size() > 1) {
+                    buildGraph(graph, map, currentPosition, nextNextSteps, newNodeName, stepCounter, helper);
+                    break;
+                } else if (nextNextSteps.size() == 1) {
+                    stepCounter++;
+                    previousPosition = currentPosition;
+                    currentPosition = nextNextSteps.get(0);
+                } else {
+                    break;
+                }
+            }
+        }
+        return newNodeName;
+    }
+
+    public static List<Pair<Integer, Integer>> findPossibleNextSteps(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> start, Set<Pair<Integer, Integer>> sources, GraphConstructionHelper helper) {
+        return helper.getPossibleNavigationPositions(start)
+                .stream()
+                .filter(pos -> (sources == null || !sources.contains(pos)) && map.get(pos) != null && helper.isPossibleNextStep(pos))
+                .collect(Collectors.toList());
+    }
+
+    public static void addEdge(Graph<String, DefaultWeightedEdge> graph, String from, String to, int weight) {
+        graph.addEdge(from, to);
+        graph.setEdgeWeight(from, to, weight);
+    }
+
+    public static String getOtherVertex(Graph<String, DefaultWeightedEdge> graph, DefaultWeightedEdge edge, String vertex) {
+        String target = graph.getEdgeTarget(edge);
+        if (vertex.equals(target)) {
+            target = graph.getEdgeSource(edge);
+        }
+        return target;
+    }
 
     public static String printGraphAsDOT(Graph<String, DefaultWeightedEdge> graph, Map<String, String> replacements) {
         DOTExporter<String, DefaultWeightedEdge> exporter = new DOTExporter<>(v -> {

@@ -17,6 +17,11 @@
 - Simple CSV parsing (to String/int/long)
 - Painting of 2D ASCII images with a few different input possibilities
 - Math util functions for least common multiple and greatest common divisor
+- Math util functions for chinese remainder theorem
+- Graph support
+    - Integrate JGraphT
+    - Creation from 2D maps
+    - Export to DOT to render it
 - Support of multiple years
 
 The general structure is based on https://github.com/dave-burke/advent-of-code-java-starter/
@@ -73,7 +78,7 @@ The general structure is based on https://github.com/dave-burke/advent-of-code-j
 |17|✔|✔|
 |18|✔|✔|
 |19|❌|❌|
-|20|❌|❌|
+|20|✔|❌|
 |21|❌|❌|
 |22|❌|❌|
 |23|❌|❌|
