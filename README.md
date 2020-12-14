@@ -43,7 +43,7 @@ The general structure is based on https://github.com/dave-burke/advent-of-code-j
 |11|✔|✔|
 |12|✔|✔|
 |13|✔|✔|
-|14|❌|❌|
+|14|✔|✔|
 |15|❌|❌|
 |16|❌|❌|
 |17|❌|❌|
@@ -77,7 +77,7 @@ The general structure is based on https://github.com/dave-burke/advent-of-code-j
 |16|✔|✔|
 |17|✔|✔|
 |18|✔|✔|
-|19|❌|❌|
+|19|✔|❌|
 |20|✔|❌|
 |21|❌|❌|
 |22|❌|❌|
