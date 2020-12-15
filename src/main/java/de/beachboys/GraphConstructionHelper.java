@@ -41,7 +41,7 @@ public class GraphConstructionHelper {
         return !map.get(currentPosition).matches("\\.");
     }
 
-    public boolean isPossibleNextStep(Pair<Integer, Integer> pos, Set<Pair<Integer, Integer>> sources) {
+    public boolean isPossibleNextStep(Pair<Integer, Integer> pos) {
         return !unpassableMapValues.contains(map.get(pos));
     }
 

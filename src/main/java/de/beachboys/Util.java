@@ -192,29 +192,37 @@ public final class Util {
 
     public static Graph<String, DefaultWeightedEdge> buildGraphFromMap(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> startPosition, GraphConstructionHelper helper) {
         Graph<String, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
-        Util.buildGraph(graph, map, startPosition, Util.findPossibleNextSteps(map, startPosition, null, helper), null, 0, helper);
+        Queue<GraphBuilderQueueElement> queue = new LinkedList<>();
+        queue.add(new GraphBuilderQueueElement(startPosition, Util.findPossibleNextSteps(map, startPosition, null, helper), null, 0));
+        while (!queue.isEmpty()) {
+            buildGraph(queue, graph, map, queue.poll(), helper);
+        }
+
         return graph;
     }
 
-    public static String buildGraph(Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> nodePosition, List<Pair<Integer, Integer>> nextSteps, String parentNode, int distanceToParent, GraphConstructionHelper helper) {
-        String newNodeName = helper.getNodeName(nodePosition);
-        graph.addVertex(newNodeName);
-        if (parentNode != null) {
-            if (graph.containsEdge(parentNode, newNodeName)) {
-                //don't create existing edges
-                return newNodeName;
-            }
-            addEdge(graph, parentNode, newNodeName, distanceToParent + 1);
+    private static void buildGraph(Queue<GraphBuilderQueueElement> queue, Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map, GraphBuilderQueueElement queueElement, GraphConstructionHelper helper) {
+        String newNodeName = helper.getNodeName(queueElement.getNodePosition(), queueElement.getParentNode());
+        if (newNodeName == null) {
+            return;
         }
-        for (Pair<Integer, Integer> nextStep : nextSteps) {
+        graph.addVertex(newNodeName);
+        if (queueElement.getParentNode() != null) {
+            if (graph.containsEdge(queueElement.getParentNode(), newNodeName)) {
+                //don't create existing edges
+                return;
+            }
+            addEdge(graph, queueElement.getParentNode(), newNodeName, queueElement.getDistanceToParent() + 1);
+        }
+        for (Pair<Integer, Integer> nextStep : queueElement.getNextSteps()) {
             int stepCounter = 0;
-            Pair<Integer, Integer> previousPosition = nodePosition;
+            Pair<Integer, Integer> previousPosition = queueElement.getNodePosition();
             Pair<Integer, Integer> currentPosition = nextStep;
 
             while (true) {
                 List<Pair<Integer, Integer>> nextNextSteps = findPossibleNextSteps(map, currentPosition, Set.of(previousPosition), helper);
                 if (helper.createNodeForPosition(currentPosition) || nextNextSteps.size() > 1) {
-                    buildGraph(graph, map, currentPosition, nextNextSteps, newNodeName, stepCounter, helper);
+                    queue.add(new GraphBuilderQueueElement(currentPosition, nextNextSteps, newNodeName, stepCounter));
                     break;
                 } else if (nextNextSteps.size() == 1) {
                     stepCounter++;
@@ -225,7 +233,6 @@ public final class Util {
                 }
             }
         }
-        return newNodeName;
     }
 
     public static List<Pair<Integer, Integer>> findPossibleNextSteps(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> start, Set<Pair<Integer, Integer>> sources, GraphConstructionHelper helper) {
@@ -260,5 +267,35 @@ public final class Util {
         Writer writer = new StringWriter();
         exporter.exportGraph(graph, writer);
         return writer.toString();
+    }
+
+    private static class GraphBuilderQueueElement {
+        private final Pair<Integer, Integer> nodePosition;
+        private final List<Pair<Integer, Integer>> nextSteps;
+        private final String parentNode;
+        private final int distanceToParent;
+
+        private GraphBuilderQueueElement(Pair<Integer, Integer> nodePosition, List<Pair<Integer, Integer>> nextSteps, String parentNode, int distanceToParent) {
+            this.nodePosition = nodePosition;
+            this.nextSteps = nextSteps;
+            this.parentNode = parentNode;
+            this.distanceToParent = distanceToParent;
+        }
+
+        public Pair<Integer, Integer> getNodePosition() {
+            return nodePosition;
+        }
+
+        public List<Pair<Integer, Integer>> getNextSteps() {
+            return nextSteps;
+        }
+
+        public String getParentNode() {
+            return parentNode;
+        }
+
+        public int getDistanceToParent() {
+            return distanceToParent;
+        }
     }
 }

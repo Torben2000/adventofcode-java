@@ -10,27 +10,39 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Day20 extends Day {
 
+    public static final int MAX_LEVEL_PART_2 = 100;
+
     public Object part1(List<String> input) {
+        return runLogic(input, this::getGraphConstructionHelperPart1);
+    }
+
+    public Object part2(List<String> input) {
+        return runLogic(input, this::getGraphConstructionHelperPart2);
+    }
+
+    private GraphConstructionHelper getGraphConstructionHelperPart1(Map<Pair<Integer, Integer>, String> map, Map<String, Set<Pair<Integer, Integer>>> portals) {
+        return new GraphConstructionHelperPart1(map, portals);
+    }
+
+    private GraphConstructionHelper getGraphConstructionHelperPart2(Map<Pair<Integer, Integer>, String> map, Map<String, Set<Pair<Integer, Integer>>> portals) {
+        return new GraphConstructionHelperPart2(map, portals);
+    }
+
+    private Object runLogic(List<String> input, BiFunction<Map<Pair<Integer, Integer>, String>, Map<String, Set<Pair<Integer, Integer>>>, GraphConstructionHelper> helperBuilder) {
         Map<Pair<Integer, Integer>, String> map = Util.buildImageMap(input);
 
-        Map<String, Set<Pair<Integer, Integer>>> portals = new HashMap<>();
-
         setPortalsAsSinglePosition(map);
-        map.entrySet().stream().filter(e -> e.getValue().matches("[A-Z]{2}")).forEach(e -> {
-            if (!portals.containsKey(e.getValue())) {
-                portals.put(e.getValue(), new HashSet<>());
-            }
-            portals.get(e.getValue()).add(e.getKey());
-        });
+        Map<String, Set<Pair<Integer, Integer>>> portals = buildPortalsMap(map);
 
         Pair<Integer, Integer> startPosition = portals.get("AA").stream().findFirst().orElseThrow();
-        GraphConstructionHelperPart1 provider = new GraphConstructionHelperPart1(map, portals);
-        Graph<String, DefaultWeightedEdge> graph = Util.buildGraphFromMap(map, startPosition, provider);
+        GraphConstructionHelper helper = helperBuilder.apply(map, portals);
+        Graph<String, DefaultWeightedEdge> graph = Util.buildGraphFromMap(map, startPosition, helper);
 
         io.logDebug(Util.printGraphAsDOT(graph, Map.of("[", "_", "]", "", " ", "", ",", "_")));
 
@@ -38,8 +50,18 @@ public class Day20 extends Day {
         String zzNode = graph.vertexSet().stream().filter(v -> v.startsWith("ZZ")).findFirst().orElseThrow();
         DijkstraShortestPath<String, DefaultWeightedEdge> alg = new DijkstraShortestPath<>(graph);
 
-
         return (long) alg.getPath(aaNode, zzNode).getWeight();
+    }
+
+    private Map<String, Set<Pair<Integer, Integer>>> buildPortalsMap(Map<Pair<Integer, Integer>, String> map) {
+        Map<String, Set<Pair<Integer, Integer>>> portals = new HashMap<>();
+        map.entrySet().stream().filter(e -> e.getValue().matches("[A-Z]{2}")).forEach(e -> {
+            if (!portals.containsKey(e.getValue())) {
+                portals.put(e.getValue(), new HashSet<>());
+            }
+            portals.get(e.getValue()).add(e.getKey());
+        });
+        return portals;
     }
 
     private void setPortalsAsSinglePosition(Map<Pair<Integer, Integer>, String> map) {
@@ -85,10 +107,6 @@ public class Day20 extends Day {
         throw new IllegalArgumentException("no neighbor found");
     }
 
-    public Object part2(List<String> input) {
-        return 2;
-    }
-
     private static class GraphConstructionHelperPart1 extends GraphConstructionHelper {
         private final Map<String, Set<Pair<Integer, Integer>>> portals;
 
@@ -97,7 +115,7 @@ public class Day20 extends Day {
             this.portals = portals;
         }
 
-        public String getNodeName(Pair<Integer, Integer> nodePosition) {
+        public String getNodeName(Pair<Integer, Integer> nodePosition, String parentNode) {
             String newNodeName;
             if (".".equals(map.get(nodePosition))) {
                 newNodeName = "crossing" + nodePosition;
@@ -105,6 +123,56 @@ public class Day20 extends Day {
                 newNodeName = map.get(nodePosition) + nodePosition;
             }
             return newNodeName;
+        }
+
+        public List<Pair<Integer, Integer>> getPossibleNavigationPositions(Pair<Integer, Integer> currentPosition) {
+            List<Pair<Integer, Integer>> list = new ArrayList<>(super.getPossibleNavigationPositions(currentPosition));
+            String mapValue = map.get(currentPosition);
+            if (mapValue.matches("[A-Z]{2}")) {
+                Set<Pair<Integer, Integer>> portal = portals.get(mapValue);
+                portal.stream().filter(Predicate.not(currentPosition::equals)).forEach(list::add);
+            }
+            return list;
+        }
+    }
+
+    private static class GraphConstructionHelperPart2 extends GraphConstructionHelper {
+        private final Map<String, Set<Pair<Integer, Integer>>> portals;
+
+        private final int maxX;
+        private final int maxY;
+
+        public GraphConstructionHelperPart2(Map<Pair<Integer, Integer>, String> map, Map<String, Set<Pair<Integer, Integer>>> portals) {
+            super(map);
+            this.portals = portals;
+            maxX = portals.values().stream().flatMap(Collection::stream).map(Pair::getValue0).max(Integer::compareTo).orElseThrow();
+            maxY = portals.values().stream().flatMap(Collection::stream).map(Pair::getValue1).max(Integer::compareTo).orElseThrow();
+        }
+
+        public String getNodeName(Pair<Integer, Integer> nodePosition, String parentNode) {
+            int level = 0;
+            String mapString = map.get(nodePosition);
+            if (parentNode != null) {
+                String[] splitParentNode = parentNode.split("_");
+                level = Integer.parseInt(splitParentNode[1]);
+                if (mapString.equals(splitParentNode[0])) {
+                    level += isOuterPosition(nodePosition) ? 1 : -1;
+                }
+            }
+            if (level < 0 || level > MAX_LEVEL_PART_2 || level > 0 && ("AA".equals(mapString) || "ZZ".equals(mapString))) {
+                return null;
+            }
+            String newNodeName;
+            if (".".equals(mapString)) {
+                newNodeName = "crossing_" + level + "_" + nodePosition;
+            } else {
+                newNodeName = mapString + "_" + level + "_" + nodePosition;
+            }
+            return newNodeName;
+        }
+
+        private boolean isOuterPosition(Pair<Integer, Integer> nodePosition) {
+            return nodePosition.getValue0() == 2 || nodePosition.getValue1() == 2 || nodePosition.getValue0() == maxX || nodePosition.getValue1() == maxY;
         }
 
         public List<Pair<Integer, Integer>> getPossibleNavigationPositions(Pair<Integer, Integer> currentPosition) {
