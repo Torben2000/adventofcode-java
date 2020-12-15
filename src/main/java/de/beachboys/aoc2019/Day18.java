@@ -1,7 +1,6 @@
 package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
-import de.beachboys.GraphConstructionHelper;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
@@ -67,15 +66,8 @@ public class Day18 extends Day {
 
     private void buildGraphsAndInitialQueueForPart1(Map<Pair<Integer, Integer>, String> map, Set<String> allKeys, Pair<Integer, Integer> start) {
         int graphId = 0;
-        Graph<String, DefaultWeightedEdge> graph = getGraph(graphId);
-
-        if (Pair.with(40, 40).equals(start)) {
-            GraphConstructionHelper helper = new GraphConstructionHelper(map);
-            buildGraphForInputWithSpecialCenter(graph, map, helper);
-        } else {
-            graph = Util.buildGraphFromMap(map, start);
-            graphs.put(graphId, graph);
-        }
+        Graph<String, DefaultWeightedEdge> graph = Util.buildGraphFromMap(map, start);
+        graphs.put(graphId, graph);
         simplifyGraph(graphId);
         io.logDebug(Util.printGraphAsDOT(graph, Map.of(ROOT, "root")));
 
@@ -94,32 +86,6 @@ public class Day18 extends Day {
             io.logDebug(Util.printGraphAsDOT(graph, Map.of(ROOT, "root")));
             addQueueItem(initialNodeMap, graphId, 0, new HashSet<>(allKeys));
         }
-    }
-
-    private void buildGraphForInputWithSpecialCenter(Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map, GraphConstructionHelper helper) {
-        Pair<Integer, Integer> topLeft = Pair.with(39, 39);
-        Pair<Integer, Integer> topCenter = Pair.with(40, 39);
-        Pair<Integer, Integer> topRight = Pair.with(41, 39);
-        Pair<Integer, Integer> centerLeft = Pair.with(39, 40);
-        Pair<Integer, Integer> centerRight = Pair.with(41, 40);
-        Pair<Integer, Integer> bottomLeft = Pair.with(39, 41);
-        Pair<Integer, Integer> bottomCenter = Pair.with(40, 41);
-        Pair<Integer, Integer> bottomRight = Pair.with(41, 41);
-
-        String topLeftVertex = Util.buildGraph(graph, map, topLeft, Util.findPossibleNextSteps(map, topLeft, Set.of(topCenter, centerLeft), helper), null, 0, helper);
-        String topRightVertex = Util.buildGraph(graph, map, topRight, Util.findPossibleNextSteps(map, topRight, Set.of(topCenter, centerRight), helper), null, 0, helper);
-        String bottomLeftVertex = Util.buildGraph(graph, map, bottomLeft, Util.findPossibleNextSteps(map, bottomLeft, Set.of(centerLeft, bottomCenter), helper), null, 0, helper);
-        String bottomRightVertex = Util.buildGraph(graph, map, bottomRight, Util.findPossibleNextSteps(map, bottomRight, Set.of(centerRight, bottomCenter), helper), null, 0, helper);
-
-        graph.addVertex(ROOT);
-        Util.addEdge(graph, ROOT, topLeftVertex, 2);
-        Util.addEdge(graph, ROOT, topRightVertex, 2);
-        Util.addEdge(graph, ROOT, bottomRightVertex, 2);
-        Util.addEdge(graph, ROOT, bottomLeftVertex, 2);
-        Util.addEdge(graph, topLeftVertex, topRightVertex, 2);
-        Util.addEdge(graph, topRightVertex, bottomRightVertex, 2);
-        Util.addEdge(graph, bottomRightVertex, bottomLeftVertex, 2);
-        Util.addEdge(graph, bottomLeftVertex, topLeftVertex, 2);
     }
 
     private Map<Integer, Pair<Integer, Integer>> manipulateMapForPart2(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> start) {

@@ -10,7 +10,6 @@ public class GraphConstructionHelper {
 
     private final Set<String> unpassableMapValues;
     protected final Map<Pair<Integer, Integer>, String> map;
-    private int crossingCounter = 0;
 
     public GraphConstructionHelper(Map<Pair<Integer, Integer>, String> map) {
         this(map, Set.of("#", " "));
@@ -28,10 +27,10 @@ public class GraphConstructionHelper {
                 Pair.with(currentPosition.getValue0() + 1, currentPosition.getValue1()));
     }
 
-    public String getNodeName(Pair<Integer, Integer> nodePosition) {
+    public String getNodeName(Pair<Integer, Integer> nodePosition, String parentNode) {
         String newNodeName;
         if (".".equals(map.get(nodePosition))) {
-            newNodeName = "crossing" + crossingCounter++;
+            newNodeName = "crossing_" + nodePosition.getValue0() + "_" + nodePosition.getValue1();
         } else {
             newNodeName = map.get(nodePosition);
         }
@@ -42,7 +41,7 @@ public class GraphConstructionHelper {
         return !map.get(currentPosition).matches("\\.");
     }
 
-    public boolean isPossibleNextStep(Pair<Integer, Integer> pos) {
+    public boolean isPossibleNextStep(Pair<Integer, Integer> pos, Set<Pair<Integer, Integer>> sources) {
         return !unpassableMapValues.contains(map.get(pos));
     }
 
