@@ -15,6 +15,10 @@ public class IOHelper {
         System.out.println(debugText);
     }
 
+    public void logDebugWithoutLineBreak(Object debugText) {
+        System.out.print(debugText);
+    }
+
     public void logInfo(Object infoText) {
         System.out.println(infoText);
     }
