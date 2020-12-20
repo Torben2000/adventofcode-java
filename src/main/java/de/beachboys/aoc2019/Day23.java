@@ -6,8 +6,7 @@ import de.beachboys.Util;
 import org.javatuples.Pair;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Day23 extends Day {
 
@@ -15,16 +14,16 @@ public class Day23 extends Day {
         INIT, ADDRESS, X, Y
     }
 
-    private final Map<Integer, Deque<Pair<Long, Long>>> traffic = new ConcurrentHashMap<>();
+    private final Map<Integer, Deque<Pair<Long, Long>>> traffic = Collections.synchronizedMap(new HashMap<>());
 
     @SuppressWarnings("SpellCheckingInspection")
-    private final Map<Integer, IntcodeComputer> nics = new ConcurrentHashMap<>();
+    private final Map<Integer, IntcodeComputer> nics = Collections.synchronizedMap(new HashMap<>());
 
-    private final Map<Integer, Mode> inputModes = new ConcurrentHashMap<>();
+    private final Map<Integer, Mode> inputModes = Collections.synchronizedMap(new HashMap<>());
 
-    private final Map<Integer, Mode> outputModes = new ConcurrentHashMap<>();
+    private final Map<Integer, Mode> outputModes = Collections.synchronizedMap(new HashMap<>());
 
-    private final Map<Integer, Pair<Long, Long>> tempOutputs = new ConcurrentHashMap<>();
+    private final Map<Integer, Pair<Long, Long>> tempOutputs = Collections.synchronizedMap(new HashMap<>());
 
     private final Set<Thread> threads = new HashSet<>();
 
@@ -35,13 +34,15 @@ public class Day23 extends Day {
             nics.put(i, nic);
             inputModes.put(i, Mode.INIT);
             outputModes.put(i, Mode.ADDRESS);
-            traffic.put(i, new ConcurrentLinkedDeque<>());
+            traffic.put(i, new LinkedBlockingDeque<>());
             final int finalI = i;
             Thread thread = new Thread(() -> runNic(nic, list, finalI));
             threads.add(thread);
-            thread.start();
         }
-        traffic.put(255, new ConcurrentLinkedDeque<>());
+        traffic.put(255, new LinkedBlockingDeque<>());
+
+        threads.forEach(Thread::start);
+
         while (isAnyThreadActive()) {
             try {
                 //noinspection BusyWait
@@ -53,12 +54,12 @@ public class Day23 extends Day {
         return traffic.get(255).stream().findFirst().orElseThrow().getValue1();
     }
 
-    private boolean isAnyThreadActive() {
-        return threads.stream().anyMatch(Thread::isAlive);
-    }
-
     public Object part2(List<String> input) {
         return 2;
+    }
+
+    private boolean isAnyThreadActive() {
+        return threads.stream().anyMatch(Thread::isAlive);
     }
 
     private void runNic(IntcodeComputer nic, List<Long> list, int address) {
