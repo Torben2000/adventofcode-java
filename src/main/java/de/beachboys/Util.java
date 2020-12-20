@@ -269,6 +269,18 @@ public final class Util {
         return writer.toString();
     }
 
+    public static List<String> removeEmptyTrailingStrings(List<String> stringList) {
+        int toIndex = stringList.size();
+        for (int i = stringList.size() - 1; i >= 0; i--) {
+            if (stringList.get(i).isEmpty()) {
+                toIndex = i;
+            } else {
+                break;
+            }
+        }
+        return List.copyOf(stringList.subList(0, toIndex));
+    }
+
     private static class GraphBuilderQueueElement {
         private final Pair<Integer, Integer> nodePosition;
         private final List<Pair<Integer, Integer>> nextSteps;
