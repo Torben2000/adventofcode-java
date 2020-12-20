@@ -183,7 +183,7 @@ public final class Util {
         }
 
         // the normal algorithm just returns (result % product)...but somehow we need it...
-        return product - (result % product);
+        return result % product;
     }
 
     public static Graph<String, DefaultWeightedEdge> buildGraphFromMap(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> startPosition) {
