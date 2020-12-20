@@ -7,6 +7,7 @@ import org.javatuples.Pair;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.function.Consumer;
 
 public class Day23 extends Day {
 
@@ -16,7 +17,6 @@ public class Day23 extends Day {
 
     private final Map<Integer, Deque<Pair<Long, Long>>> traffic = Collections.synchronizedMap(new HashMap<>());
 
-    @SuppressWarnings("SpellCheckingInspection")
     private final Map<Integer, IntcodeComputer> nics = Collections.synchronizedMap(new HashMap<>());
 
     private final Map<Integer, Mode> inputModes = Collections.synchronizedMap(new HashMap<>());
@@ -27,7 +27,23 @@ public class Day23 extends Day {
 
     private final Set<Thread> threads = new HashSet<>();
 
+    private final Set<Integer> idleNics = Collections.synchronizedSet(new HashSet<>());
+
+    private long returnValue = 0L;
+
     public Object part1(List<String> input) {
+        initAndStartNics(input);
+        monitorNat(this::handleNatTrafficPart1);
+        return returnValue;
+    }
+
+    public Object part2(List<String> input) {
+        initAndStartNics(input);
+        monitorNat(this::handleNatTrafficPart2);
+        return returnValue;
+    }
+
+    private void initAndStartNics(List<String> input) {
         List<Long> list = Util.parseLongCsv(input.get(0));
         for (int i = 0; i < 50; i++) {
             IntcodeComputer nic = new IntcodeComputer();
@@ -40,22 +56,43 @@ public class Day23 extends Day {
             threads.add(thread);
         }
         traffic.put(255, new LinkedBlockingDeque<>());
-
         threads.forEach(Thread::start);
+    }
 
+    private void monitorNat(Consumer<Deque<Pair<Long, Long>>> natTrafficHandler) {
         while (isAnyThreadActive()) {
+            Deque<Pair<Long, Long>> natTraffic = traffic.get(255);
+            if (!natTraffic.isEmpty()) {
+                natTrafficHandler.accept(natTraffic);
+            }
             try {
                 //noinspection BusyWait
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 io.logDebug(e.toString());
             }
         }
-        return traffic.get(255).stream().findFirst().orElseThrow().getValue1();
     }
 
-    public Object part2(List<String> input) {
-        return 2;
+    private void handleNatTrafficPart1(Deque<Pair<Long, Long>> natTraffic) {
+        for (int i = 0; i < 50; i++) {
+            nics.get(i).setKillSwitch(true);
+        }
+        returnValue = natTraffic.stream().findFirst().orElseThrow().getValue1();
+    }
+
+    private void handleNatTrafficPart2(Deque<Pair<Long, Long>> natTraffic) {
+        if (idleNics.size() == 50) {
+            Pair<Long, Long> valueToSend = natTraffic.getLast();
+            natTraffic.clear();
+            traffic.get(0).add(valueToSend);
+            if (valueToSend.getValue1() == returnValue) {
+                for (int i = 0; i < 50; i++) {
+                    nics.get(i).setKillSwitch(true);
+                }
+            }
+            returnValue = valueToSend.getValue1();
+        }
     }
 
     private boolean isAnyThreadActive() {
@@ -67,7 +104,7 @@ public class Day23 extends Day {
 
             @Override
             public String getInput(String textToDisplay) {
-                long returnValue = -1;
+                long returnValue;
                 switch (inputModes.get(address)) {
                     case INIT:
                         returnValue = address;
@@ -78,6 +115,10 @@ public class Day23 extends Day {
                         if (!nicTraffic.isEmpty()) {
                             returnValue = nicTraffic.peek().getValue0();
                             inputModes.put(address, Mode.Y);
+                            idleNics.remove(address);
+                        } else {
+                            returnValue = -1;
+                            idleNics.add(address);
                         }
                         break;
                     case Y:
@@ -85,6 +126,8 @@ public class Day23 extends Day {
                         returnValue = traffic.get(address).poll().getValue1();
                         inputModes.put(address, Mode.X);
                         break;
+                    default:
+                        throw new IllegalArgumentException();
                 }
                 return returnValue + "";
             }
@@ -103,11 +146,6 @@ public class Day23 extends Day {
                         break;
                     case Y:
                         Pair<Long, Long> tempOutput = tempOutputs.get(address);
-                        if (255 == tempOutput.getValue0()) {
-                            for (int i = 0; i < 50; i++) {
-                                nics.get(i).setKillSwitch(true);
-                            }
-                        }
                         traffic.get(tempOutput.getValue0().intValue()).add(Pair.with(tempOutput.getValue1(), output));
                         outputModes.put(address, Mode.ADDRESS);
                         break;
