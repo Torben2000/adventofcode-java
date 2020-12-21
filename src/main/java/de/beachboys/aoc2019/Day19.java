@@ -13,6 +13,10 @@ public class Day19 extends Day {
 
     private final IntcodeComputer computer = new IntcodeComputer();
 
+    private List<Long> program;
+
+    private final IOHelper computerIo = buildCustomIo();
+
     private int inputCounterX = 0;
 
     private int inputCounterY = 0;
@@ -20,23 +24,56 @@ public class Day19 extends Day {
     private boolean returnX = true;
 
     public Object part1(List<String> input) {
-        IOHelper customIo = buildCustomIo();
+        initComputer(input);
 
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        int startOfBeam = 0;
         for (int j = 0; j < 50; j++) {
-            for (int i = 0; i <  50; i++) {
-                inputCounterX = i;
-                inputCounterY = j;
-                runComputer(list, customIo);
-                imageMap.put(Pair.with(inputCounterX, inputCounterY), computer.getLastOutput() + "");
+            boolean beamFoundInLine = false;
+            for (int i = startOfBeam; i < 50; i++) {
+                boolean inBeam = isInBeam(j, i);
+                imageMap.put(Pair.with(i, j), inBeam ? "#" : ".");
+                if (!beamFoundInLine && inBeam) {
+                    beamFoundInLine = true;
+                    startOfBeam = i;
+                } else if (beamFoundInLine && !inBeam) {
+                    break;
+                }
             }
         }
-        io.logDebug(Util.paintMap(imageMap, Map.of("0", ".", "1", "#")));
-        return imageMap.values().stream().filter("1"::equals).count();
+        io.logDebug(Util.paintMap(imageMap));
+        return imageMap.values().stream().filter("#"::equals).count();
     }
 
     public Object part2(List<String> input) {
-        return 2;
+        initComputer(input);
+
+        int shipSize = 100;
+        // initially set to 1000 because it is close to the real result and thus fast (when running first, set it lower)
+        int leftOfBeamLine = 1000;
+        int leftOfBeamCol = leftOfBeamLine / 2;
+        do {
+            leftOfBeamLine++;
+            while (!isInBeam(leftOfBeamLine, leftOfBeamCol)) {
+                leftOfBeamCol++;
+            }
+        } while (!isInBeam(leftOfBeamLine - shipSize + 1, leftOfBeamCol + shipSize - 1));
+
+        return leftOfBeamCol * 10000 + (leftOfBeamLine - shipSize + 1);
+    }
+
+    private boolean isInBeam(int lineToCheck, int colToCheck) {
+        inputCounterX = colToCheck;
+        inputCounterY = lineToCheck;
+        runComputer(program, computerIo);
+        return computer.getLastOutput() == 1;
+    }
+
+    private void runComputer(List<Long> list, IOHelper io) {
+        computer.runLogic(new ArrayList<>(list), io);
+    }
+
+    private void initComputer(List<String> input) {
+        program = Util.parseLongCsv(input.get(0));
     }
 
     private IOHelper buildCustomIo() {
@@ -44,7 +81,7 @@ public class Day19 extends Day {
 
             @Override
             public String getInput(String textToDisplay) {
-                long returnValue = returnX ? inputCounterX : inputCounterY;
+                int returnValue = returnX ? inputCounterX : inputCounterY;
                 returnX = !returnX;
                 return "" + returnValue;
             }
@@ -59,9 +96,5 @@ public class Day19 extends Day {
                 // do nothing
             }
         };
-    }
-
-    private void runComputer(List<Long> list, IOHelper io) {
-        computer.runLogic(new ArrayList<>(list), io);
     }
 }
