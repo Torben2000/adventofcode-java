@@ -43,52 +43,47 @@ public class Runner {
         while (true) {
             System.out.println("Test input (q to exit, d to download, r to use real data): ");
             String input = in.nextLine();
-            switch (input) {
-                case "q":
-                    System.exit(0);
-                    break;
-                case "d":
-                    downloadInput();
-                    break;
-                case "r":
-                    System.out.println(currentPart.apply(loadInputLines()));
-                    break;
-                default:
-                    System.out.println(currentPart.apply(List.of(input)));
-                    break;
-            }
-        }
-    }
-
-    private static void downloadInput() {
-        try {
-            Files.createDirectories(Paths.get(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/"));
-            HttpURLConnection con = (HttpURLConnection) new URL("https://adventofcode.com/" + CURRENT_YEAR + "/day/" + CURRENT_DAY + "/input").openConnection();
-            con.setRequestMethod("GET");
-            con.addRequestProperty("Cookie", "session=" + BROWSER_SESSION);
-            try (BufferedInputStream in = new BufferedInputStream(con.getInputStream());
-                FileOutputStream fileOutputStream = new FileOutputStream(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/" + getInputFileName())) {
-                byte[] dataBuffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+            try {
+                switch (input) {
+                    case "q":
+                        System.exit(0);
+                        break;
+                    case "d":
+                        downloadInput();
+                        break;
+                    case "r":
+                        System.out.println(currentPart.apply(loadInputLines()));
+                        break;
+                    default:
+                        System.out.println(currentPart.apply(List.of(input)));
+                        break;
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // no cool handling, but it should be fine
                 e.printStackTrace();
             }
-        } catch (Exception e) {
-            // no cool handling, but it should be fine
-            e.printStackTrace();
         }
     }
 
-    private static List<String> loadInputLines(){
+    private static void downloadInput() throws Exception {
+        Files.createDirectories(Paths.get(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/"));
+        HttpURLConnection con = (HttpURLConnection) new URL("https://adventofcode.com/" + CURRENT_YEAR + "/day/" + CURRENT_DAY + "/input").openConnection();
+        con.setRequestMethod("GET");
+        con.addRequestProperty("Cookie", "session=" + BROWSER_SESSION);
+        try (BufferedInputStream in = new BufferedInputStream(con.getInputStream());
+            FileOutputStream fileOutputStream = new FileOutputStream(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/" + getInputFileName())) {
+            byte[] dataBuffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                fileOutputStream.write(dataBuffer, 0, bytesRead);
+            }
+        }
+    }
+
+    private static List<String> loadInputLines() throws IOException {
         String fileNameWithPath = DATA_FOLDER + "aoc" + CURRENT_YEAR + "/" + getInputFileName();
         try(BufferedReader r = new BufferedReader((new FileReader(fileNameWithPath)))){
             return Util.removeEmptyTrailingStrings(r.lines().collect(toList()));
-        } catch(IOException e){
-            throw new UncheckedIOException(e);
         }
     }
 
