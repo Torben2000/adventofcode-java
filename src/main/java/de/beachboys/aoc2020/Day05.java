@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 public class Day05 extends Day {
 
-    private TreeSet<Integer> seatIds = new TreeSet<>();
+    private final TreeSet<Integer> seatIds = new TreeSet<>();
 
     public Object part1(List<String> input) {
         buildSeatIdTreeMap(input);

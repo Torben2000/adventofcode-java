@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * This implementation does not perform as hoped for. I even made it slower for nicer reuseability between part 1 and 2.
+ * This implementation does not perform as hoped for. I even made it slower for nicer reusability between part 1 and 2.
  * Part 1 still finishes with the real input in less than a minute on my machine, so I am fine with the current state.
  */
 public class Day18 extends Day {

@@ -4,7 +4,6 @@ import de.beachboys.IOHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class IntcodeComputer {
 
@@ -12,8 +11,8 @@ public class IntcodeComputer {
     private long relBaseOffset = 0;
     private boolean killSwitch = false;
 
-    public int runLogic(List<Long> list, IOHelper io) {
-        return runLogic(list, io, false, 0);
+    public void runLogic(List<Long> list, IOHelper io) {
+        runLogic(list, io, false, 0);
     }
 
     public int runLogic(List<Long> list, IOHelper io, boolean loopMode, int startIndex) {
@@ -23,7 +22,7 @@ public class IntcodeComputer {
             opcode = list.get(currentIndex);
             List<Long> modes = new ArrayList<>();
             modes.add(opcode % 100);
-            opcode = opcode /100;
+            opcode = opcode / 100;
             while (opcode != 0) {
                 modes.add(opcode % 10);
                 opcode = opcode / 10;
@@ -40,7 +39,6 @@ public class IntcodeComputer {
                     currentIndex += 4;
                     break;
                 case 3:
-                    Scanner in = new Scanner(System.in);
                     setValue(list, currentIndex + 1, Long.parseLong(io.getInput("Input needed")), getMode(modes, 1));
                     currentIndex += 2;
                     break;

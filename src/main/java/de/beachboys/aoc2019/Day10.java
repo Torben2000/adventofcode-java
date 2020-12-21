@@ -3,7 +3,6 @@ package de.beachboys.aoc2019;
 import de.beachboys.Day;
 import org.javatuples.Pair;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -20,6 +19,7 @@ public class Day10 extends Day {
                 if (isAsteroid[i][j]) {
                     boolean[][] asteroidsInSight = getAsteroidsInLineOfSight(isAsteroid, i, j);
                     long numOfAsteroidsInSight = 0L;
+                    //noinspection ForLoopReplaceableByForEach
                     for (int x = 0; x < asteroidsInSight.length; x++) {
                         for (int y = 0; y < asteroidsInSight[i].length; y++) {
                             if (asteroidsInSight[x][y]) {

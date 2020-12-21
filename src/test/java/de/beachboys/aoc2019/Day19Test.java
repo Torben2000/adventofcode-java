@@ -22,7 +22,7 @@ public class Day19Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputlines"), 2, null)
+                Arguments.of(List.of("inputLines"), 2, null)
 
         );
     }

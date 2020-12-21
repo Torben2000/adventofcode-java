@@ -16,9 +16,9 @@ public class Day11 extends Day {
         UP, DOWN, RIGHT, LEFT
     }
 
-    private IntcodeComputer computer = new IntcodeComputer();
+    private final IntcodeComputer computer = new IntcodeComputer();
 
-    private Map<Pair<Integer, Integer>, String> colorMap = new HashMap<>();
+    private final Map<Pair<Integer, Integer>, String> colorMap = new HashMap<>();
 
     private Pair<Integer, Integer> robotPosition = Pair.with(0, 0);
 

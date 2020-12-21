@@ -16,9 +16,9 @@ public class Day13 extends Day {
         X, Y, TILE
     }
 
-    private Map<Pair<Integer, Integer>, String> tileMap = new HashMap<>();
+    private final Map<Pair<Integer, Integer>, String> tileMap = new HashMap<>();
 
-    private IntcodeComputer computer = new IntcodeComputer();
+    private final IntcodeComputer computer = new IntcodeComputer();
 
     private Mode currentMode = Mode.X;
 
@@ -52,7 +52,7 @@ public class Day13 extends Day {
                 if (oldBallPosition == null) {
                     oldBallPosition = ballPosition;
                 }
-                int targetX = calculateTargetXValue(ballPosition, paddlePosition);
+                int targetX = calculateTargetXValue(ballPosition);
                 if (targetX > paddlePosition.getValue0()) {
                     return "1";
                 } else if (targetX < paddlePosition.getValue0()) {
@@ -94,7 +94,7 @@ public class Day13 extends Day {
         computer.runLogic(new ArrayList<>(list), io);
     }
 
-    private int calculateTargetXValue(Pair<Integer, Integer> ballPosition, Pair<Integer, Integer> paddlePosition) {
+    private int calculateTargetXValue(Pair<Integer, Integer> ballPosition) {
         Pair<Integer, Integer> nextBallPosition = Pair.with(ballPosition.getValue0() + (ballPosition.getValue0() - oldBallPosition.getValue0()), ballPosition.getValue1() + (ballPosition.getValue1() - oldBallPosition.getValue1()));
         int targetX = nextBallPosition.getValue0();
         if (hitsPanel(nextBallPosition)) {
@@ -109,6 +109,7 @@ public class Day13 extends Day {
         return targetX;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean hitsOpposingCorner(Pair<Integer, Integer> nextBallPosition) {
         return isBlockingTile(tileMap.get(Pair.with(oldBallPosition.getValue0(), nextBallPosition.getValue1())));
     }

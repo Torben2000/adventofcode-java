@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;import java.util.List;
 import java.util.stream.Stream;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class Day05Test extends DayTest {
 
     private final Day day = new Day05();

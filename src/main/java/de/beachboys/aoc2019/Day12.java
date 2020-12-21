@@ -13,10 +13,10 @@ public class Day12 extends Day {
         List<Integer> moonsY = new ArrayList<>();
         List<Integer> moonsZ = new ArrayList<>();
         for (String moonInput : input) {
-            String[] coords = moonInput.substring(1, moonInput.length() - 1).split(", ");
-            moonsX.add(Integer.valueOf(coords[0].split("=")[1]));
-            moonsY.add(Integer.valueOf(coords[1].split("=")[1]));
-            moonsZ.add(Integer.valueOf(coords[2].split("=")[1]));
+            String[] position = moonInput.substring(1, moonInput.length() - 1).split(", ");
+            moonsX.add(Integer.valueOf(position[0].split("=")[1]));
+            moonsY.add(Integer.valueOf(position[1].split("=")[1]));
+            moonsZ.add(Integer.valueOf(position[2].split("=")[1]));
         }
 
         List<Integer> moonSpeedsX = new ArrayList<>();
@@ -69,7 +69,7 @@ public class Day12 extends Day {
     private Object calculateEnergy(List<Integer> moonsX, List<Integer> moonsY, List<Integer> moonsZ, List<Integer> moonSpeedsX, List<Integer> moonSpeedsY, List<Integer> moonSpeedsZ) {
         long sum = 0L;
         for (int i = 0; i < moonsX.size(); i++) {
-            sum += (Math.abs(moonsX.get(i)) + Math.abs(moonsY.get(i)) + Math.abs(moonsZ.get(i))) * (Math.abs(moonSpeedsX.get(i)) + Math.abs(moonSpeedsY.get(i)) + Math.abs(moonSpeedsZ.get(i)));
+            sum += (long) (Math.abs(moonsX.get(i)) + Math.abs(moonsY.get(i)) + Math.abs(moonsZ.get(i))) * (Math.abs(moonSpeedsX.get(i)) + Math.abs(moonSpeedsY.get(i)) + Math.abs(moonSpeedsZ.get(i)));
         }
         return sum;
     }
@@ -79,10 +79,10 @@ public class Day12 extends Day {
         List<Integer> moonsY = new ArrayList<>();
         List<Integer> moonsZ = new ArrayList<>();
         for (String moonInput : input) {
-            String[] coords = moonInput.substring(1, moonInput.length() - 1).split(", ");
-            moonsX.add(Integer.valueOf(coords[0].split("=")[1]));
-            moonsY.add(Integer.valueOf(coords[1].split("=")[1]));
-            moonsZ.add(Integer.valueOf(coords[2].split("=")[1]));
+            String[] position = moonInput.substring(1, moonInput.length() - 1).split(", ");
+            moonsX.add(Integer.valueOf(position[0].split("=")[1]));
+            moonsY.add(Integer.valueOf(position[1].split("=")[1]));
+            moonsZ.add(Integer.valueOf(position[2].split("=")[1]));
         }
 
         List<Integer> moonSpeedsX = new ArrayList<>();

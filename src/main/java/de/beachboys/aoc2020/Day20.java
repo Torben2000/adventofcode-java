@@ -20,10 +20,10 @@ public class Day20 extends Day {
     public static final int TILE_DIMENSION_WITHOUT_BORDER = TILE_DIMENSION - 2;
     private int tilesPerDimension = 0;
 
-    Map<Integer, Map<Pair<Integer, Integer>, String>> tileImageMaps = new HashMap<>();
-    Map<Pair<Integer, Edge>, Integer> tileEdgeIds = new HashMap<>();
-    Map<Integer, Set<Pair<Integer, Edge>>> edgeIdToTiles = new HashMap<>();
-    Map<Integer, Integer> fittingEdgeIds = new HashMap<>();
+    private final Map<Integer, Map<Pair<Integer, Integer>, String>> tileImageMaps = new HashMap<>();
+    private final Map<Pair<Integer, Edge>, Integer> tileEdgeIds = new HashMap<>();
+    private final Map<Integer, Set<Pair<Integer, Edge>>> edgeIdToTiles = new HashMap<>();
+    private final Map<Integer, Integer> fittingEdgeIds = new HashMap<>();
 
     public static final List<String> MONSTER_IMAGE = List.of("                  # ",
             "#    ##    ##    ###",

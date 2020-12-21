@@ -17,8 +17,8 @@ public class Day03 extends Day {
 
         int returnValue = Integer.MAX_VALUE;
 
-        for (Pair<Integer, Integer> coord : crossings) {
-            int dist = Math.abs(coord.getValue0()) + Math.abs(coord.getValue1());
+        for (Pair<Integer, Integer> position : crossings) {
+            int dist = Math.abs(position.getValue0()) + Math.abs(position.getValue1());
             returnValue = Math.min(returnValue, dist);
         }
 
@@ -31,8 +31,8 @@ public class Day03 extends Day {
 
         int returnValue = Integer.MAX_VALUE;
 
-        for (Pair<Integer, Integer> coord : crossings) {
-            int dist = wire1Dist.get(coord) + wire2Dist.get(coord);
+        for (Pair<Integer, Integer> position : crossings) {
+            int dist = wire1Dist.get(position) + wire2Dist.get(position);
             returnValue = Math.min(returnValue, dist);
         }
 
@@ -76,10 +76,10 @@ public class Day03 extends Day {
                         x++;
                         break;
                 }
-                Pair<Integer, Integer> coord = Pair.with(x, y);
-                coordinatesWire1.add(coord);
-                if (!wireDist.containsKey(coord)) {
-                    wireDist.put(coord, distCounter);
+                Pair<Integer, Integer> position = Pair.with(x, y);
+                coordinatesWire1.add(position);
+                if (!wireDist.containsKey(position)) {
+                    wireDist.put(position, distCounter);
                 }
             }
         }

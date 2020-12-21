@@ -4,17 +4,14 @@ import de.beachboys.Day;
 import de.beachboys.IOHelper;
 import de.beachboys.Util;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Day07 extends Day {
 
-    private IntcodeComputer computer = new IntcodeComputer();
+    private final IntcodeComputer computer = new IntcodeComputer();
     private List<String> inputList;
     private int inputIndex = 0;
-    private boolean outputSent;
 
     public Object part1(List<String> input) {
         inputList = new ArrayList<>(List.of("", "", "", "", "", "", "", "", "", "", "", ""));

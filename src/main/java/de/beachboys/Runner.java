@@ -21,7 +21,8 @@ public class Runner {
     private static int CURRENT_DAY = 1;
     private static int CURRENT_PART = 1;
     // use the session id from your browser session (long hex string)
-    private static String BROWSER_SESSION = "secret";
+    @SuppressWarnings("SpellCheckingInspection")
+    private static final String BROWSER_SESSION = "secret";
     private static final String DATA_FOLDER = "c:/temp/";
 
     public static final Map<Integer, Map<Integer, Day>> YEARS = new HashMap<>();
@@ -40,7 +41,7 @@ public class Runner {
         }
         Scanner in = new Scanner(System.in);
         while (true) {
-            System.out.println("Testinput (q to exit, d to download, r to use real data): ");
+            System.out.println("Test input (q to exit, d to download, r to use real data): ");
             String input = in.nextLine();
             switch (input) {
                 case "q":

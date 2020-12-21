@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 
 public class Day14 extends Day {
 
-    private Map<String, Reaction> reactions = new HashMap<>();
+    private final Map<String, Reaction> reactions = new HashMap<>();
 
-    private Map<String, Long> requirements = new HashMap<>();
+    private final Map<String, Long> requirements = new HashMap<>();
 
     public Object part1(List<String> input) {
         buildReactionMap(input);
@@ -55,9 +55,9 @@ public class Day14 extends Day {
         return 2;
     }
 
-    private class Reaction {
-        Pair<Long, String> output;
-        List<Pair<Long, String>> input;
+    private static class Reaction {
+        public final Pair<Long, String> output;
+        public final List<Pair<Long, String>> input;
 
         public Reaction(List<Pair<Long, String>> input, Pair<Long, String> output) {
             this.input = input;

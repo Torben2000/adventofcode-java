@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+@SuppressWarnings("ALL")
 public class Day14Test extends DayTest {
 
     private final Day day = new Day14();

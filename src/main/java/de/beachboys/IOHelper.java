@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class IOHelper {
 
-    private Scanner in = new Scanner(System.in);
+    private final Scanner in = new Scanner(System.in);
 
     public String getInput(String textToDisplay) {
         System.out.println(textToDisplay);

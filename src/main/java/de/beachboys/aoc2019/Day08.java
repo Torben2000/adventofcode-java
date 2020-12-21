@@ -50,11 +50,11 @@ public class Day08 extends Day {
     }
 
     private List<String> getLayers(List<String> input) {
-        String realinput = input.get(0);
+        String realInput = input.get(0);
         List<String> layers = new ArrayList<>();
-        while (!realinput.isEmpty()) {
-            layers.add(realinput.substring(0, width*height));
-            realinput = realinput.substring(width*height);
+        while (!realInput.isEmpty()) {
+            layers.add(realInput.substring(0, width*height));
+            realInput = realInput.substring(width*height);
         }
         return layers;
     }
