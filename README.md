@@ -51,7 +51,7 @@ The general structure is based on https://github.com/dave-burke/advent-of-code-j
 |19|✔|✔|
 |20|✔|✔|
 |21|✔|✔|
-|22|❌|❌|
+|22|✔|✔|
 |23|❌|❌|
 |24|❌|❌|
 |25|❌|❌|
