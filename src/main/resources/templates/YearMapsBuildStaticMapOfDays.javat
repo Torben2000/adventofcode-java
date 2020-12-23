@@ -1,0 +1,7 @@
+    private static void buildStaticMapOfDays() {
+<#list methods as method>
+    <#if method.name?starts_with("getDays")>
+        YEARS.put(${method.name?substring(7)}, ${method.name}());
+    </#if>
+</#list>
+    }

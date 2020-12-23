@@ -1,4 +1,4 @@
-# Advent of Code 2020
+# Advent of Code
 
 ## Disclaimer
 - Code might be ugly as it is just there to solve the puzzles of https://adventofcode.com/. :-)
@@ -23,6 +23,9 @@
     - Creation from 2D maps
     - Export to DOT to render it
 - Support of multiple years
+- Command line tool to
+    - add support for other years
+    - reset your implementation for a desired year to start from scratch
 
 The general structure is based on https://github.com/dave-burke/advent-of-code-java-starter/
 
