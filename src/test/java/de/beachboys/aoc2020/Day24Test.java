@@ -14,14 +14,52 @@ public class Day24Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("sesenwnenenewseeswwswswwnenewsewsw",
+                        "neeenesenwnwwswnenewnwwsewnenwseswesw",
+                        "seswneswswsenwwnwse",
+                        "nwnwneseeswswnenewneswwnewseswneseene",
+                        "swweswneswnenwsewnwneneseenw",
+                        "eesenwseswswnenwswnwnwsewwnwsene",
+                        "sewnenenenesenwsewnenwwwse",
+                        "wenwwweseeeweswwwnwwe",
+                        "wsweesenenewnwwnwsenewsenwwsesesenwne",
+                        "neeswseenwwswnwswswnw",
+                        "nenwswwsewswnenenewsenwsenwnesesenew",
+                        "enewnwewneswsewnwswenweswnenwsenwsw",
+                        "sweneswneswneneenwnewenewwneswswnese",
+                        "swwesenesewenwneswnwwneseswwne",
+                        "enesenwswwswneneswsenwnewswseenwsese",
+                        "wnwnesenesenenwwnenwsewesewsesesew",
+                        "nenewswnwewswnenesenwnesewesw",
+                        "eneswnwswnwsenenwnwnwwseeswneewsenese",
+                        "neswnwewnwnwseenwseesewsenwsweewe",
+                        "wseweeenwnesenwwwswnew"), 10, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("sesenwnenenewseeswwswswwnenewsewsw",
+                        "neeenesenwnwwswnenewnwwsewnenwseswesw",
+                        "seswneswswsenwwnwse",
+                        "nwnwneseeswswnenewneswwnewseswneseene",
+                        "swweswneswnenwsewnwneneseenw",
+                        "eesenwseswswnenwswnwnwsewwnwsene",
+                        "sewnenenenesenwsewnenwwwse",
+                        "wenwwweseeeweswwwnwwe",
+                        "wsweesenenewnwwnwsenewsenwwsesesenwne",
+                        "neeswseenwwswnwswswnw",
+                        "nenwswwsewswnenenewsenwsenwnesesenew",
+                        "enewnwewneswsewnwswenweswnenwsenwsw",
+                        "sweneswneswneneenwnewenewwneswswnese",
+                        "swwesenesewenwneswnwwneseswwne",
+                        "enesenwswwswneneswsenwnewswseenwsese",
+                        "wnwnesenesenenwwnenwsewesewsesesew",
+                        "nenewswnwewswnenesenwnesewesw",
+                        "eneswnwswnwsenenwnwnwwseeswneewsenese",
+                        "neswnwewnwnwseenwseesewsenwsweewe",
+                        "wseweeenwnesenwwwswnew"), 2208, null)
 
         );
     }
