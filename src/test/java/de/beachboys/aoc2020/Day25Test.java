@@ -14,7 +14,7 @@ public class Day25Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("5764801", "17807724"), "14897079", null)
 
         );
     }
