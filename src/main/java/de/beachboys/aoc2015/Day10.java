@@ -7,11 +7,53 @@ import java.util.List;
 public class Day10 extends Day {
 
     public Object part1(List<String> input) {
-        return "part1result";
+        int defaultIterations = 40;
+        return runLogic(input, defaultIterations);
     }
 
     public Object part2(List<String> input) {
-        return 2;
+        int defaultIterations = 50;
+        return runLogic(input, defaultIterations);
+    }
+
+    private int runLogic(List<String> input, int defaultIterations) {
+        String currentValue = input.get(0);
+        int numOfIterations = defaultIterations;
+        String numOfIterationsAsString = io.getInput("Number of iterations (default " + defaultIterations + "):");
+        if (!numOfIterationsAsString.isEmpty()) {
+            numOfIterations = Integer.parseInt(numOfIterationsAsString);
+        }
+
+        for (int i = 0; i < numOfIterations; i++) {
+            currentValue = lookAndSay(currentValue);
+        }
+
+        io.logInfo(currentValue);
+        return currentValue.length();
+    }
+
+    private String lookAndSay(String numString) {
+        StringBuilder sb = new StringBuilder();
+        int currentCounter = 0;
+        String currentNumber = "";
+        for (int i = 0; i < numString.length(); i++) {
+            String digit = numString.substring(i, i + 1);
+            if (!digit.equals(currentNumber)) {
+                if (currentCounter > 0) {
+                    sb.append(currentCounter);
+                    sb.append(currentNumber);
+                }
+                currentCounter = 1;
+                currentNumber = digit;
+            } else {
+                currentCounter++;
+            }
+        }
+        if (currentCounter > 0) {
+            sb.append(currentCounter);
+            sb.append(currentNumber);
+        }
+        return sb.toString();
     }
 
 }
