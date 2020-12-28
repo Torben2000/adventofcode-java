@@ -15,15 +15,17 @@ public class Day09Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("London to Dublin = 464",
+                        "London to Belfast = 518",
+                        "Dublin to Belfast = 141"), 605, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("London to Dublin = 464",
+                        "London to Belfast = 518",
+                        "Dublin to Belfast = 141"), 982, null)
         );
     }
 
