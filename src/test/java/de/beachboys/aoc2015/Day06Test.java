@@ -15,15 +15,19 @@ public class Day06Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("turn on 0,0 through 999,999"), 1000000, null),
+                Arguments.of(List.of("toggle 0,0 through 999,0"), 1000, null),
+                Arguments.of(List.of("turn on 0,0 through 999,999", "toggle 0,0 through 999,0"), 999000, null),
+                Arguments.of(List.of("turn on 0,0 through 999,999", "turn off 499,499 through 500,500"), 999996, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("turn on 0,0 through 999,999"), 1000000, null),
+                Arguments.of(List.of("toggle 0,0 through 999,0"), 2000, null),
+                Arguments.of(List.of("turn on 0,0 through 999,999", "toggle 0,0 through 999,0"), 1002000, null),
+                Arguments.of(List.of("turn on 0,0 through 999,999", "turn off 499,499 through 500,500"), 999996, null)
         );
     }
 
