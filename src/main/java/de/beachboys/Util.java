@@ -104,6 +104,10 @@ public final class Util {
         return map;
     }
 
+    public static Set<Pair<Integer, Integer>> buildConwaySet(List<String> input, String representationOfActiveState) {
+        return buildImageMap(input).entrySet().stream().filter(entry -> representationOfActiveState.equals(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
+    }
+
     public static long greatestCommonDivisor(long long1, long long2) {
         if (long1 == long2 || long2 == 0) {
             return long1;
