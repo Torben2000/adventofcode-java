@@ -15,15 +15,15 @@ public class Day15Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8",
+                        "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3"), 62842880, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8",
+                        "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3"), 57600000, null)
         );
     }
 
