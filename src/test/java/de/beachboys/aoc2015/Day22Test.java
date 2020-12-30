@@ -3,6 +3,7 @@ package de.beachboys.aoc2015;
 import de.beachboys.Day;
 import de.beachboys.DayTest;
 import de.beachboys.IOHelper;
+import de.beachboys.IOHelperForTests;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,15 +16,19 @@ public class Day22Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("Hit Points: 13",
+                        "Damage: 8"), 226, new IOHelperForTests(List.of("10", "250"), null)),
+                Arguments.of(List.of("Hit Points: 14",
+                        "Damage: 8"), 641, new IOHelperForTests(List.of("10", "250"), null))
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("Hit Points: 13",
+                        "Damage: 8"), 226, new IOHelperForTests(List.of("17", "250"), null)),
+                Arguments.of(List.of("Hit Points: 14",
+                        "Damage: 8"), 568, new IOHelperForTests(List.of("17", "250"), null))
         );
     }
 
