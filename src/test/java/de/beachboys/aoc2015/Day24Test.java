@@ -15,15 +15,32 @@ public class Day24Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "7",
+                        "8",
+                        "9",
+                        "10",
+                        "11"), 99, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "7",
+                        "8",
+                        "9",
+                        "10",
+                        "11"), 44, null)
         );
     }
 
