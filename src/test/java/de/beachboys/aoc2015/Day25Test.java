@@ -15,15 +15,17 @@ public class Day25Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("To continue, please consult the code grid in the manual. Enter the code at row 6, column 6."), 27995004, null),
+                Arguments.of(List.of("To continue, please consult the code grid in the manual. Enter the code at row 3, column 6."), 16474243, null),
+                Arguments.of(List.of("To continue, please consult the code grid in the manual. Enter the code at row 6, column 3."), 25397450, null),
+                Arguments.of(List.of("To continue, please consult the code grid in the manual. Enter the code at row 4, column 5."), 10600672, null),
+                Arguments.of(List.of("To continue, please consult the code grid in the manual. Enter the code at row 2, column 6."), 4041754, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("Nothing to see here"), "There is no puzzle! :-)", null)
         );
     }
 
