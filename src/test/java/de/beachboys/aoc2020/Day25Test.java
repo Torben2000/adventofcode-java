@@ -21,8 +21,7 @@ public class Day25Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("Nothing to see here"), "There is no puzzle! :-)", null)
         );
     }
 

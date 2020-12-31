@@ -41,7 +41,7 @@ public class Day25 extends Day {
     }
 
     public Object part2(List<String> input) {
-        return 2;
+        return "There is no puzzle! :-)";
     }
 
 }
