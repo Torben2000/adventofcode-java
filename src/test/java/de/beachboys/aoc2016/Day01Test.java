@@ -13,16 +13,18 @@ public class Day01Test extends DayTest {
 
     private final Day day = new Day01();
 
+
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("R2, L3"), 5, null),
+                Arguments.of(List.of("R2, R2, R2"), 2, null),
+                Arguments.of(List.of("R5, L5, R5, R3"), 12, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("R8, R4, R4, R8"), 4, null)
 
         );
     }
