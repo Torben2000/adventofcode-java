@@ -1,6 +1,7 @@
 package de.beachboys.aoc2015;
 
 import de.beachboys.Day;
+import de.beachboys.Util;
 
 import java.util.List;
 
@@ -18,11 +19,7 @@ public class Day10 extends Day {
 
     private int runLogic(List<String> input, int defaultIterations) {
         String currentValue = input.get(0);
-        int numOfIterations = defaultIterations;
-        String numOfIterationsAsString = io.getInput("Number of iterations (default " + defaultIterations + "):");
-        if (!numOfIterationsAsString.isEmpty()) {
-            numOfIterations = Integer.parseInt(numOfIterationsAsString);
-        }
+        int numOfIterations = Util.getIntValueFromUser("Number of iterations", defaultIterations, io);
 
         for (int i = 0; i < numOfIterations; i++) {
             currentValue = lookAndSay(currentValue);

@@ -1,6 +1,7 @@
 package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
+import de.beachboys.Util;
 import org.javatuples.Pair;
 
 import java.util.List;
@@ -45,11 +46,7 @@ public class Day09 extends Day {
     }
 
     private long getFirstWrongSum(List<Long> longList) {
-        int preamble = 25;
-        String preambleAsInput = io.getInput("Preamble (default 25):");
-        if (!preambleAsInput.isEmpty()) {
-            preamble = Integer.parseInt(preambleAsInput);
-        }
+        int preamble = Util.getIntValueFromUser("Preamble", 25, io);
         for (int i = preamble; i < longList.size(); i++) {
             boolean matchFound = false;
             for (int j = i - preamble; j < i; j++) {

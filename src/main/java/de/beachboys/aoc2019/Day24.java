@@ -33,11 +33,7 @@ public class Day24 extends Day {
     }
 
     public Object part2(List<String> input) {
-        int minutes = 200;
-        String minutesAsInput = io.getInput("Minutes to mutate (default 200):");
-        if (!minutesAsInput.isEmpty()) {
-            minutes = Integer.parseInt(minutesAsInput);
-        }
+        int minutes = Util.getIntValueFromUser("Minutes to mutate", 200, io);
         fillInitialBugsSet(input);
 
         for (int i = 0; i < minutes; i++) {

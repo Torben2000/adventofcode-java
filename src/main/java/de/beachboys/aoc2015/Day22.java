@@ -1,6 +1,7 @@
 package de.beachboys.aoc2015;
 
 import de.beachboys.Day;
+import de.beachboys.Util;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -77,14 +78,8 @@ public class Day22 extends Day {
 
     private State getInitialState(List<String> input) {
         State initialState = new State();
-        String hitPointsAsString = io.getInput("Hit points (default " + initialState.playerHitPoints + "):");
-        if (!hitPointsAsString.isEmpty()) {
-            initialState.playerHitPoints = Integer.parseInt(hitPointsAsString);
-        }
-        String manaAsString = io.getInput("Mana (default " + initialState.playerMana + "):");
-        if (!manaAsString.isEmpty()) {
-            initialState.playerMana = Integer.parseInt(manaAsString);
-        }
+        initialState.playerHitPoints = Util.getIntValueFromUser("Hit points", initialState.playerHitPoints, io);
+        initialState.playerMana = Util.getIntValueFromUser("Mana", initialState.playerMana, io);
         initialState.bossHitPoints = Integer.parseInt(input.get(0).split(": ")[1]);
         initialState.bossDamage = Integer.parseInt(input.get(1).split(": ")[1]);
         return initialState;

@@ -1,6 +1,7 @@
 package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
+import de.beachboys.Util;
 import org.javatuples.Pair;
 
 import java.math.BigInteger;
@@ -16,36 +17,15 @@ public class Day22 extends Day {
     Map<Long, List<Pair<OpType, Long>>> opsPerNumOfRuns = new HashMap<>();
 
     public Object part1(List<String> input) {
-        long deckSize = 10007;
-        String deckSizeAsInput = io.getInput("Deck size (default 10007):");
-        if (!deckSizeAsInput.isEmpty()) {
-            deckSize = Long.parseLong(deckSizeAsInput);
-        }
-        long positionOfCard = 2019;
-        String positionOfCardAsInput = io.getInput("Position of card (default 2019):");
-        if (!positionOfCardAsInput.isEmpty()) {
-            positionOfCard = Long.parseLong(positionOfCardAsInput);
-        }
-
+        long deckSize = Util.getLongValueFromUser("Deck size",10007, io);
+        long positionOfCard = Util.getLongValueFromUser("Position of card",2019, io);
         return getPositionOfCard(input, deckSize, positionOfCard, 1L);
     }
 
     public Object part2(List<String> input) {
-        long deckSize = 119315717514047L;
-        String deckSizeAsInput = io.getInput("Deck size (default 119315717514047):");
-        if (!deckSizeAsInput.isEmpty()) {
-            deckSize = Long.parseLong(deckSizeAsInput);
-        }
-        long numberOfRuns = 101741582076661L;
-        String numberOfRunsAsInput = io.getInput("Number of runs (default 101741582076661):");
-        if (!numberOfRunsAsInput.isEmpty()) {
-            numberOfRuns = Long.parseLong(numberOfRunsAsInput);
-        }
-        long positionOfCard = 2020;
-        String positionOfCardAsInput = io.getInput("Position of card (default 2020):");
-        if (!positionOfCardAsInput.isEmpty()) {
-            positionOfCard = Long.parseLong(positionOfCardAsInput);
-        }
+        long deckSize = Util.getLongValueFromUser("Deck size",119315717514047L, io);
+        long numberOfRuns = Util.getLongValueFromUser("Number of runs",101741582076661L, io);
+        long positionOfCard = Util.getLongValueFromUser("Position of card",2020, io);
 
         // Math magic... https://www.reddit.com/r/adventofcode/comments/ee56wh/2019_day_22_part_2_so_whats_the_purpose_of_this/fbs6s6z/
         long numOfRunsReverse = deckSize - 1 - numberOfRuns;

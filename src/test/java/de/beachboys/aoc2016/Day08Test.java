@@ -3,6 +3,7 @@ package de.beachboys.aoc2016;
 import de.beachboys.Day;
 import de.beachboys.DayTest;
 import de.beachboys.IOHelper;
+import de.beachboys.IOHelperForTests;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,14 +16,16 @@ public class Day08Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("rect 3x2", "rotate column x=1 by 1", "rotate row y=0 by 4", "rotate column x=1 by 1"), 6, new IOHelperForTests(List.of("7", "3"), null))
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("rect 3x2", "rotate column x=1 by 1", "rotate row y=0 by 4", "rotate column x=1 by 1"),
+                        " *  * *\n" +
+                        "* *    \n" +
+                        " *     \n", new IOHelperForTests(List.of("7", "3"), null))
 
         );
     }

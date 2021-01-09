@@ -1,6 +1,7 @@
 package de.beachboys.aoc2015;
 
 import de.beachboys.Day;
+import de.beachboys.Util;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -63,12 +64,7 @@ public class Day14 extends Day {
     }
 
     private int getRaceDuration() {
-        int raceDuration = 2503;
-        String raceDurationAsString = io.getInput("Length of race (default " + raceDuration + "):");
-        if (!raceDurationAsString.isEmpty()) {
-            raceDuration = Integer.parseInt(raceDurationAsString);
-        }
-        return raceDuration;
+        return Util.getIntValueFromUser("Length of race", 2503, io);
     }
 
     private int getTotalDistance(int raceDuration, Reindeer reindeer) {

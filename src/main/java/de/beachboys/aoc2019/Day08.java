@@ -76,13 +76,7 @@ public class Day08 extends Day {
     }
 
     private void setImageDimensionsFromUserInput() {
-        String widthAsInput = io.getInput("Width (default 25):");
-        String heightAsInput = io.getInput("Height (default 6):");
-        if (!widthAsInput.isEmpty()) {
-            width = Integer.parseInt(widthAsInput);
-        }
-        if (!heightAsInput.isEmpty()) {
-            height = Integer.parseInt(heightAsInput);
-        }
+        width = Util.getIntValueFromUser("Width", width, io);
+        height = Util.getIntValueFromUser("Height", height, io);
     }
 }

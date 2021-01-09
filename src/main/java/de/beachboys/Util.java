@@ -296,6 +296,22 @@ public final class Util {
         return new String(hexChars);
     }
 
+    public static int getIntValueFromUser(String name, int defaultValue, IOHelper io) {
+        String valueAsString = io.getInput(name + " (default " + defaultValue + "):");
+        if (!valueAsString.isEmpty()) {
+            return Integer.parseInt(valueAsString);
+        }
+        return defaultValue;
+    }
+
+    public static long getLongValueFromUser(String name, long defaultValue, IOHelper io) {
+        String valueAsString = io.getInput(name + " (default " + defaultValue + "):");
+        if (!valueAsString.isEmpty()) {
+            return Long.parseLong(valueAsString);
+        }
+        return defaultValue;
+    }
+
     private static class GraphBuilderQueueElement {
         private final Pair<Integer, Integer> nodePosition;
         private final List<Pair<Integer, Integer>> nextSteps;

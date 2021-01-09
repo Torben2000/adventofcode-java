@@ -1,6 +1,7 @@
 package de.beachboys.aoc2015;
 
 import de.beachboys.Day;
+import de.beachboys.Util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +23,7 @@ public class Day17 extends Day {
     }
 
     private void fillCountPerNumberOfContainersMap(List<String> input) {
-        int totalEggnog = 150;
-        String totalEggnogAsString = io.getInput("Total eggnog (default " + totalEggnog + "):");
-        if (!totalEggnogAsString.isEmpty()) {
-            totalEggnog = Integer.parseInt(totalEggnogAsString);
-        }
+        int totalEggnog = Util.getIntValueFromUser("Total eggnog", 150, io);
         List<Integer> containers = input.stream().map(Integer::valueOf).collect(Collectors.toList());
         countPossibilitiesPerNumberOfContainers(totalEggnog, containers, 0);
     }

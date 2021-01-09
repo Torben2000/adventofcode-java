@@ -10,7 +10,6 @@ import java.util.Set;
 
 public class Day18 extends Day {
 
-    private int numberOfSteps = 100;
     private int width;
     private int height;
 
@@ -25,10 +24,7 @@ public class Day18 extends Day {
     }
 
     private int runLogic(List<String> input, Runnable conwaySetManipulator) {
-        String numberOfStepsAsString = io.getInput("Number of steps (default " + numberOfSteps + "):");
-        if (!numberOfStepsAsString.isEmpty()) {
-            numberOfSteps = Integer.parseInt(numberOfStepsAsString);
-        }
+        int numberOfSteps = Util.getIntValueFromUser("Number of steps", 100, io);
         width = input.get(0).length();
         height = input.size();
         conwaySet = Util.buildConwaySet(input, "#");
