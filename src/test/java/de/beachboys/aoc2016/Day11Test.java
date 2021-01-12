@@ -15,15 +15,19 @@ public class Day11Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("The first floor contains a hydrogen-compatible microchip and a lithium-compatible microchip.",
+                        "The second floor contains a hydrogen generator.",
+                        "The third floor contains a lithium generator.",
+                        "The fourth floor contains nothing relevant."), 11, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("The first floor contains a hydrogen-compatible microchip and a lithium-compatible microchip.",
+                        "The second floor contains a hydrogen generator.",
+                        "The third floor contains a lithium generator.",
+                        "The fourth floor contains nothing relevant."), "not possible", null)
         );
     }
 
