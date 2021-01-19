@@ -3,6 +3,7 @@ package de.beachboys.aoc2016;
 import de.beachboys.Day;
 import de.beachboys.DayTest;
 import de.beachboys.IOHelper;
+import de.beachboys.IOHelperForTests;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,15 +16,27 @@ public class Day21Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("swap position 4 with position 0",
+                        "swap letter d with letter b",
+                        "reverse positions 0 through 4",
+                        "rotate left 1 step",
+                        "move position 1 to position 4",
+                        "move position 3 to position 0",
+                        "rotate based on position of letter b",
+                        "rotate based on position of letter d"), "decab", new IOHelperForTests(List.of("abcde"), null))
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("swap position 4 with position 0",
+                        "swap letter d with letter b",
+                        "reverse positions 0 through 4",
+                        "rotate left 1 step",
+                        "move position 1 to position 4",
+                        "move position 3 to position 0",
+                        "rotate based on position of letter b",
+                        "rotate based on position of letter d"), "deabc", new IOHelperForTests(List.of("decab"), null))
         );
     }
 

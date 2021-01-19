@@ -296,6 +296,14 @@ public final class Util {
         return new String(hexChars);
     }
 
+    public static String getStringValueFromUser(String name, String defaultValue, IOHelper io) {
+        String valueAsString = io.getInput(name + " (default " + defaultValue + "):");
+        if (!valueAsString.isEmpty()) {
+            return valueAsString;
+        }
+        return defaultValue;
+    }
+
     public static int getIntValueFromUser(String name, int defaultValue, IOHelper io) {
         String valueAsString = io.getInput(name + " (default " + defaultValue + "):");
         if (!valueAsString.isEmpty()) {
