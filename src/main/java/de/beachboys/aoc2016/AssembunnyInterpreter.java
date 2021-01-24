@@ -1,5 +1,7 @@
 package de.beachboys.aoc2016;
 
+import de.beachboys.IOHelper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,26 +11,28 @@ import java.util.regex.Pattern;
 
 public class AssembunnyInterpreter {
 
-    private final List<String> program;
-
-    private int instructionPointer = 0;
-
     public enum Register {
         A, B, C, D
     }
 
+    private List<String> program;
+    private int instructionPointer = 0;
+    private IOHelper io;
+    private boolean killSwitch = false;
+
     private final Map<Register, Integer> registers = new HashMap<>();
 
-    public AssembunnyInterpreter(List<String> program) {
+    public AssembunnyInterpreter() {
         for (Register register : Register.values()) {
             setValueToRegister(register, 0);
         }
-        this.program = new ArrayList<>(program);
     }
 
-    public void runProgram() {
-        while (instructionPointer < program.size()) {
-            instructionPointer += executeInstruction(program.get(instructionPointer));
+    public void runProgram(List<String> program, IOHelper io) {
+        this.program = new ArrayList<>(program);
+        this.io = io;
+        while (!killSwitch && instructionPointer < this.program.size()) {
+            instructionPointer += executeInstruction(this.program.get(instructionPointer));
         }
     }
 
@@ -86,6 +90,9 @@ public class AssembunnyInterpreter {
                         program.set(lineToChange, newInstruction + instructionToChange.substring(3));
                     }
                     break;
+                case "out":
+                    io.logInfo(getValue(instructionParts[1]));
+                    break;
                 default:
                     throw new IllegalArgumentException();
             }
@@ -133,6 +140,10 @@ public class AssembunnyInterpreter {
             value = registers.get(getRegister(valueReference));
         }
         return value;
+    }
+
+    public void setKillSwitch(boolean killSwitch) {
+        this.killSwitch = killSwitch;
     }
 
 }
