@@ -207,16 +207,22 @@ public final class Util {
 
     private static void buildGraph(Queue<GraphBuilderQueueElement> queue, Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map, GraphBuilderQueueElement queueElement, GraphConstructionHelper helper) {
         String newNodeName = helper.getNodeName(queueElement.getNodePosition(), queueElement.getParentNode());
-        if (newNodeName == null) {
+        if (newNodeName == null || newNodeName.equals(queueElement.getParentNode())) {
             return;
         }
         graph.addVertex(newNodeName);
         if (queueElement.getParentNode() != null) {
+            double newEdgeWeight = queueElement.getDistanceToParent() + 1.0;
             if (graph.containsEdge(queueElement.getParentNode(), newNodeName)) {
-                //don't create existing edges
+                DefaultWeightedEdge existingEdge = graph.getEdge(queueElement.getParentNode(), newNodeName);
+                double existingEdgeWeight = graph.getEdgeWeight(existingEdge);
+                if (existingEdgeWeight > newEdgeWeight) {
+                    graph.setEdgeWeight(existingEdge, Math.min(existingEdgeWeight, newEdgeWeight));
+                }
+                //don't continue here as we already walked that path...
                 return;
             }
-            addEdge(graph, queueElement.getParentNode(), newNodeName, queueElement.getDistanceToParent() + 1);
+            addEdge(graph, queueElement.getParentNode(), newNodeName, newEdgeWeight);
         }
         for (Pair<Integer, Integer> nextStep : queueElement.getNextSteps()) {
             int stepCounter = 0;
@@ -246,7 +252,7 @@ public final class Util {
                 .collect(Collectors.toList());
     }
 
-    public static void addEdge(Graph<String, DefaultWeightedEdge> graph, String from, String to, int weight) {
+    public static void addEdge(Graph<String, DefaultWeightedEdge> graph, String from, String to, double weight) {
         graph.addEdge(from, to);
         graph.setEdgeWeight(from, to, weight);
     }
