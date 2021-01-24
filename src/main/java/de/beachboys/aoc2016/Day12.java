@@ -19,6 +19,11 @@ public class Day12 extends Day {
     }
 
     private Integer runLogic(List<String> input, int initialValueC) {
+        AssembunnyInterpreter interpreter = new AssembunnyInterpreter(input);
+        interpreter.setValueToRegister(AssembunnyInterpreter.Register.C, initialValueC);
+        interpreter.runProgram();
+        return interpreter.getValueFromRegister(AssembunnyInterpreter.Register.A);
+        /*
         registers.put("a", 0);
         registers.put("b", 0);
         registers.put("c", initialValueC);
@@ -28,6 +33,8 @@ public class Day12 extends Day {
             instructionPointer += executeInstruction(input.get(instructionPointer));
         }
         return registers.get("a");
+
+         */
     }
 
     private int executeInstruction(String instruction) {
