@@ -22,16 +22,12 @@ public class Runner {
     private static final String DATA_FOLDER = "c:/temp/";
 
     public static void main(String[] args) {
-        System.out.println("Current year: " + CURRENT_YEAR + ", current day: " + CURRENT_DAY + ", current part: " + CURRENT_PART);
-        Function<List<String>, Object> currentPart;
-        if (CURRENT_PART == 1) {
-            currentPart = YearMaps.getDay(CURRENT_YEAR, CURRENT_DAY)::part1;
-        } else {
-            currentPart = YearMaps.getDay(CURRENT_YEAR, CURRENT_DAY)::part2;
-        }
+        int currentPartAsInt = CURRENT_PART;
+        printCurrentState(currentPartAsInt);
+        Function<List<String>, Object> currentPart = getCurrentPart(currentPartAsInt);
         Scanner in = new Scanner(System.in);
         while (true) {
-            System.out.println("Test input (q to exit, d to download, r to use real data): ");
+            System.out.println("Test input (q to exit, d to download, r to use real data, s to switch to other part): ");
             String input = in.nextLine();
             try {
                 switch (input) {
@@ -44,6 +40,11 @@ public class Runner {
                     case "r":
                         System.out.println(currentPart.apply(loadInputLines()));
                         break;
+                    case "s":
+                        currentPartAsInt = currentPartAsInt == 1 ? 2 : 1;
+                        currentPart = getCurrentPart(currentPartAsInt);
+                        printCurrentState(currentPartAsInt);
+                        break;
                     default:
                         System.out.println(currentPart.apply(List.of(input)));
                         break;
@@ -53,6 +54,20 @@ public class Runner {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void printCurrentState(int currentPartAsInt) {
+        System.out.println("Current year: " + CURRENT_YEAR + ", current day: " + CURRENT_DAY + ", current part: " + currentPartAsInt);
+    }
+
+    private static Function<List<String>, Object> getCurrentPart(int partToSelect) {
+        Function<List<String>, Object> currentPart;
+        if (partToSelect == 1) {
+            currentPart = YearMaps.getDay(CURRENT_YEAR, CURRENT_DAY)::part1;
+        } else {
+            currentPart = YearMaps.getDay(CURRENT_YEAR, CURRENT_DAY)::part2;
+        }
+        return currentPart;
     }
 
     private static void downloadInput() throws Exception {
