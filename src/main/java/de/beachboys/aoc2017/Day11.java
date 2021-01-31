@@ -1,7 +1,7 @@
 package de.beachboys.aoc2017;
 
 import de.beachboys.Day;
-import de.beachboys.DirectionHex;
+import de.beachboys.DirectionHexFlatTop;
 import de.beachboys.Util;
 import org.javatuples.Triplet;
 
@@ -26,7 +26,7 @@ public class Day11 extends Day {
         Triplet<Integer, Integer, Integer> currentPosition = Triplet.with(0, 0, 0);
         maxDistance = 0;
         for (String directionString : directions) {
-            currentPosition = DirectionHex.fromString(directionString).move(currentPosition, 1);
+            currentPosition = DirectionHexFlatTop.fromString(directionString).move(currentPosition, 1);
             maxDistance = Math.max(maxDistance, getDistanceToStart(currentPosition));
         }
         return currentPosition;

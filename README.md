@@ -16,6 +16,7 @@
     - run your logic with your puzzle input
 - Tuples (Pair, Triplet, ...)
 - Simple CSV parsing (to String/int/long)
+- Direction enums to help with navigating using square or hex fields
 - Painting of 2D ASCII images with a few different input possibilities
 - Math util functions for least common multiple and greatest common divisor
 - Math util functions for chinese remainder theorem

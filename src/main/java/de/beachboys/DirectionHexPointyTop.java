@@ -2,104 +2,102 @@ package de.beachboys;
 
 import org.javatuples.Triplet;
 
-public enum DirectionHex {
+public enum DirectionHexPointyTop {
 
-    NORTH(0, 1, -1), SOUTH(0, -1, 1), NORTHWEST(-1, 1, 0), NORTHEAST(1, 0, -1), SOUTHWEST(-1, 0, 1), SOUTHEAST(1, -1, 0);
+    WEST(-1, 1, 0), EAST(1, -1, 0), NORTHWEST(0, 1, -1), NORTHEAST(1, 0, -1), SOUTHWEST(-1, 0, 1), SOUTHEAST(0, -1, 1);
 
     public final int stepX;
     public final int stepY;
     public final int stepZ;
 
-    DirectionHex(int stepX, int stepY, int stepZ) {
+    DirectionHexPointyTop(int stepX, int stepY, int stepZ) {
         this.stepX = stepX;
         this.stepY = stepY;
         this.stepZ = stepZ;
     }
 
-    public static DirectionHex fromString(String directionString) {
+    public static DirectionHexPointyTop fromString(String directionString) {
         switch (directionString.toLowerCase()) {
-            case "n":
-            case "north":
-                return DirectionHex.NORTH;
+            case "e":
+            case "east":
+                return DirectionHexPointyTop.EAST;
             case "ne":
             case "northeast":
-                return DirectionHex.NORTHEAST;
+                return DirectionHexPointyTop.NORTHEAST;
             case "se":
             case "southeast":
-                return DirectionHex.SOUTHEAST;
-            case "s":
-            case "south":
-                return DirectionHex.SOUTH;
+                return DirectionHexPointyTop.SOUTHEAST;
+            case "w":
+            case "west":
+                return DirectionHexPointyTop.WEST;
             case "sw":
             case "southwest":
-                return DirectionHex.SOUTHWEST;
+                return DirectionHexPointyTop.SOUTHWEST;
             case "nw":
             case "northwest":
-                return DirectionHex.NORTHWEST;
+                return DirectionHexPointyTop.NORTHWEST;
             default:
                 throw new IllegalArgumentException();
         }
     }
 
-
-
     public Triplet<Integer, Integer, Integer> move(Triplet<Integer, Integer, Integer> currentPosition, int distance) {
         return Triplet.with(currentPosition.getValue0() + distance * stepX, currentPosition.getValue1() + distance * stepY, currentPosition.getValue2() + distance * stepZ);
     }
 
-    public DirectionHex turn(boolean left) {
+    public DirectionHexPointyTop turn(boolean left) {
         if (left) {
             return turnLeft();
         }
         return turnRight();
     }
 
-    public DirectionHex turnLeft() {
+    public DirectionHexPointyTop turnLeft() {
         switch (this) {
-            case NORTH:
-                return NORTHWEST;
             case NORTHWEST:
+                return WEST;
+            case WEST:
                 return SOUTHWEST;
             case SOUTHWEST:
-                return SOUTH;
-            case SOUTH:
                 return SOUTHEAST;
             case SOUTHEAST:
+                return EAST;
+            case EAST:
                 return NORTHEAST;
             case NORTHEAST:
-                return NORTH;
+                return NORTHWEST;
         }
         throw new IllegalStateException();
     }
 
-    public DirectionHex turnRight() {
+    public DirectionHexPointyTop turnRight() {
         switch (this) {
-            case NORTH:
-                return NORTHEAST;
             case NORTHWEST:
-                return NORTH;
-            case SOUTHWEST:
+                return NORTHEAST;
+            case WEST:
                 return NORTHWEST;
-            case SOUTH:
-                return SOUTHWEST;
+            case SOUTHWEST:
+                return WEST;
             case SOUTHEAST:
-                return SOUTH;
-            case NORTHEAST:
+                return SOUTHWEST;
+            case EAST:
                 return SOUTHEAST;
+            case NORTHEAST:
+                return EAST;
         }
         throw new IllegalStateException();
     }
 
-    public DirectionHex getOpposite() {
+    public DirectionHexPointyTop getOpposite() {
         switch (this) {
-            case NORTH:
-                return SOUTH;
+            case WEST:
+                return EAST;
             case NORTHWEST:
                 return SOUTHEAST;
             case SOUTHWEST:
                 return NORTHEAST;
-            case SOUTH:
-                return NORTH;
+            case EAST:
+                return WEST;
             case SOUTHEAST:
                 return NORTHWEST;
             case NORTHEAST:

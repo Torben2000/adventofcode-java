@@ -14,6 +14,25 @@ public enum Direction {
         this.stepY = stepY;
     }
 
+    public static Direction fromString(String directionString) {
+        switch (directionString.toLowerCase()) {
+            case "n":
+            case "north":
+                return Direction.NORTH;
+            case "e":
+            case "east":
+                return Direction.EAST;
+            case "s":
+            case "south":
+                return Direction.SOUTH;
+            case "w":
+            case "west":
+                return Direction.WEST;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
     public Pair<Integer, Integer> move(Pair<Integer, Integer> currentPosition, int distance) {
         return Pair.with(currentPosition.getValue0() + distance * stepX, currentPosition.getValue1() + distance * stepY);
     }
