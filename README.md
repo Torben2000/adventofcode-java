@@ -93,7 +93,7 @@ The general structure is based on https://github.com/dave-burke/advent-of-code-j
 ### 2018
 | Day | Part 1 | Part 2 |
 | ---:|:---:|:---:|
-|1|❌|❌|
+|1|✔|✔|
 |2|❌|❌|
 |3|❌|❌|
 |4|❌|❌|
