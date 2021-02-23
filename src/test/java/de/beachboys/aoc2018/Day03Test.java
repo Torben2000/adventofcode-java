@@ -15,15 +15,17 @@ public class Day03Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("#1 @ 1,3: 4x4",
+                        "#2 @ 3,1: 4x4",
+                        "#3 @ 5,5: 2x2"), 4, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("#1 @ 1,3: 4x4",
+                        "#2 @ 3,1: 4x4",
+                        "#3 @ 5,5: 2x2"), 3, null)
         );
     }
 
