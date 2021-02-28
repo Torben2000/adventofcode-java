@@ -15,15 +15,23 @@ public class Day09Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("9 players; last marble is worth 25 points"), 32, null),
+                Arguments.of(List.of("10 players; last marble is worth 1618 points"), 8317, null),
+                Arguments.of(List.of("13 players; last marble is worth 7999 points"), 146373, null),
+                Arguments.of(List.of("17 players; last marble is worth 1104 points"), 2764, null),
+                Arguments.of(List.of("21 players; last marble is worth 6111 points"), 54718, null),
+                Arguments.of(List.of("30 players; last marble is worth 5807 points"), 37305, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("9 players; last marble is worth 25 points"), 22563, null),
+                Arguments.of(List.of("10 players; last marble is worth 1618 points"), 74765078, null),
+                Arguments.of(List.of("13 players; last marble is worth 7999 points"), 1406506154, null),
+                Arguments.of(List.of("17 players; last marble is worth 1104 points"), 20548882, null),
+                Arguments.of(List.of("21 players; last marble is worth 6111 points"), 507583214, null),
+                Arguments.of(List.of("30 players; last marble is worth 5807 points"), 320997431, null)
         );
     }
 
