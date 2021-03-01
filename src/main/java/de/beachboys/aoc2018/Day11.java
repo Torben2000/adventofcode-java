@@ -1,17 +1,72 @@
 package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
+import org.javatuples.Triplet;
 
 import java.util.List;
+import java.util.function.IntBinaryOperator;
 
 public class Day11 extends Day {
 
+    private final int[][] summedAreaTable = new int[301][301];
+
     public Object part1(List<String> input) {
-        return "part1result";
+        IntBinaryOperator getMaxSquareSize = (i, j) -> Math.min(3, Math.min(300 - i, 300 - j));
+        Triplet<Integer, Integer, Integer> bestPositionWithSize = runLogicAndGetBestPositionWithSize(input, 3, getMaxSquareSize);
+        return bestPositionWithSize.getValue0() + "," + bestPositionWithSize.getValue1();
     }
 
     public Object part2(List<String> input) {
-        return 2;
+        IntBinaryOperator getMaxSquareSize = (i, j) -> Math.min(300 - i, 300 - j);
+        Triplet<Integer, Integer, Integer> bestPositionWithSize = runLogicAndGetBestPositionWithSize(input, 1, getMaxSquareSize);
+        return bestPositionWithSize.getValue0() + "," + bestPositionWithSize.getValue1() + "," + bestPositionWithSize.getValue2();
+    }
+
+    private Triplet<Integer, Integer, Integer> runLogicAndGetBestPositionWithSize(List<String> input, int minSquareSize, IntBinaryOperator getMaxSquareSize) {
+        fillSummedAreaTable(input);
+        Triplet<Integer, Integer, Integer> bestPositionWithSize = Triplet.with(0, 0, 0);
+        int maxValue = Integer.MIN_VALUE;
+        for (int i = 0; i < 300; i++) {
+            for (int j = 0; j < 300; j++) {
+                int maxSquareSize = getMaxSquareSize.applyAsInt(i, j);
+                for (int squareSize = minSquareSize; squareSize <= maxSquareSize; squareSize++) {
+                    int value = getValue(i, j, squareSize);
+                    if (value > maxValue) {
+                        maxValue = value;
+                        bestPositionWithSize = Triplet.with(i + 1, j + 1, squareSize);
+                    }
+                }
+            }
+        }
+        return bestPositionWithSize;
+    }
+
+    private void fillSummedAreaTable(List<String> input) {
+        int serialNumber = Integer.parseInt(input.get(0));
+        summedAreaTable[0][0] = 0;
+        for (int i = 1; i <= 300; i++) {
+            summedAreaTable[0][i] = 0;
+            summedAreaTable[i][0] = 0;
+            for (int j = 1; j <= 300; j++) {
+                int powerLevel = getPowerLevel(serialNumber, i, j);
+                summedAreaTable[i][j] = powerLevel + summedAreaTable[i - 1][j] + summedAreaTable[i][j - 1] - summedAreaTable[i - 1][j - 1];
+            }
+        }
+    }
+
+    private int getPowerLevel(int serialNumber, int i, int j) {
+        int rackId = i + 10;
+        int powerLevel = rackId * j;
+        powerLevel += serialNumber;
+        powerLevel *= rackId;
+        powerLevel /= 100;
+        powerLevel %= 10;
+        powerLevel -= 5;
+        return powerLevel;
+    }
+
+    private int getValue(int i, int j, int squareSize) {
+        return summedAreaTable[i][j] + summedAreaTable[i + squareSize][j + squareSize] - summedAreaTable[i + squareSize][j] - summedAreaTable[i][j + squareSize];
     }
 
 }
