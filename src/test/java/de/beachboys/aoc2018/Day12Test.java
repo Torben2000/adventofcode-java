@@ -15,15 +15,43 @@ public class Day12Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("initial state: #..#.#..##......###...###",
+                        "",
+                        "...## => #",
+                        "..#.. => #",
+                        ".#... => #",
+                        ".#.#. => #",
+                        ".#.## => #",
+                        ".##.. => #",
+                        ".#### => #",
+                        "#.#.# => #",
+                        "#.### => #",
+                        "##.#. => #",
+                        "##.## => #",
+                        "###.. => #",
+                        "###.# => #",
+                        "####. => #"), 325, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("initial state: #..#.#..##......###...###",
+                        "",
+                        "...## => #",
+                        "..#.. => #",
+                        ".#... => #",
+                        ".#.#. => #",
+                        ".#.## => #",
+                        ".##.. => #",
+                        ".#### => #",
+                        "#.#.# => #",
+                        "#.### => #",
+                        "##.#. => #",
+                        "##.## => #",
+                        "###.. => #",
+                        "###.# => #",
+                        "####. => #"), 999999999374L, null)
         );
     }
 
