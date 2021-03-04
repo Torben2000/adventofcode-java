@@ -15,15 +15,18 @@ public class Day16Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("Before: [3, 2, 1, 1]",
+                        "9 2 1 2",
+                        "After:  [3, 2, 2, 1]"), 1, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("Before: [3, 3, 1, 1]",
+                        "9 1 3 0",
+                        "After:  [6, 3, 1, 1]",
+                        "9 1 3 0"), 3, null)
         );
     }
 
