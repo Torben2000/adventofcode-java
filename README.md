@@ -107,7 +107,7 @@ The general structure is based on https://github.com/dave-burke/advent-of-code-j
 |12|✔|✔|
 |13|✔|✔|
 |14|✔|✔|
-|15|❌|❌|
+|15|✔|✔|
 |16|❌|❌|
 |17|❌|❌|
 |18|❌|❌|
