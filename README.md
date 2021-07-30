@@ -1,5 +1,5 @@
 # Advent of Code
-[![CircleCI build status](https://circleci.com/gh/Torben2000/adventofcode2020.svg?style=shield)](https://circleci.com/gh/Torben2000/adventofcode2020)
+[![CircleCI build status](https://circleci.com/gh/Torben2000/adventofcode-java.svg?style=shield)](https://circleci.com/gh/Torben2000/adventofcode-java)
 
 ## Disclaimer
 - Code might be ugly as it is just there to solve the puzzles of https://adventofcode.com/. :-)
