@@ -25,7 +25,8 @@ public class Day19 extends Day {
     }
 
     public Object part2(List<String> input) {
-        return 2;
+        registers = new ArrayList<>(List.of(1L, 0L, 0L, 0L, 0L, 0L));
+        return runLogic(input);
     }
 
     private Long runLogic(List<String> input) {
@@ -38,13 +39,27 @@ public class Day19 extends Day {
                 program.add(Pair.with(m.group(1), Triplet.with(Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)))));
             }
         }
-        while (registers.get(ip) < program.size()) {
+         while (registers.get(ip) < program.size()) {
             int lineToExecute = registers.get(ip).intValue();
             Pair<String, Triplet<Integer, Integer, Integer>> programLine = program.get(lineToExecute);
+            // special handling for real logic
+            if (Pair.with("seti", Triplet.with(1, 5, 2)).equals(programLine)) {
+               return getSumOfAllDivisors(registers.get(5));
+            }
             operations.get(programLine.getValue0()).accept(programLine.getValue1());
             registers.set(ip, registers.get(ip) + 1);
         }
         return registers.get(0);
+    }
+
+    private long getSumOfAllDivisors(long longToCheck) {
+        long sum = 0;
+        for (long i = 1; i <= longToCheck; i++) {
+            if (longToCheck % i == 0) {
+                sum += i;
+            }
+        }
+        return sum;
     }
 
     private void buildOperationMap() {
