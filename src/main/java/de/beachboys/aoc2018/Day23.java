@@ -3,11 +3,10 @@ package de.beachboys.aoc2018;
 import de.beachboys.Day;
 import org.javatuples.Triplet;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Day23 extends Day {
 
@@ -16,14 +15,127 @@ public class Day23 extends Day {
         Bot botWithLongestRange = bots.stream().max(Comparator.comparing(bot -> bot.range)).orElseThrow();
         long botsInRange = 0L;
         for (Bot bot : bots) {
-                long distance = Math.abs(botWithLongestRange.position.getValue0() - bot.position.getValue0())
-                        + Math.abs(botWithLongestRange.position.getValue1() - bot.position.getValue1())
-                        + Math.abs(botWithLongestRange.position.getValue2() - bot.position.getValue2());
-                if (distance <= botWithLongestRange.range) {
-                    botsInRange++;
-                }
+            boolean inRange = isInRangeOfBot(botWithLongestRange, bot.position.getValue0(), bot.position.getValue1(), bot.position.getValue2());
+            if (inRange) {
+                botsInRange++;
+            }
         }
         return botsInRange;
+    }
+
+    public Object part2(List<String> input) {
+        List<Bot> bots = parseBotList(input);
+        List<Bot> botsWithIntersectingRanges = getBotsWithIntersectingRanges(bots);
+
+        long minX = Long.MIN_VALUE;
+        long maxX = Long.MAX_VALUE;
+        long minY = Long.MIN_VALUE;
+        long maxY = Long.MAX_VALUE;
+        long minZ = Long.MIN_VALUE;
+        long maxZ = Long.MAX_VALUE;
+        for (Bot bot : botsWithIntersectingRanges) {
+            minX = Math.max(minX, bot.position.getValue0() - bot.range);
+            maxX = Math.min(maxX, bot.position.getValue0() + bot.range);
+            minY = Math.max(minY, bot.position.getValue1() - bot.range);
+            maxY = Math.min(maxY, bot.position.getValue1() + bot.range);
+            minZ = Math.max(minZ, bot.position.getValue2() - bot.range);
+            maxZ = Math.min(maxZ, bot.position.getValue2() + bot.range);
+        }
+
+        Optional<Long> minDistance = getMinimalDistanceToCenterFast(botsWithIntersectingRanges, minX, maxX, minY, maxY, minZ, maxZ);
+        if (minDistance.isPresent()) {
+            return minDistance.get();
+        }
+
+        return getMinimalDistanceToCenterSlow(botsWithIntersectingRanges, minX, maxX, minY, maxY, minZ, maxZ);
+    }
+
+    private Optional<Long> getMinimalDistanceToCenterFast(List<Bot> botsWithIntersectingRanges, long minX, long maxX, long minY, long maxY, long minZ, long maxZ) {
+        if (minX >= 0 && minY >= 0 && minZ >= 0) {
+            long minDistance = minX + minY + minZ;
+            long maxDistance = maxX + maxY + maxZ;
+            for (Bot bot : botsWithIntersectingRanges) {
+                minDistance = Math.max(minDistance, bot.position.getValue0() + bot.position.getValue1() + bot.position.getValue2() - bot.range);
+                maxDistance = Math.min(maxDistance, bot.position.getValue0() + bot.position.getValue1() + bot.position.getValue2() + bot.range);
+            }
+            if (minDistance == maxDistance) {
+                return Optional.of(minDistance);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private long getMinimalDistanceToCenterSlow(List<Bot> botsWithIntersectingRanges, long minX, long maxX, long minY, long maxY, long minZ, long maxZ) {
+        long minDistance = Long.MAX_VALUE;
+        for (long i = minX; i <= maxX; i++) {
+            for (long j = minY; j <= maxY; j++) {
+                for (long k = minZ; k <= maxZ; k++) {
+                    boolean workingPosition = true;
+                    for (Bot bot : botsWithIntersectingRanges) {
+                        if (!isInRangeOfBot(bot, i, j, k)) {
+                            workingPosition = false;
+                            break;
+                        }
+                    }
+                    if (workingPosition) {
+                        long distance = getDistanceToCenter(i, j, k);
+                        if (minDistance > distance) {
+                            minDistance = distance;
+                        }
+                    }
+                }
+            }
+        }
+        return minDistance;
+    }
+
+    private List<Bot> getBotsWithIntersectingRanges(List<Bot> bots) {
+        Map<Bot, List<Bot>> botListWithConnectedBots = getBotListWithConnectedBots(bots);
+        List<Map.Entry<Bot, List<Bot>>> sortedBotsWithConnectedBots = botListWithConnectedBots.entrySet().stream().sorted(Comparator.comparingInt(entry -> entry.getValue().size())).collect(Collectors.toList());
+
+        List<Bot> botsToRemove = new ArrayList<>();
+        List<Bot> botsWithIntersectingRanges = new ArrayList<>();
+        for (int i = 0; i < sortedBotsWithConnectedBots.size(); i++) {
+            Map.Entry<Bot, List<Bot>> botListEntry = sortedBotsWithConnectedBots.get(i);
+            int minSize = sortedBotsWithConnectedBots.size() - 1 - botsToRemove.size();
+            if (botListEntry.getValue().size() == minSize) {
+                for (Bot otherBot : botsToRemove) {
+                    if (botListEntry.getValue().contains(otherBot)) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+                botsWithIntersectingRanges.add(botListEntry.getKey());
+            } else if (botListEntry.getValue().size() > minSize) {
+                int counter = 0;
+                for (Bot otherBot : botsToRemove) {
+                    if (botListEntry.getValue().contains(otherBot)) {
+                        counter++;
+                    }
+                }
+                if (counter != botListEntry.getValue().size() - minSize) {
+                    throw new IllegalArgumentException();
+                }
+                botsWithIntersectingRanges.add(botListEntry.getKey());
+            } else {
+                botsToRemove.add(botListEntry.getKey());
+            }
+        }
+        return botsWithIntersectingRanges;
+    }
+
+    private Map<Bot, List<Bot>> getBotListWithConnectedBots(List<Bot> bots) {
+        Map<Bot, List<Bot>> botsThatCanRangeToSamePosition = new HashMap<>();
+        for (Bot bot1 : bots) {
+            botsThatCanRangeToSamePosition.put(bot1, new ArrayList<>());
+            for (Bot bot2 : bots) {
+                if (bot1 != bot2) {
+                    if (getBotDistance(bot1, bot2) <= bot1.range + bot2.range) {
+                        botsThatCanRangeToSamePosition.get(bot1).add(bot2);
+                    }
+                }
+            }
+        }
+        return botsThatCanRangeToSamePosition;
     }
 
     private List<Bot> parseBotList(List<String> input) {
@@ -39,8 +151,25 @@ public class Day23 extends Day {
         return bots;
     }
 
-    public Object part2(List<String> input) {
-        return 2;
+    private boolean isInRangeOfBot(Bot bot, long x, long y, long z) {
+        boolean inRange = false;
+        long distance = Math.abs(bot.position.getValue0() - x)
+                    + Math.abs(bot.position.getValue1() - y)
+                    + Math.abs(bot.position.getValue2() - z);
+        if (distance <= bot.range) {
+            inRange = true;
+        }
+        return inRange;
+    }
+
+    private long getBotDistance(Bot bot1, Bot bot2) {
+        return Math.abs(bot1.position.getValue0() - bot2.position.getValue0())
+                + Math.abs(bot1.position.getValue1() - bot2.position.getValue1())
+                + Math.abs(bot1.position.getValue2() - bot2.position.getValue2());
+    }
+
+    private long getDistanceToCenter(long x, long y, long z) {
+        return Math.abs(x) + Math.abs(y) + Math.abs(z);
     }
 
     private static class Bot {
@@ -53,5 +182,17 @@ public class Day23 extends Day {
             this.range = range;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Bot bot = (Bot) o;
+            return range == bot.range && position.equals(bot.position);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(position, range);
+        }
     }
 }
