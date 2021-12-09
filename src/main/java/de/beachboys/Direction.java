@@ -2,6 +2,9 @@ package de.beachboys;
 
 import org.javatuples.Pair;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public enum Direction {
 
     NORTH(0, -1), SOUTH(0, 1), WEST(-1, 0), EAST(1, 0);
@@ -84,6 +87,14 @@ public enum Direction {
                 return WEST;
         }
         throw new IllegalStateException();
+    }
+
+    public static Set<Pair<Integer, Integer>> getDirectNeighbors(Pair<Integer, Integer> position) {
+        Set<Pair<Integer, Integer>> neighbors = new HashSet<>();
+        for (Direction dir : values()) {
+            neighbors.add(dir.move(position, 1));
+        }
+        return neighbors;
     }
 
 }

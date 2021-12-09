@@ -2,6 +2,9 @@ package de.beachboys;
 
 import org.javatuples.Triplet;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public enum DirectionHexPointyTop {
 
     WEST(-1, 1, 0), EAST(1, -1, 0), NORTHWEST(0, 1, -1), NORTHEAST(1, 0, -1), SOUTHWEST(-1, 0, 1), SOUTHEAST(0, -1, 1);
@@ -104,6 +107,14 @@ public enum DirectionHexPointyTop {
                 return SOUTHWEST;
         }
         throw new IllegalStateException();
+    }
+
+    public static Set<Triplet<Integer, Integer, Integer>> getDirectNeighbors(Triplet<Integer, Integer, Integer> position) {
+        Set<Triplet<Integer, Integer, Integer>> neighbors = new HashSet<>();
+        for (DirectionHexPointyTop dir : values()) {
+            neighbors.add(dir.move(position, 1));
+        }
+        return neighbors;
     }
 
 }

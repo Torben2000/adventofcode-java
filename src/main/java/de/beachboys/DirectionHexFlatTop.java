@@ -1,6 +1,10 @@
 package de.beachboys;
 
+import org.javatuples.Pair;
 import org.javatuples.Triplet;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public enum DirectionHexFlatTop {
 
@@ -104,6 +108,14 @@ public enum DirectionHexFlatTop {
                 return SOUTHWEST;
         }
         throw new IllegalStateException();
+    }
+
+    public static Set<Triplet<Integer, Integer, Integer>> getDirectNeighbors(Triplet<Integer, Integer, Integer> position) {
+        Set<Triplet<Integer, Integer, Integer>> neighbors = new HashSet<>();
+        for (DirectionHexFlatTop dir : values()) {
+            neighbors.add(dir.move(position, 1));
+        }
+        return neighbors;
     }
 
 }
