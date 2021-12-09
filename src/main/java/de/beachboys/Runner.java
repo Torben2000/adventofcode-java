@@ -1,5 +1,7 @@
 package de.beachboys;
 
+import com.google.common.base.Stopwatch;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -17,7 +19,6 @@ public class Runner {
     private static final int CURRENT_DAY = 1;
     private static final int CURRENT_PART = 1;
     // use the session id from your browser session (long hex string)
-    @SuppressWarnings("SpellCheckingInspection")
     private static final String BROWSER_SESSION = "secret";
     private static final String DATA_FOLDER = "c:/temp/";
 
@@ -38,7 +39,7 @@ public class Runner {
                         downloadInput();
                         break;
                     case "r":
-                        System.out.println(currentPart.apply(loadInputLines()));
+                        runLogicWithStopWatchAndPrintResult(currentPart, loadInputLines());
                         break;
                     case "s":
                         currentPartAsInt = currentPartAsInt == 1 ? 2 : 1;
@@ -46,7 +47,7 @@ public class Runner {
                         printCurrentState(currentPartAsInt);
                         break;
                     default:
-                        System.out.println(currentPart.apply(List.of(input)));
+                        runLogicWithStopWatchAndPrintResult(currentPart, List.of(input));
                         break;
                 }
             } catch (Exception e) {
@@ -54,6 +55,14 @@ public class Runner {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void runLogicWithStopWatchAndPrintResult(Function<List<String>, Object> currentPart, List<String> inputLines) {
+        Stopwatch stop = Stopwatch.createStarted();
+        Object result = currentPart.apply(inputLines);
+        stop.stop();
+        System.out.println("Calculation time: " + stop);
+        System.out.println("Result: " + result);
     }
 
     private static void printCurrentState(int currentPartAsInt) {
