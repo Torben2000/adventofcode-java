@@ -15,15 +15,58 @@ public class Day13Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("6,10",
+                        "0,14",
+                        "9,10",
+                        "0,3",
+                        "10,4",
+                        "4,11",
+                        "6,0",
+                        "6,12",
+                        "4,1",
+                        "0,13",
+                        "10,12",
+                        "3,4",
+                        "3,0",
+                        "8,4",
+                        "1,10",
+                        "2,14",
+                        "8,10",
+                        "9,0",
+                        "",
+                        "fold along y=7",
+                        "fold along x=5"), 17, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("6,10",
+                        "0,14",
+                        "9,10",
+                        "0,3",
+                        "10,4",
+                        "4,11",
+                        "6,0",
+                        "6,12",
+                        "4,1",
+                        "0,13",
+                        "10,12",
+                        "3,4",
+                        "3,0",
+                        "8,4",
+                        "1,10",
+                        "2,14",
+                        "8,10",
+                        "9,0",
+                        "",
+                        "fold along y=7",
+                        "fold along x=5"),
+                        "*****\n" +
+                        "*   *\n" +
+                        "*   *\n" +
+                        "*   *\n" +
+                        "*****\n", null)
         );
     }
 

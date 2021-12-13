@@ -62,7 +62,12 @@ public class Runner {
         Object result = currentPart.apply(inputLines);
         stop.stop();
         System.out.println("Calculation time: " + stop);
-        System.out.println("Result: " + result);
+        if (result.toString().contains("\n")) {
+            System.out.println("Result:");
+            System.out.println(result);
+        } else {
+            System.out.println("Result: " + result);
+        }
     }
 
     private static void printCurrentState(int currentPartAsInt) {

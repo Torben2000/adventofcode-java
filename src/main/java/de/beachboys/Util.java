@@ -39,6 +39,10 @@ public final class Util {
         return parseToLongList(input, ",");
     }
 
+    public static String paintSet(Set<Pair<Integer, Integer>> set) {
+        return paintMap(set.stream().collect(Collectors.toMap(Function.identity(), position -> "*")));
+    }
+
     public static String paintMap(Map<Pair<Integer, Integer>, String> map) {
         Map<String, String> valuesToPaint = map.values().stream().distinct().collect(Collectors.toMap(Function.identity(), Function.identity()));
         return paintMap(map, valuesToPaint);
