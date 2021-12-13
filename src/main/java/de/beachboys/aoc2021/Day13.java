@@ -1,6 +1,7 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
+import de.beachboys.OCR;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 
@@ -26,7 +27,7 @@ public class Day13 extends Day {
             dots = foldPaper(dots, foldInstruction);
         }
 
-        return Util.paintSet(dots);
+        return OCR.runOCRAndReturnOriginalOnError(Util.paintSet(dots));
     }
 
     private void parseInput(List<String> input) {
