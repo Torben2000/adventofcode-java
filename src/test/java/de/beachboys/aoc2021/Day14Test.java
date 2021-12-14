@@ -15,14 +15,48 @@ public class Day14Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("NNCB",
+                        "",
+                        "CH -> B",
+                        "HH -> N",
+                        "CB -> H",
+                        "NH -> C",
+                        "HB -> C",
+                        "HC -> B",
+                        "HN -> C",
+                        "NN -> C",
+                        "BH -> H",
+                        "NC -> B",
+                        "NB -> B",
+                        "BN -> B",
+                        "BB -> N",
+                        "BC -> B",
+                        "CC -> N",
+                        "CN -> C"), 1588, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("NNCB",
+                        "",
+                        "CH -> B",
+                        "HH -> N",
+                        "CB -> H",
+                        "NH -> C",
+                        "HB -> C",
+                        "HC -> B",
+                        "HN -> C",
+                        "NN -> C",
+                        "BH -> H",
+                        "NC -> B",
+                        "NB -> B",
+                        "BN -> B",
+                        "BB -> N",
+                        "BC -> B",
+                        "CC -> N",
+                        "CN -> C"), 2188189693529L, null)
 
         );
     }
