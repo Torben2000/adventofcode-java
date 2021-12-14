@@ -1,6 +1,7 @@
 package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
+import de.beachboys.OCR;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 
@@ -57,7 +58,7 @@ public class Day10 extends Day {
         for (Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> point : points) {
             skyContentMap.put(point.getValue0(), "*");
         }
-        skyContent = Util.paintMap(skyContentMap);
+        skyContent = OCR.runOCRAndReturnOriginalOnError(Util.paintMap(skyContentMap));
         io.logDebug(skyContent);
     }
 
