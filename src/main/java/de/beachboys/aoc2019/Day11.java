@@ -2,6 +2,7 @@ package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
 import de.beachboys.IOHelper;
+import de.beachboys.OCR;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 
@@ -101,7 +102,7 @@ public class Day11 extends Day {
     public Object part2(List<String> input) {
         colorMap.put(Pair.with(0, 0), "1");
         part1(input);
-        return Util.paintMap(colorMap, Map.of("1", "*"));
+        return OCR.runOCRAndReturnOriginalOnError(Util.paintMap(colorMap, Map.of("1", "*")));
     }
 
 }

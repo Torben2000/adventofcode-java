@@ -1,6 +1,7 @@
 package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
+import de.beachboys.OCR;
 import de.beachboys.Util;
 import org.javatuples.Triplet;
 
@@ -72,7 +73,7 @@ public class Day08 extends Day {
             }
         }
 
-        return Util.formatImage(imageString, width, height, Map.of("1", "*"));
+        return OCR.runOCRAndReturnOriginalOnError(Util.formatImage(imageString, width, height, Map.of("1", "*")));
     }
 
     private void setImageDimensionsFromUserInput() {

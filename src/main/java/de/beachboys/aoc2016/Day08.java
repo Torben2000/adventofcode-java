@@ -1,16 +1,15 @@
 package de.beachboys.aoc2016;
 
 import de.beachboys.Day;
+import de.beachboys.OCR;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day08 extends Day {
 
@@ -21,7 +20,7 @@ public class Day08 extends Day {
 
     public Object part2(List<String> input) {
         Set<Pair<Integer, Integer>> pixels = buildPixelSet(input);
-        return Util.paintMap(pixels.stream().collect(Collectors.toMap(Function.identity(), p -> "*")));
+        return OCR.runOCRAndReturnOriginalOnError(Util.paintSet(pixels));
     }
 
     private Set<Pair<Integer, Integer>> buildPixelSet(List<String> input) {

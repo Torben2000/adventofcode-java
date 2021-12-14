@@ -53,7 +53,13 @@ public final class Util {
         int minY = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
         int maxY = Integer.MIN_VALUE;
-        for (Pair<Integer, Integer> point : map.keySet()) {
+        Map<Pair<Integer, Integer>, String> filteredMap = new HashMap<>(map);
+        map.forEach((point, value) -> {
+            if (valuesToPaint != null && !valuesToPaint.containsKey(value)) {
+                filteredMap.remove(point);
+            }
+        });
+        for (Pair<Integer, Integer> point : filteredMap.keySet()) {
             minX = Math.min(minX, point.getValue0());
             minY = Math.min(minY, point.getValue1());
             maxX = Math.max(maxX, point.getValue0());
@@ -63,9 +69,9 @@ public final class Util {
         int height = maxY - minY + 1;
         StringBuilder imageString = new StringBuilder();
         imageString.append(" ".repeat(width*height));
-        for (Pair<Integer, Integer> point : map.keySet()) {
+        for (Pair<Integer, Integer> point : filteredMap.keySet()) {
             int index = width * (point.getValue1() - minY) + (point.getValue0() - minX);
-            imageString.replace(index, index + 1, map.get(point));
+            imageString.replace(index, index + 1, filteredMap.get(point));
         }
         return formatImage(imageString.toString(), width, height, valuesToPaint);
     }

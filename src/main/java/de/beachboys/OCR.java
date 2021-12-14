@@ -3,6 +3,7 @@ package de.beachboys;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class OCR {
@@ -121,11 +122,18 @@ public class OCR {
     }
 
     public static String runOCR(String paintedString) {
+        int characterWidth = 4;
+        int spaceWidth = 1;
+        int characterPlusSpaceWidth = characterWidth + spaceWidth;
         StringBuilder returnValue = new StringBuilder();
         String[] lines = paintedString.split("\n");
-        for (int i = 0; i <= lines[0].length() / 5; i++) {
+        int lineLength = lines[0].length();
+        if (lineLength % characterPlusSpaceWidth != characterWidth && lineLength % characterPlusSpaceWidth != 0) {
+            throw new IllegalArgumentException("invalid line length: " + lineLength);
+        }
+        for (int i = 0; i < (lineLength + spaceWidth) / characterPlusSpaceWidth; i++) {
             int finalI = i;
-            String character = Arrays.stream(lines).map(line -> line.substring(finalI * 5, finalI * 5 + 4)).collect(Collectors.joining("\n"));
+            String character = Arrays.stream(lines).map(line -> line.substring(finalI * characterPlusSpaceWidth, finalI * characterPlusSpaceWidth + characterWidth)).collect(Collectors.joining("\n"));
             if (!characters.containsKey(character)) {
                 throw new IllegalArgumentException("Invalid character: " + character);
             }
@@ -143,7 +151,7 @@ public class OCR {
     }
 
     public static String runOCRAndReturnDotVersionOnError(String paintedString, String dotRepresentation) {
-        return runOCRAndReturnOriginalOnError(paintedString.replaceAll(dotRepresentation, "*"));
+        return runOCRAndReturnOriginalOnError(paintedString.replaceAll(Pattern.quote(dotRepresentation), "*").replaceAll("[^*^\\n]", " "));
     }
 
 }
