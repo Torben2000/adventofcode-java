@@ -15,15 +15,31 @@ public class Day15Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("1163751742",
+                        "1381373672",
+                        "2136511328",
+                        "3694931569",
+                        "7463417111",
+                        "1319128137",
+                        "1359912421",
+                        "3125421639",
+                        "1293138521",
+                        "2311944581"), 40, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("1163751742",
+                        "1381373672",
+                        "2136511328",
+                        "3694931569",
+                        "7463417111",
+                        "1319128137",
+                        "1359912421",
+                        "3125421639",
+                        "1293138521",
+                        "2311944581"), 315, null)
         );
     }
 
