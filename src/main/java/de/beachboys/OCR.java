@@ -1,7 +1,5 @@
 package de.beachboys;
 
-import com.google.common.base.Strings;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -85,7 +83,7 @@ public class OCR {
                     if (characterRepresentation.length() > 0) {
                         characterRepresentation.append("\n");
                     }
-                    characterRepresentation.append(Strings.padEnd(mapping.get(currentLineIndex + i), characterWidth, ' '));
+                    characterRepresentation.append(String.format("%-" + characterWidth + "s", mapping.get(currentLineIndex + i)));
                 }
                 currentLineIndex += height;
                 characters.put(characterRepresentation.toString(), mapping.get(currentLineIndex));
