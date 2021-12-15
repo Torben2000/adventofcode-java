@@ -13,6 +13,7 @@ public class Day15 extends Day {
     private final Map<Pair<Integer, Integer>, Integer> riskMap = new HashMap<>();
     private Pair<Integer, Integer> goal;
     private final Map<Pair<Integer, Integer>, Integer> minRiskMap = new HashMap<>();
+    Set<Pair<Integer, Integer>> positionsToCheckAgain = new HashSet<>();
 
 
     public Object part1(List<String> input) {
@@ -26,9 +27,7 @@ public class Day15 extends Day {
     private Integer runLogic(List<String> input, int mapRepetitions) {
         parseInputToRiskMapAndGoal(input, mapRepetitions);
 
-        initiallyFillMinRiskMap();
-
-        Set<Pair<Integer, Integer>> positionsToCheckAgain = new HashSet<>(minRiskMap.keySet());
+        initiallyFillMinRiskMapAndPositionsToCheckAgain();
 
         while (!positionsToCheckAgain.isEmpty()) {
             Pair<Integer, Integer> pos = positionsToCheckAgain.stream().findFirst().orElseThrow();
@@ -44,14 +43,15 @@ public class Day15 extends Day {
                 }
             }
             if (change) {
-                minRiskMap.put(pos, riskMap.get(pos) + minRiskNeighbors);
-                positionsToCheckAgain.addAll(neighbors);
+                int newValue = riskMap.get(pos) + minRiskNeighbors;
+                minRiskMap.put(pos, newValue);
+                positionsToCheckAgain.addAll(neighbors.stream().filter(p -> minRiskMap.get(p) > newValue + riskMap.get(p)).collect(Collectors.toSet()));
             }
         }
         return minRiskMap.get(goal);
     }
 
-    private void initiallyFillMinRiskMap() {
+    private void initiallyFillMinRiskMapAndPositionsToCheckAgain() {
         minRiskMap.clear();
         for (int i = 0; i <= goal.getValue0(); i++) {
             for (int j = 0; j <= goal.getValue1(); j++) {
@@ -59,7 +59,19 @@ public class Day15 extends Day {
                 if (i == 0 && j == 0) {
                     minRiskMap.put(pos, 0);
                 } else {
-                    minRiskMap.put(pos, riskMap.get(pos) + Math.min(minRiskMap.getOrDefault(Pair.with(i, j - 1), Integer.MAX_VALUE), minRiskMap.getOrDefault(Pair.with(i - 1, j), Integer.MAX_VALUE)));
+                    Pair<Integer, Integer> topPos = Pair.with(i, j - 1);
+                    Pair<Integer, Integer> leftPos = Pair.with(i - 1, j);
+                    int top = minRiskMap.getOrDefault(topPos, Integer.MAX_VALUE);
+                    int left = minRiskMap.getOrDefault(leftPos, Integer.MAX_VALUE);
+                    int risk = riskMap.get(pos);
+                    minRiskMap.put(pos, risk + Math.min(top, left));
+                    if (i > 0 && j > 0) {
+                        if (top + risk < left) {
+                            positionsToCheckAgain.add(leftPos);
+                        } else if (left + risk < top) {
+                            positionsToCheckAgain.add(topPos);
+                        }
+                    }
                 }
             }
         }
