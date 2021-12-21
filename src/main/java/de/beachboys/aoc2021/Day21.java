@@ -2,6 +2,7 @@ package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
 import org.javatuples.Pair;
+import org.javatuples.Quartet;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 public class Day21 extends Day {
 
     private final Map<Integer, Integer> throwPossibilitiesPart2 = new HashMap<>();
+    private final Map<Quartet<Integer, Integer, Long, Long>, Pair<Long, Long>> winningUniversesCache = new HashMap<>();
 
     public Object part1(List<String> input) {
         int positionPlayer1 = Integer.parseInt(input.get(0).substring("Player 1 starting position: ".length()));
@@ -56,6 +58,7 @@ public class Day21 extends Day {
             }
         }
 
+        winningUniversesCache.clear();
         Pair<Long, Long> result = getWinningUniverses(positionPlayer1, positionPlayer2, 0, 0);
         if (result.getValue0() > result.getValue1()) {
             return result.getValue0();
@@ -68,6 +71,10 @@ public class Day21 extends Day {
     }
 
     private Pair<Long, Long> getWinningUniverses(int positionOfNextPlayer, int positionOfOtherPlayer, long scoreOfNextPlayer, long scoreOfOtherPlayer) {
+        Quartet<Integer, Integer, Long, Long> cacheKey = Quartet.with(positionOfNextPlayer, positionOfOtherPlayer, scoreOfNextPlayer, scoreOfOtherPlayer);
+        if (winningUniversesCache.containsKey(cacheKey)) {
+            return winningUniversesCache.get(cacheKey);
+        }
         long winningUniversesOfNextPlayer = 0;
         long winningUniversesOfOtherPlayer = 0;
         for (Map.Entry<Integer, Integer> throwPossibility : throwPossibilitiesPart2.entrySet()) {
@@ -81,7 +88,9 @@ public class Day21 extends Day {
                 winningUniversesOfOtherPlayer += throwPossibility.getValue() * res.getValue0();
             }
         }
-        return Pair.with(winningUniversesOfNextPlayer, winningUniversesOfOtherPlayer);
+        Pair<Long, Long> result = Pair.with(winningUniversesOfNextPlayer, winningUniversesOfOtherPlayer);
+        winningUniversesCache.put(cacheKey, result);
+        return result;
     }
 
     private int updatePosition(int currentPosition, int diceThrowResult) {
@@ -95,6 +104,5 @@ public class Day21 extends Day {
         }
         return newScore;
     }
-
 
 }
