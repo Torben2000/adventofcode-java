@@ -1,22 +1,25 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
+import org.javatuples.Pair;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.IntUnaryOperator;
 
 public class Day24 extends Day {
 
     private final long[] ram = new long[4];
 
     public Object part1(List<String> input) {
-        return runLogic(input, calculateModelNumberPart1());
+        return runLogic(input, 9, d -> d - 1);
     }
 
     public Object part2(List<String> input) {
-        return runLogic(input, calculateModelNumberPart2());
+        return runLogic(input, 1, d -> d + 1);
     }
 
-    private String runLogic(List<String> input, int[] modelNumber) {
+    private String runLogic(List<String> input, int firstDigitValueToTry, IntUnaryOperator nextDigitToTry) {
+        int[] modelNumber = getFirstPossibleModelNumber(input, firstDigitValueToTry, nextDigitToTry);
         if (checkModelNumberForValidityWithALU(input, modelNumber)) {
             return printModelNumber(modelNumber);
         }
@@ -24,45 +27,61 @@ public class Day24 extends Day {
         throw new IllegalArgumentException("something went wrong");
     }
 
-    private int[] calculateModelNumberPart1() {
-        int[] modelNumber = new int[14];
-        modelNumber[0] = 9;
-        modelNumber[1] = 9;
-        modelNumber[2] = 3;
-        modelNumber[4] = 4;
-        modelNumber[5] = 8;
-        modelNumber[9] = 9;
-        modelNumber[10] = 1;
+    private int[] getFirstPossibleModelNumber(List<String> aluProgram, int firstDigitValueToTry, IntUnaryOperator nextDigitToTry) {
+        Map<Integer, Pair<Integer, Integer>> calculatedDigits = getCalculatedDigits(aluProgram);
 
-        modelNumber[3] = modelNumber[2] + 6;
-        modelNumber[6] = modelNumber[5] + 1;
-        modelNumber[7] = modelNumber[4] + 5;
-        modelNumber[8] = modelNumber[1] - 1;
-        modelNumber[11] = modelNumber[10] + 8;
-        modelNumber[12] = modelNumber[9] - 2;
-        modelNumber[13] = modelNumber[0] - 8;
+        int[] modelNumber = new int[14];
+
+        int currentDigitIndex = 0;
+        for (int i = 0; i < 7; i++) {
+            int digit = firstDigitValueToTry;
+            while (!calculatedDigits.containsKey(currentDigitIndex)) {
+                currentDigitIndex++;
+            }
+
+            Pair<Integer, Integer> calculation = calculatedDigits.get(currentDigitIndex);
+
+            boolean digitFound = false;
+            while (digit > 0 && digit < 10) {
+                int otherDigit = digit + calculation.getValue1();
+                if (otherDigit > 0 && otherDigit < 10) {
+                    modelNumber[currentDigitIndex] = digit;
+                    modelNumber[calculation.getValue0()] = otherDigit;
+                    digitFound = true;
+                    break;
+                }
+                digit = nextDigitToTry.applyAsInt(digit);
+            }
+            if (!digitFound) {
+                throw new IllegalArgumentException("no possible digit found for index " + currentDigitIndex);
+            }
+            currentDigitIndex++;
+        }
         return modelNumber;
     }
 
+    private Map<Integer, Pair<Integer, Integer>> getCalculatedDigits(List<String> aluProgram) {
+        Map<Integer, Pair<Integer, Integer>> calculatedDigits = new HashMap<>();
 
-    private int[] calculateModelNumberPart2() {
-        int[] modelNumber = new int[14];
-        modelNumber[0] = 9;
-        modelNumber[1] = 2;
-        modelNumber[2] = 1;
-        modelNumber[4] = 1;
-        modelNumber[5] = 1;
-        modelNumber[9] = 3;
-        modelNumber[10] = 1;
-
-        modelNumber[3] = modelNumber[2] + 6;
-        modelNumber[6] = modelNumber[5] + 1;
-        modelNumber[7] = modelNumber[4] + 5;
-        modelNumber[8] = modelNumber[1] - 1;
-        modelNumber[11] = modelNumber[10] + 8;
-        modelNumber[12] = modelNumber[9] - 2;
-        modelNumber[13] = modelNumber[0] - 8;
-        return modelNumber;
+        int curDigit = -1;
+        Deque<Integer> inputDigits = new LinkedList<>();
+        Map<Integer, Integer> diffValues = new HashMap<>();
+        for (int i = 0; i < aluProgram.size(); i++) {
+            String line = aluProgram.get(i);
+            if (line.startsWith("div z ")) {
+                curDigit++;
+                if ("1".equals(line.substring("div z ".length()))) {
+                    inputDigits.add(curDigit);
+                } else {
+                    Integer inputDigit = inputDigits.pollLast();
+                    int diff = diffValues.get(inputDigit) + Integer.parseInt(aluProgram.get(i + 1).substring("add x ".length()));
+                    calculatedDigits.put(inputDigit, Pair.with(curDigit, diff));
+                }
+            } else if ("add y w".equals(line)) {
+                diffValues.put(curDigit, Integer.valueOf(aluProgram.get(i + 1).substring("add y ".length())));
+            }
+        }
+        return calculatedDigits;
     }
 
     private boolean checkModelNumberForValidityWithALU(List<String> aluProgram, int[] modelNumber) {
