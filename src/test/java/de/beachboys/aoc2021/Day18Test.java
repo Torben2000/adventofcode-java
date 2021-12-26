@@ -2,7 +2,6 @@ package de.beachboys.aoc2021;
 
 import de.beachboys.DayTest;
 import de.beachboys.IOHelper;
-import org.javatuples.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -30,11 +29,8 @@ public class Day18Test extends DayTest {
     }
     @ParameterizedTest
     @MethodSource("provideTestDataForExplode")
-    public void testExplode(String snailFishNumber, String expectedSnailfishNumber) {
-        Day18.SnailfishNumber s = day.parseSnailfishNumber(snailFishNumber);
-        Pair<Boolean, Day18.SnailfishNumber> result = day.explodeLeftmostPair(s, 0);
-        Assertions.assertEquals(true, result.getValue0());
-        Assertions.assertEquals(expectedSnailfishNumber, result.getValue1().toString());
+    public void testExplode(String snailfishNumber, String expectedSnailfishNumber) {
+        Assertions.assertEquals(expectedSnailfishNumber, day.explode(snailfishNumber));
     }
 
     private static Stream<Arguments> provideTestDataForSplit() {
@@ -46,14 +42,11 @@ public class Day18Test extends DayTest {
 
     @ParameterizedTest
     @MethodSource("provideTestDataForSplit")
-    public void testSplit(String snailFishNumber, String expectedSnailfishNumber) {
-        Day18.SnailfishNumber s = day.parseSnailfishNumber(snailFishNumber);
-        Pair<Boolean, Day18.SnailfishNumber> result = day.splitLeftmostNumber(s);
-        Assertions.assertEquals(true, result.getValue0());
-        Assertions.assertEquals(expectedSnailfishNumber, result.getValue1().toString());
+    public void testSplit(String snailfishNumber, String expectedSnailfishNumber) {
+        Assertions.assertEquals(expectedSnailfishNumber, day.split(snailfishNumber));
     }
 
-    private static Stream<Arguments> provideTestDataForSumUp() {
+    private static Stream<Arguments> provideTestDataForAdd() {
         return Stream.of(
                 Arguments.of(List.of("[[[[4,3],4],4],[7,[[8,4],9]]]",
                         "[1,1]"), "[[[[0,7],4],[[7,8],[6,0]]],[8,1]]"),
@@ -96,10 +89,9 @@ public class Day18Test extends DayTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideTestDataForSumUp")
-    public void testSumUp(List<String> snailfishNumbers, String expectedSnailfish) {
-        List<Day18.SnailfishNumber> list = day.parseSnailfishNumbers(snailfishNumbers);
-        Assertions.assertEquals(expectedSnailfish, day.sumUpSnails(list).toString());
+    @MethodSource("provideTestDataForAdd")
+    public void testSumUp(List<String> snailfishNumbers, String expectedSnailfishNumber) {
+        Assertions.assertEquals(expectedSnailfishNumber, day.sumUp(snailfishNumbers));
     }
 
     private static Stream<Arguments> provideTestDataForGetMagnitude() {
@@ -115,9 +107,8 @@ public class Day18Test extends DayTest {
 
     @ParameterizedTest
     @MethodSource("provideTestDataForGetMagnitude")
-    public void testGetMagnitude(String snailFishNumber, long expectedMagnitude) {
-        Day18.SnailfishNumber s = day.parseSnailfishNumber(snailFishNumber);
-        Assertions.assertEquals(expectedMagnitude, day.getMagnitude(s));
+    public void testGetMagnitude(String snailFishNumber, int expectedMagnitude) {
+        Assertions.assertEquals(expectedMagnitude, day.getMagnitude(snailFishNumber));
     }
 
     private static Stream<Arguments> provideTestDataForPart1() {
