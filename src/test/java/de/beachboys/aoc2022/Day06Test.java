@@ -15,15 +15,21 @@ public class Day06Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("mjqjpqmgbljsphdztnvjfqwrcgsmlb"), 7, null),
+                Arguments.of(List.of("bvwbjplbgvbhsrlpgdmjqwftvncz"), 5, null),
+                Arguments.of(List.of("nppdvjthqldpwncqszvftbrmjlhg"), 6, null),
+                Arguments.of(List.of("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"), 10, null),
+                Arguments.of(List.of("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"), 11, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("mjqjpqmgbljsphdztnvjfqwrcgsmlb"), 19, null),
+                Arguments.of(List.of("bvwbjplbgvbhsrlpgdmjqwftvncz"), 23, null),
+                Arguments.of(List.of("nppdvjthqldpwncqszvftbrmjlhg"), 23, null),
+                Arguments.of(List.of("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"), 29, null),
+                Arguments.of(List.of("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"), 26, null)
         );
     }
 
