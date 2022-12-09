@@ -20,16 +20,24 @@ public enum Direction {
     public static Direction fromString(String directionString) {
         switch (directionString.toLowerCase()) {
             case "n":
+            case "u":
             case "north":
+            case "up":
                 return Direction.NORTH;
             case "e":
+            case "r":
             case "east":
+            case "right":
                 return Direction.EAST;
             case "s":
+            case "d":
             case "south":
+            case "down":
                 return Direction.SOUTH;
             case "w":
+            case "l":
             case "west":
+            case "left":
                 return Direction.WEST;
             default:
                 throw new IllegalArgumentException();
