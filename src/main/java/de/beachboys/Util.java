@@ -118,6 +118,27 @@ public final class Util {
         return buildImageMap(input).entrySet().stream().filter(entry -> representationOfActiveState.equals(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
     }
 
+    public static int getManhattanDistance(Pair<Integer, Integer> pos1, Pair<Integer, Integer> pos2) {
+        return Math.abs(pos1.getValue0() - pos2.getValue0()) + Math.abs(pos1.getValue1() - pos2.getValue1());
+    }
+
+    public static boolean isInRectangle(Pair<Integer, Integer> positionToCheck, Pair<Integer, Integer> cornerOfRectangle, Pair<Integer, Integer> oppositeCornerOfRectangle) {
+        boolean returnValue = true;
+        if (positionToCheck.getValue0() < cornerOfRectangle.getValue0() && positionToCheck.getValue0() < oppositeCornerOfRectangle.getValue0()) {
+            returnValue = false;
+        }
+        if (positionToCheck.getValue0() > cornerOfRectangle.getValue0() && positionToCheck.getValue0() > oppositeCornerOfRectangle.getValue0()) {
+            returnValue = false;
+        }
+        if (positionToCheck.getValue1() < cornerOfRectangle.getValue1() && positionToCheck.getValue1() < oppositeCornerOfRectangle.getValue1()) {
+            returnValue = false;
+        }
+        if (positionToCheck.getValue1() > cornerOfRectangle.getValue1() && positionToCheck.getValue1() > oppositeCornerOfRectangle.getValue1()) {
+            returnValue = false;
+        }
+        return returnValue;
+    }
+
     public static long greatestCommonDivisor(long long1, long long2) {
         if (long1 == long2 || long2 == 0) {
             return long1;

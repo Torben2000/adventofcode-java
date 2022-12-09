@@ -1,6 +1,7 @@
 package de.beachboys.aoc2022;
 
 import de.beachboys.Day;
+import de.beachboys.Direction;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 
@@ -25,53 +26,29 @@ public class Day08 extends Day {
         int visibleTrees = 2 * maxX + 2 * maxY;
         for (int x = 1; x < maxX; x++) {
             for (int y = 1; y < maxY; y++) {
-                int height = getTreeHeight(map, x, y);
+                Pair<Integer, Integer> treePos = Pair.with(x, y);
+                int height = getTreeHeight(map, treePos);
                 int scenicScore = 1;
-                boolean visibleLeft = true;
-                for (int i = x - 1; i >= 0; i--) {
-                    if (height <= getTreeHeight(map, i, y)) {
-                        scenicScore *= x - i;
-                        visibleLeft = false;
-                        break;
+                boolean visible = false;
+
+                for (Direction direction : Direction.values()) {
+                    boolean visibleFromDirection = true;
+                    Pair<Integer, Integer> curPos = direction.move(treePos, 1);
+                    while (Util.isInRectangle(curPos, Pair.with(0, 0), Pair.with(maxX, maxY))) {
+                        if (height <= getTreeHeight(map, curPos)) {
+                            scenicScore *= Util.getManhattanDistance(treePos, curPos);
+                            visibleFromDirection = false;
+                            break;
+                        }
+                        curPos = direction.move(curPos, 1);
+                    }
+                    if (visibleFromDirection) {
+                        scenicScore *= Util.getManhattanDistance(treePos, curPos) - 1;
+                        visible = true;
                     }
                 }
-                if (visibleLeft) {
-                    scenicScore *= x;
-                }
-                boolean visibleRight = true;
-                for (int i = x + 1; i <= maxX; i++) {
-                    if (height <= getTreeHeight(map, i, y)) {
-                        scenicScore *= i - x;
-                        visibleRight = false;
-                        break;
-                    }
-                }
-                if (visibleRight) {
-                    scenicScore *= maxX-x;
-                }
-                boolean visibleTop = true;
-                for (int i = y - 1; i >= 0; i--) {
-                    if (height <= getTreeHeight(map, x, i)) {
-                        scenicScore *= y - i;
-                        visibleTop = false;
-                        break;
-                    }
-                }
-                if (visibleTop) {
-                    scenicScore *= y;
-                }
-                boolean visibleDown = true;
-                for (int i = y + 1; i <= maxY; i++) {
-                    if (height <= getTreeHeight(map, x, i)) {
-                        scenicScore *= i - y;
-                        visibleDown = false;
-                        break;
-                    }
-                }
-                if (visibleDown) {
-                    scenicScore *= maxY - y;
-                }
-                if (visibleLeft || visibleRight || visibleTop || visibleDown) {
+
+                if (visible) {
                     visibleTrees++;
                     maxScenicScore = Math.max(maxScenicScore, scenicScore);
                 }
@@ -81,8 +58,8 @@ public class Day08 extends Day {
         return Pair.with(visibleTrees, maxScenicScore);
     }
 
-    private int getTreeHeight(Map<Pair<Integer, Integer>, String> map, int i, int j) throws NumberFormatException {
-        return Integer.parseInt(map.get(Pair.with(i, j)));
+    private static int getTreeHeight(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> treePos) {
+        return Integer.parseInt(map.get(treePos));
     }
 
 }
