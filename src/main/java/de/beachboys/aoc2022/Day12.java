@@ -2,101 +2,76 @@ package de.beachboys.aoc2022;
 
 import de.beachboys.Day;
 import de.beachboys.Direction;
+import de.beachboys.Util;
 import org.javatuples.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Day12 extends Day {
 
     public Object part1(List<String> input) {
-        Map<Character, List<Pair<Integer, Integer>>> characterToPositionMap = getCharacterToPositionMap(input);
-        Map<Pair<Integer, Integer>, Pair<Character, Integer>> positionToCharacterDistanceMap = getPositionToCharacterDistanceMap(characterToPositionMap);
-
-        return positionToCharacterDistanceMap.get(characterToPositionMap.get('S').get(0)).getValue1();
+        return runLogic(input, Set.of('S'));
     }
 
     public Object part2(List<String> input) {
-        Map<Character, List<Pair<Integer, Integer>>> characterToPositionMap = getCharacterToPositionMap(input);
-        Map<Pair<Integer, Integer>, Pair<Character, Integer>> positionToCharacterDistanceMap = getPositionToCharacterDistanceMap(characterToPositionMap);
+        return runLogic(input, Set.of('S', 'a'));
+   }
 
-        int result = positionToCharacterDistanceMap.get(characterToPositionMap.get('S').get(0)).getValue1();
-        for (Pair<Integer, Integer> position : characterToPositionMap.get('a')) {
-            result = Math.min(result, positionToCharacterDistanceMap.get(position).getValue1());
+    private static int runLogic(List<String> input, Set<Character> startCharacters) {
+        Map<Pair<Integer, Integer>, String> map = Util.buildImageMap(input);
+        Map<Character, Set<Pair<Integer, Integer>>> characterToPositionMap = getCharacterToPositionMap(input);
+
+        Set<Pair<Integer, Integer>> start = new HashSet<>();
+        for (Character startCharacter : startCharacters) {
+            start.addAll(characterToPositionMap.get(startCharacter));
         }
-        return result;
-    }
+        Set<Pair<Integer, Integer>> end = characterToPositionMap.get('E');
 
-    private static Map<Pair<Integer, Integer>, Pair<Character, Integer>> getPositionToCharacterDistanceMap(Map<Character, List<Pair<Integer, Integer>>> characterToPositionMap) {
-        Map<Pair<Integer, Integer>, Pair<Character, Integer>> positionToCharacterDistanceMap = new HashMap<>();
+        for (Pair<Integer, Integer> ePosition : characterToPositionMap.get('E')) {
+            map.put(ePosition, "z");
+        }
+        for (Pair<Integer, Integer> sPosition : characterToPositionMap.get('S')) {
+            map.put(sPosition, "a");
+        }
 
-        Pair<Integer, Integer> end = characterToPositionMap.get('E').get(0);
-        positionToCharacterDistanceMap.put(end, Pair.with('z', 0));
-
-        boolean anyChangeOccurred = true;
-        while (anyChangeOccurred) {
-            anyChangeOccurred = false;
-            for (char character = 'z'; character >= 'a'; character--) {
-                List<Pair<Integer, Integer>> positionsOfCharacter = characterToPositionMap.get(character);
-                boolean changeForCharacterOccurred = true;
-                while (changeForCharacterOccurred) {
-                    changeForCharacterOccurred = updatePositionToDistanceMapForCharacter(positionToCharacterDistanceMap, character, positionsOfCharacter);
-                    anyChangeOccurred |= changeForCharacterOccurred;
+        Map<Pair<Integer, Integer>, Integer> distances = new HashMap<>();
+        Map<Integer, Set<Pair<Integer, Integer>>> queue = new HashMap<>();
+        queue.put(0, start);
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            for (Pair<Integer, Integer> pos : queue.getOrDefault(i, Set.of())) {
+                if (end.contains(pos)) {
+                    return i;
+                }
+                char currentChar = map.get(pos).charAt(0);
+                for (Pair<Integer, Integer> directNeighbor : Direction.getDirectNeighbors(pos)) {
+                    if (!distances.containsKey(directNeighbor)) {
+                        String neighborString = map.getOrDefault(directNeighbor, "");
+                        if (!neighborString.isEmpty()) {
+                            char neighborChar = neighborString.charAt(0);
+                            if (neighborChar <= currentChar + 1) {
+                                Set<Pair<Integer, Integer>> set = queue.getOrDefault(i + 1, new HashSet<>());
+                                set.add(directNeighbor);
+                                queue.put(i + 1, set);
+                                distances.put(directNeighbor, i + 1);
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        Pair<Integer, Integer> pos = characterToPositionMap.get('S').get(0);
-        positionToCharacterDistanceMap.put(pos, Pair.with('S', getLowestDistanceValue(positionToCharacterDistanceMap, 'a', pos)));
-
-        return positionToCharacterDistanceMap;
+        return Integer.MAX_VALUE;
     }
 
-    private static boolean updatePositionToDistanceMapForCharacter(Map<Pair<Integer, Integer>, Pair<Character, Integer>> positionToCharacterDistanceMap, char character, List<Pair<Integer, Integer>> positionsOfCharacter) {
-        boolean changeForCharacterOccurred;
-        changeForCharacterOccurred = false;
-        for (Pair<Integer, Integer> position : positionsOfCharacter) {
-            int low = getLowestDistanceValue(positionToCharacterDistanceMap, character, position);
-
-            if (positionToCharacterDistanceMap.containsKey(position)) {
-                int oldLow = positionToCharacterDistanceMap.get(position).getValue1();
-                low = Math.min(low, oldLow);
-                if (oldLow > low) {
-                    changeForCharacterOccurred = true;
-                }
-            } else {
-                changeForCharacterOccurred = true;
-            }
-
-            positionToCharacterDistanceMap.put(position, Pair.with(character, low));
-        }
-        return changeForCharacterOccurred;
-    }
-
-    private static int getLowestDistanceValue(Map<Pair<Integer, Integer>, Pair<Character, Integer>> positionToCharacterDistanceMap, char character, Pair<Integer, Integer> position) {
-        int low = Integer.MAX_VALUE / 2;
-        for (Pair<Integer, Integer> directNeighbor : Direction.getDirectNeighbors(position)) {
-            if (positionToCharacterDistanceMap.containsKey(directNeighbor)) {
-                Pair<Character, Integer> pair = positionToCharacterDistanceMap.get(directNeighbor);
-                if (character >= pair.getValue0() - 1) {
-                    low = Math.min(low, pair.getValue1() + 1);
-                }
-            }
-        }
-        return low;
-    }
-
-    private static Map<Character, List<Pair<Integer, Integer>>> getCharacterToPositionMap(List<String> input) {
-        Map<Character, List<Pair<Integer, Integer>>> characterToPositionMap = new HashMap<>();
+    private static Map<Character, Set<Pair<Integer, Integer>>> getCharacterToPositionMap(List<String> input) {
+        Map<Character, Set<Pair<Integer, Integer>>> characterToPositionMap = new HashMap<>();
         for (int i = 0; i < input.size(); i++) {
             String line = input.get(i);
             for (int j = 0; j < line.length(); j++) {
                 char c = line.charAt(j);
-                List<Pair<Integer, Integer>> list = characterToPositionMap.getOrDefault(c, new ArrayList<>());
-                list.add(Pair.with(j, i));
-                characterToPositionMap.put(c, list);
+                Set<Pair<Integer, Integer>> set = characterToPositionMap.getOrDefault(c, new HashSet<>());
+                set.add(Pair.with(j, i));
+                characterToPositionMap.put(c, set);
             }
         }
         return characterToPositionMap;
