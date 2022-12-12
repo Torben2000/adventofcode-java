@@ -1,20 +1,18 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
-import de.beachboys.Direction;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Day15 extends Day {
 
     private final Map<Pair<Integer, Integer>, Integer> riskMap = new HashMap<>();
     private Pair<Integer, Integer> goal;
-    private final Map<Pair<Integer, Integer>, Integer> minRiskMap = new HashMap<>();
-    Set<Pair<Integer, Integer>> positionsToCheckAgain = new HashSet<>();
-
 
     public Object part1(List<String> input) {
         return runLogic(input, 1);
@@ -27,54 +25,10 @@ public class Day15 extends Day {
     private Integer runLogic(List<String> input, int mapRepetitions) {
         parseInputToRiskMapAndGoal(input, mapRepetitions);
 
-        initiallyFillMinRiskMapAndPositionsToCheckAgain();
-
-        while (!positionsToCheckAgain.isEmpty()) {
-            Pair<Integer, Integer> pos = positionsToCheckAgain.stream().findFirst().orElseThrow();
-            positionsToCheckAgain.remove(pos);
-            boolean change = false;
-            int minRiskNeighbors = minRiskMap.get(pos) - riskMap.get(pos);
-            Set<Pair<Integer, Integer>> neighbors = Direction.getDirectNeighbors(pos).stream().filter(p ->  p.getValue0() >= 0 && p.getValue0() <= goal.getValue0() && p.getValue1() >= 0 && p.getValue1() <= goal.getValue1()).collect(Collectors.toSet());
-            for (Pair<Integer, Integer> neighbor : neighbors) {
-                Integer minRiskNeighbor = minRiskMap.get(neighbor);
-                if (minRiskNeighbor < minRiskNeighbors) {
-                    change = true;
-                    minRiskNeighbors = minRiskNeighbor;
-                }
-            }
-            if (change) {
-                int newValue = riskMap.get(pos) + minRiskNeighbors;
-                minRiskMap.put(pos, newValue);
-                positionsToCheckAgain.addAll(neighbors.stream().filter(p -> minRiskMap.get(p) > newValue + riskMap.get(p)).collect(Collectors.toSet()));
-            }
-        }
-        return minRiskMap.get(goal);
-    }
-
-    private void initiallyFillMinRiskMapAndPositionsToCheckAgain() {
-        minRiskMap.clear();
-        for (int i = 0; i <= goal.getValue0(); i++) {
-            for (int j = 0; j <= goal.getValue1(); j++) {
-                Pair<Integer, Integer> pos = Pair.with(i, j);
-                if (i == 0 && j == 0) {
-                    minRiskMap.put(pos, 0);
-                } else {
-                    Pair<Integer, Integer> topPos = Pair.with(i, j - 1);
-                    Pair<Integer, Integer> leftPos = Pair.with(i - 1, j);
-                    int top = minRiskMap.getOrDefault(topPos, Integer.MAX_VALUE);
-                    int left = minRiskMap.getOrDefault(leftPos, Integer.MAX_VALUE);
-                    int risk = riskMap.get(pos);
-                    minRiskMap.put(pos, risk + Math.min(top, left));
-                    if (i > 0 && j > 0) {
-                        if (top + risk < left) {
-                            positionsToCheckAgain.add(leftPos);
-                        } else if (left + risk < top) {
-                            positionsToCheckAgain.add(topPos);
-                        }
-                    }
-                }
-            }
-        }
+        Pair<Integer, Integer> start = Pair.with(0, 0);
+        return Util.getShortestPath(Set.of(start), Set.of(goal),
+                (position, neighbor) -> Util.isInRectangle(neighbor, start, goal),
+                (distance, position, neighbor) -> distance + riskMap.get(neighbor));
     }
 
     private void parseInputToRiskMapAndGoal(List<String> input, int mapRepetitions) {

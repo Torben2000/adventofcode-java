@@ -1,11 +1,11 @@
 package de.beachboys.aoc2022;
 
 import de.beachboys.Day;
-import de.beachboys.Direction;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 
 import java.util.*;
+import java.util.function.BiPredicate;
 
 public class Day12 extends Day {
 
@@ -34,33 +34,17 @@ public class Day12 extends Day {
             map.put(sPosition, "a");
         }
 
-        Map<Pair<Integer, Integer>, Integer> distances = new HashMap<>();
-        Map<Integer, Set<Pair<Integer, Integer>>> queue = new HashMap<>();
-        queue.put(0, start);
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            for (Pair<Integer, Integer> pos : queue.getOrDefault(i, Set.of())) {
-                if (end.contains(pos)) {
-                    return i;
-                }
-                char currentChar = map.get(pos).charAt(0);
-                for (Pair<Integer, Integer> directNeighbor : Direction.getDirectNeighbors(pos)) {
-                    if (!distances.containsKey(directNeighbor)) {
-                        String neighborString = map.getOrDefault(directNeighbor, "");
-                        if (!neighborString.isEmpty()) {
-                            char neighborChar = neighborString.charAt(0);
-                            if (neighborChar <= currentChar + 1) {
-                                Set<Pair<Integer, Integer>> set = queue.getOrDefault(i + 1, new HashSet<>());
-                                set.add(directNeighbor);
-                                queue.put(i + 1, set);
-                                distances.put(directNeighbor, i + 1);
-                            }
-                        }
-                    }
-                }
+        BiPredicate<Pair<Integer, Integer>, Pair<Integer, Integer>> canGoFromPositionToNeighbor = ((position, neighbor) -> {
+            String neighborString = map.getOrDefault(neighbor, "");
+            if (!neighborString.isEmpty()) {
+                char neighborChar = neighborString.charAt(0);
+                char currentChar = map.get(position).charAt(0);
+                return neighborChar <= currentChar + 1;
             }
-        }
+            return false;
+        });
 
-        return Integer.MAX_VALUE;
+        return Util.getShortestPath(start, end, canGoFromPositionToNeighbor, ((positionDistance, position, neighbor) -> positionDistance + 1));
     }
 
     private static Map<Character, Set<Pair<Integer, Integer>>> getCharacterToPositionMap(List<String> input) {

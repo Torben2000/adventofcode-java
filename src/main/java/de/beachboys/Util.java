@@ -10,6 +10,7 @@ import org.jgrapht.nio.dot.DOTExporter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -137,6 +138,29 @@ public final class Util {
             returnValue = false;
         }
         return returnValue;
+    }
+
+    public static int getShortestPath(Set<Pair<Integer, Integer>> start, Set<Pair<Integer, Integer>> end, BiPredicate<Pair<Integer, Integer>, Pair<Integer, Integer>> canGoFromPositionToNeighbor, TriFunction<Integer, Pair<Integer, Integer>, Pair<Integer, Integer>, Integer> getNeighborDistanceFromPositionDistance) {
+        Map<Pair<Integer, Integer>, Integer> distances = new HashMap<>();
+        Map<Integer, Set<Pair<Integer, Integer>>> queue = new HashMap<>();
+        queue.put(0, start);
+        for (int currentDistance = 0; currentDistance < Integer.MAX_VALUE; currentDistance++) {
+            for (Pair<Integer, Integer> pos : queue.getOrDefault(currentDistance, Set.of())) {
+                if (end.contains(pos)) {
+                    return currentDistance;
+                }
+                for (Pair<Integer, Integer> directNeighbor : Direction.getDirectNeighbors(pos)) {
+                    if (!distances.containsKey(directNeighbor) && canGoFromPositionToNeighbor.test(pos, directNeighbor)) {
+                        int neighborDistance = getNeighborDistanceFromPositionDistance.apply(currentDistance, pos, directNeighbor);
+                        Set<Pair<Integer, Integer>> set = queue.getOrDefault(neighborDistance, new HashSet<>());
+                        set.add(directNeighbor);
+                        queue.put(neighborDistance, set);
+                        distances.put(directNeighbor, neighborDistance);
+                    }
+                }
+            }
+        }
+        return Integer.MAX_VALUE;
     }
 
     public static long greatestCommonDivisor(long long1, long long2) {
