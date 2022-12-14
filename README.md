@@ -15,6 +15,7 @@
     - download your puzzle input
     - run your logic with your puzzle input
 - Tuples (Pair, Triplet, ...)
+- JSON parsing/writing etc. via json.org lib
 - Simple CSV parsing (to String/int/long)
 - Direction enums to help with navigating using square or hex fields
 - Painting of 2D ASCII images with a few different input possibilities
@@ -33,4 +34,4 @@
 The general structure is based on https://github.com/dave-burke/advent-of-code-java-starter/
 
 ## Existing solutions within this repo
-- Every solution for the years 2015-2021
+- Every solution for the years 2015-2022
