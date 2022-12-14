@@ -61,17 +61,7 @@ public class Day14 extends Day {
                 corners.add(Pair.with(Integer.parseInt(cornerAsStringArray[0]), Integer.parseInt(cornerAsStringArray[1])));
             }
             for (int j = 0; j < corners.size() - 1; j++) {
-                Pair<Integer, Integer> corner1 = corners.get(j);
-                Pair<Integer, Integer> corner2 = corners.get(j + 1);
-                if (corner1.getValue0().equals(corner2.getValue0())) {
-                    for (int k = Math.min(corner1.getValue1(), corner2.getValue1()); k <= Math.max(corner1.getValue1(), corner2.getValue1()); k++) {
-                        rocks.add(Pair.with(corner1.getValue0(), k));
-                    }
-                } else {
-                    for (int k = Math.min(corner1.getValue0(), corner2.getValue0()); k <= Math.max(corner1.getValue0(), corner2.getValue0()); k++) {
-                        rocks.add(Pair.with(k, corner1.getValue1()));
-                    }
-                }
+                rocks.addAll(Util.drawLine(corners.get(j), corners.get(j + 1)));
             }
         }
         return rocks;

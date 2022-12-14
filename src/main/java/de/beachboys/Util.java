@@ -140,6 +140,21 @@ public final class Util {
         return returnValue;
     }
 
+    public static List<Pair<Integer, Integer>> drawLine(Pair<Integer, Integer> start, Pair<Integer, Integer> end) {
+        List<Pair<Integer, Integer>> line = new ArrayList<>();
+        if (start.getValue0().equals(end.getValue0()) || start.getValue1().equals(end.getValue1()) || Math.abs(start.getValue0() - end.getValue0()) == Math.abs(start.getValue1() - end.getValue1())) {
+            int xIncrement = end.getValue0().compareTo(start.getValue0());
+            int yIncrement = end.getValue1().compareTo(start.getValue1());
+            for (Pair<Integer, Integer> linePoint = start; !end.equals(linePoint); linePoint = Pair.with(linePoint.getValue0() + xIncrement, linePoint.getValue1() + yIncrement)) {
+                line.add(linePoint);
+            }
+            line.add(end);
+        } else {
+            throw new IllegalArgumentException();
+        }
+        return line;
+    }
+
     public static int getShortestPath(Set<Pair<Integer, Integer>> start, Set<Pair<Integer, Integer>> end, BiPredicate<Pair<Integer, Integer>, Pair<Integer, Integer>> canGoFromPositionToNeighbor, TriFunction<Integer, Pair<Integer, Integer>, Pair<Integer, Integer>, Integer> getNeighborDistanceFromPositionDistance) {
         Map<Pair<Integer, Integer>, Integer> distances = new HashMap<>();
         Map<Integer, Set<Pair<Integer, Integer>>> queue = new HashMap<>();
