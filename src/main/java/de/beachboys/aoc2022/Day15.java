@@ -52,17 +52,17 @@ public class Day15 extends Day {
                 Pair<Integer, Integer> beacon = Pair.with(Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)));
                 int distance = Util.getManhattanDistance(sensor, beacon);
 
-                for (int xDistance = 0; xDistance <= distance; xDistance++) {
-                    int yDistance = distance - xDistance;
+                for (int yDistance = -distance; yDistance <= distance; yDistance++) {
+                    int y = sensor.getValue1() + yDistance;
+                    int xDistance = distance - Math.abs(yDistance);
                     int x1 = sensor.getValue0() - xDistance;
                     int x2 = sensor.getValue0() + xDistance;
-                    int y1 = sensor.getValue1() - yDistance;
-                    int y2 = sensor.getValue1() + yDistance;
-                    if (y1 >= min) {
-                        addBlockedSpace(blockedSpaceByRow, x1, x2, y1);
-                    }
-                    if (y2 <= max) {
-                        addBlockedSpace(blockedSpaceByRow, x1, x2, y2);
+                    if (y < min) {
+                        yDistance += min - y - 1;
+                    } else if (y > max) {
+                        break;
+                    } else {
+                        addBlockedSpace(blockedSpaceByRow, x1, x2, y);
                     }
                 }
             }
