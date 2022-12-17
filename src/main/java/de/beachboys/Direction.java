@@ -23,21 +23,25 @@ public enum Direction {
             case "u":
             case "north":
             case "up":
+            case "^":
                 return Direction.NORTH;
             case "e":
             case "r":
             case "east":
             case "right":
+            case ">":
                 return Direction.EAST;
             case "s":
             case "d":
             case "south":
             case "down":
+            case "v":
                 return Direction.SOUTH;
             case "w":
             case "l":
             case "west":
             case "left":
+            case "<":
                 return Direction.WEST;
             default:
                 throw new IllegalArgumentException();
