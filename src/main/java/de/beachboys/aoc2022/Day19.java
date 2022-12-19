@@ -80,25 +80,19 @@ public class Day19 extends Day {
         if (state.oreCount >= blueprint.oreForClayRobot) {
             queue.add(new State(state.time - 1, state.oreRobots, state.clayRobots + 1, state.obsidianRobots, state.geodeRobots, newOreCount - blueprint.oreForClayRobot, newClayCount, newObsidianCount, newGeodeCount));
         }
-        if (state.oreCount >= blueprint.oreForObsidianRobot) {
-            if (state.clayCount >= blueprint.clayForObsidianRobot) {
-                queue.add(new State(state.time - 1, state.oreRobots, state.clayRobots, state.obsidianRobots + 1, state.geodeRobots, newOreCount - blueprint.oreForObsidianRobot, newClayCount - blueprint.clayForObsidianRobot, newObsidianCount, newGeodeCount));
-            }
+        if (state.oreCount >= blueprint.oreForObsidianRobot && state.clayCount >= blueprint.clayForObsidianRobot) {
+            queue.add(new State(state.time - 1, state.oreRobots, state.clayRobots, state.obsidianRobots + 1, state.geodeRobots, newOreCount - blueprint.oreForObsidianRobot, newClayCount - blueprint.clayForObsidianRobot, newObsidianCount, newGeodeCount));
         }
-        if (state.oreCount >= blueprint.oreForGeodeRobot) {
-            if (state.obsidianCount >= blueprint.obsidianForGeodeRobot) {
-                queue.add(new State(state.time - 1, state.oreRobots, state.clayRobots, state.obsidianRobots, state.geodeRobots + 1, newOreCount - blueprint.oreForGeodeRobot, newClayCount, newObsidianCount - blueprint.obsidianForGeodeRobot, newGeodeCount));
-            }
+        if (state.oreCount >= blueprint.oreForGeodeRobot && state.obsidianCount >= blueprint.obsidianForGeodeRobot) {
+            queue.add(new State(state.time - 1, state.oreRobots, state.clayRobots, state.obsidianRobots, state.geodeRobots + 1, newOreCount - blueprint.oreForGeodeRobot, newClayCount, newObsidianCount - blueprint.obsidianForGeodeRobot, newGeodeCount));
         }
         queue.add(new State(state.time - 1, state.oreRobots, state.clayRobots, state.obsidianRobots, state.geodeRobots, newOreCount, newClayCount, newObsidianCount, newGeodeCount));
     }
 
     private static void optimizeState(Blueprint blueprint, State state) {
-        int maximumOreForRobot = Math.max(Math.max(Math.max(blueprint.oreForOreRobot, blueprint.oreForClayRobot), blueprint.oreForObsidianRobot), blueprint.oreForGeodeRobot);
-
         // don't produce more stuff per time frame than you can spend => just remove superfluous robots
-        if (state.oreRobots > maximumOreForRobot) {
-            state.oreRobots = maximumOreForRobot;
+        if (state.oreRobots > blueprint.maximumOreForRobot) {
+            state.oreRobots = blueprint.maximumOreForRobot;
         }
         if (state.clayRobots > blueprint.clayForObsidianRobot) {
             state.clayRobots = blueprint.clayForObsidianRobot;
@@ -108,8 +102,8 @@ public class Day19 extends Day {
         }
 
         // don't store more stuff than you can spend => just remove superfluous stuff
-        if (state.oreCount > state.time * maximumOreForRobot - state.oreRobots * (state.time - 1)) {
-            state.oreCount = state.time * maximumOreForRobot - state.oreRobots * (state.time - 1);
+        if (state.oreCount > state.time * blueprint.maximumOreForRobot - state.oreRobots * (state.time - 1)) {
+            state.oreCount = state.time * blueprint.maximumOreForRobot - state.oreRobots * (state.time - 1);
         }
         if (state.clayCount > state.time * blueprint.clayForObsidianRobot - state.clayRobots * (state.time - 1)) {
             state.clayCount = state.time * blueprint.clayForObsidianRobot - state.clayRobots * (state.time - 1);
@@ -126,6 +120,7 @@ public class Day19 extends Day {
         private final int clayForObsidianRobot;
         private final int oreForGeodeRobot;
         private final int obsidianForGeodeRobot;
+        private final int maximumOreForRobot;
 
         public Blueprint(int oreForOreRobot, int oreForClayRobot, int oreForObsidianRobot, int clayForObsidianRobot, int oreForGeodeRobot, int obsidianForGeodeRobot) {
             this.oreForOreRobot = oreForOreRobot;
@@ -134,6 +129,7 @@ public class Day19 extends Day {
             this.clayForObsidianRobot = clayForObsidianRobot;
             this.oreForGeodeRobot = oreForGeodeRobot;
             this.obsidianForGeodeRobot = obsidianForGeodeRobot;
+            this.maximumOreForRobot = Math.max(Math.max(Math.max(oreForOreRobot, oreForClayRobot), oreForObsidianRobot), oreForGeodeRobot);
         }
 
     }
