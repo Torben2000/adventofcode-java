@@ -22,17 +22,17 @@ public class Day16 extends Day {
     public Object part2(List<String> input) {
         fillDistancesAndFlowValues(input);
 
-        List<Set<String>> possibilitiesOfValvesClosedByOneWorker = getPossibilitiesOfValvesClosedByOneWorker();
+        List<Set<String>> possibilitiesOfValvesToOpenByOneWorker = getPossibilitiesOfValvesToOpenByOneWorker();
         int result = 0;
-        for (Set<String> valvesClosedByOneWorker : possibilitiesOfValvesClosedByOneWorker) {
-            Set<String> valvesClosedByOtherWorker = new HashSet<>(flowValues.keySet());
-            valvesClosedByOtherWorker.removeAll(valvesClosedByOneWorker);
-            result = Math.max(result, getMaxReleasedPressure("AA", 26, valvesClosedByOneWorker) + getMaxReleasedPressure("AA", 26, valvesClosedByOtherWorker));
+        for (Set<String> valvesToOpenByOneWorker : possibilitiesOfValvesToOpenByOneWorker) {
+            Set<String> valvesToOpenByOtherWorker = new HashSet<>(flowValues.keySet());
+            valvesToOpenByOtherWorker.removeAll(valvesToOpenByOneWorker);
+            result = Math.max(result, getMaxReleasedPressure("AA", 26, valvesToOpenByOneWorker) + getMaxReleasedPressure("AA", 26, valvesToOpenByOtherWorker));
         }
         return result;
     }
 
-    private List<Set<String>> getPossibilitiesOfValvesClosedByOneWorker() {
+    private List<Set<String>> getPossibilitiesOfValvesToOpenByOneWorker() {
         List<Set<String>> possibilitiesFromLastRound = List.of(Set.of());
         List<Set<String>> allPossibilities = new ArrayList<>(possibilitiesFromLastRound);
         Set<String> valves = flowValues.keySet();
@@ -54,17 +54,17 @@ public class Day16 extends Day {
         return allPossibilities;
     }
 
-    private int getMaxReleasedPressure(String currentValve, int remainingTime, Set<String> openValves) {
+    private int getMaxReleasedPressure(String currentValve, int remainingTime, Set<String> closedValves) {
         if (remainingTime <= 0) {
             return 0;
         }
-        Triplet<String, Integer, Set<String>> cacheKey = Triplet.with(currentValve, remainingTime, openValves);
+        Triplet<String, Integer, Set<String>> cacheKey = Triplet.with(currentValve, remainingTime, closedValves);
         if (!cache.containsKey(cacheKey)) {
             int returnValue = 0;
-            HashSet<String> newOpenValves = new HashSet<>(openValves);
-            newOpenValves.remove(currentValve);
-            for (String nextValve : newOpenValves) {
-                returnValue = Math.max(returnValue, getMaxReleasedPressure(nextValve, remainingTime - distances.get(currentValve).get(nextValve) - 1, newOpenValves));
+            HashSet<String> newClosedValves = new HashSet<>(closedValves);
+            newClosedValves.remove(currentValve);
+            for (String nextValve : newClosedValves) {
+                returnValue = Math.max(returnValue, getMaxReleasedPressure(nextValve, remainingTime - distances.get(currentValve).get(nextValve) - 1, newClosedValves));
             }
             cache.put(cacheKey, returnValue + flowValues.getOrDefault(currentValve, 0) * remainingTime);
         }
