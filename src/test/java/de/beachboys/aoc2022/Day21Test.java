@@ -15,15 +15,41 @@ public class Day21Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("root: pppw + sjmn",
+                        "dbpl: 5",
+                        "cczh: sllz + lgvd",
+                        "zczc: 2",
+                        "ptdq: humn - dvpt",
+                        "dvpt: 3",
+                        "lfqf: 4",
+                        "humn: 5",
+                        "ljgn: 2",
+                        "sjmn: drzm * dbpl",
+                        "sllz: 4",
+                        "pppw: cczh / lfqf",
+                        "lgvd: ljgn * ptdq",
+                        "drzm: hmdt - zczc",
+                        "hmdt: 32"), 152, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("root: pppw + sjmn",
+                        "dbpl: 5",
+                        "cczh: sllz + lgvd",
+                        "zczc: 2",
+                        "ptdq: humn - dvpt",
+                        "dvpt: 3",
+                        "lfqf: 4",
+                        "humn: 5",
+                        "ljgn: 2",
+                        "sjmn: drzm * dbpl",
+                        "sllz: 4",
+                        "pppw: cczh / lfqf",
+                        "lgvd: ljgn * ptdq",
+                        "drzm: hmdt - zczc",
+                        "hmdt: 32"), 301, null)
         );
     }
 
