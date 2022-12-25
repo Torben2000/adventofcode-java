@@ -7,11 +7,56 @@ import java.util.List;
 public class Day25 extends Day {
 
     public Object part1(List<String> input) {
-        return "part1result";
+        long sum = 0;
+        for (String line : input) {
+            sum += parseSNAFUNumber(line);
+        }
+        return buildSNAFUNumber(sum);
+    }
+
+    private static String buildSNAFUNumber(long number) {
+        StringBuilder snafuString = new StringBuilder();
+        while (number > 0) {
+            long digit = number % 5;
+            if (digit == 3) {
+                snafuString.insert(0, "=");
+                number += 5;
+            } else if (digit == 4) {
+                snafuString.insert(0, "-");
+                number += 5;
+            } else {
+                snafuString.insert(0, digit);
+            }
+            number = number / 5;
+        }
+        return snafuString.toString();
+    }
+
+    private static long parseSNAFUNumber(String snafuString) {
+        long number = 0;
+        for (char c : snafuString.toCharArray()) {
+            int digit = 0;
+            switch (c) {
+                case '2':
+                    digit = 2;
+                    break;
+                case '1':
+                    digit = 1;
+                    break;
+                case '=':
+                    digit = -2;
+                    break;
+                case '-':
+                    digit = -1;
+                    break;
+            }
+            number = number * 5 + digit;
+        }
+        return number;
     }
 
     public Object part2(List<String> input) {
-        return 2;
+        return "There is no puzzle! :-)";
     }
 
 }
