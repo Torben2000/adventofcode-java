@@ -27,7 +27,7 @@ Just for reference: The correct pattern is
 Included letters are ```ABCEFGHIJKLOPRSUYZ```. The other letters did not appear in any case that I analyzed. Also 
 https://github.com/bsoyka/advent-of-code-ocr does not mention any other letters.
 
-This is the correct font for days 2016-8, 2016-11, 2019-11 and 2021-13.
+This is the correct font for days 2016-8, 2016-11, 2019-11, 2021-13 and 2022-10.
 
 ## 10.txt
 Includes the mapping for the font with letters that are 10 pixels high and 6 pixels wide.
