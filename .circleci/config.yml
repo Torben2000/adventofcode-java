@@ -1,9 +1,15 @@
 version: 2.1
 
+executors:
+  java21:
+    docker:
+      - image: 'cimg/openjdk:21.0'
+
 orbs:
-  maven: circleci/maven@1.1.0
+  maven: circleci/maven@1.4.1
 
 workflows:
   maven_test:
     jobs:
-      - maven/test
+      - maven/test:
+          executor: java21
