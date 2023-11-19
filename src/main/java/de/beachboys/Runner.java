@@ -15,8 +15,8 @@ import static java.util.stream.Collectors.toList;
 
 public class Runner {
 
-    private static final int CURRENT_YEAR = 2022;
-    private static final int CURRENT_DAY = 25;
+    private static final int CURRENT_YEAR = 2023;
+    private static final int CURRENT_DAY = 1;
     private static final int CURRENT_PART = 1;
     // use the session id from your browser session (long hex string)
     private static final String BROWSER_SESSION = "secret";
