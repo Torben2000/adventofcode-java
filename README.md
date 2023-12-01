@@ -35,3 +35,4 @@ The general structure is based on https://github.com/dave-burke/advent-of-code-j
 
 ## Existing solutions within this repo
 - Every solution for the years 2015-2022
+- Solutions for 2023 up to today (or sometimes yesterday)
