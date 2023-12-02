@@ -4,7 +4,7 @@ import com.google.common.base.Stopwatch;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -86,7 +86,7 @@ public class Runner {
 
     private static void downloadInput() throws Exception {
         Files.createDirectories(Paths.get(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/"));
-        HttpURLConnection con = (HttpURLConnection) new URL("https://adventofcode.com/" + CURRENT_YEAR + "/day/" + CURRENT_DAY + "/input").openConnection();
+        HttpURLConnection con = (HttpURLConnection) new URI("https://adventofcode.com/" + CURRENT_YEAR + "/day/" + CURRENT_DAY + "/input").toURL().openConnection();
         con.setRequestMethod("GET");
         con.addRequestProperty("Cookie", "session=" + BROWSER_SESSION);
         try (BufferedInputStream in = new BufferedInputStream(con.getInputStream());
