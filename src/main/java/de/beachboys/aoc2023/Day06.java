@@ -21,15 +21,25 @@ public class Day06 extends Day {
 
         long result = 1;
         for (Pair<Long, Long> race : races) {
-            int count = 0;
-            for (long j = 1; j < race.getValue0(); j++) {
-                if (race.getValue1() < j * (race.getValue0() - j)) {
-                    count++;
-                }
-            }
-            result *=count;
+            long leftBound = getInnerBound(race, race.getValue0() - 1, 1);
+            long rightBound = getInnerBound(race, leftBound, race.getValue0() - 1);
+            result *= (rightBound - leftBound + 1);
         }
         return result;
+    }
+
+    private static long getInnerBound(Pair<Long, Long> race, long extremeInnerBound, long extremeOuterBound) {
+        long outerBound = extremeOuterBound;
+        long innerBound = extremeInnerBound;
+        while (Math.abs(outerBound - innerBound) != 1) {
+            long toCheck = (outerBound + innerBound) / 2;
+            if (race.getValue1() < toCheck * (race.getValue0() - toCheck)) {
+                innerBound = toCheck;
+            } else {
+                outerBound = toCheck;
+            }
+        }
+        return innerBound;
     }
 
     private static List<Pair<Long, Long>> parseInput(List<String> input, boolean isJustOneRace) {
