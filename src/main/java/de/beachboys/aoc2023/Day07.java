@@ -50,59 +50,37 @@ public class Day07 extends Day {
             }
             cardCounts.put(card, cardCounts.get(card) + 1);
         }
-        int maxCount = cardCounts.values().stream().mapToInt(Integer::intValue).max().orElseThrow();
-        int jokerCount = useJoker ? cardCounts.getOrDefault('J', 0) : 0;
-        return getScoreValue(cardCounts.size(), maxCount, jokerCount);
+
+        int jokerCount = 0;
+        if (useJoker) {
+            jokerCount = cardCounts.getOrDefault('J', 0);
+            cardCounts.remove('J');
+        }
+
+        int maxCount = cardCounts.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+        return getScoreValue(cardCounts.size(), maxCount + jokerCount);
     }
 
-    private static int getScoreValue(int differentCards, int maxCount, int jokerCount) {
+    private static int getScoreValue(int differentNormalCards, int maxCount) {
         int score = 0;
-        if (differentCards == 1) {
+        if (differentNormalCards <= 1) {
             score = FIVE_OF_A_KIND;
-        } else if (differentCards == 2) {
-            if (maxCount == THREE_OF_A_KIND) {
-                if (jokerCount > 0) {
-                    score = FIVE_OF_A_KIND;
-                } else {
-                    score = FOUR_OF_A_KIND;
-                }
+        } else if (differentNormalCards == 2) {
+            if (maxCount == 4) {
+                score = FOUR_OF_A_KIND;
             } else {
-                if (jokerCount > 1) {
-                    score = FIVE_OF_A_KIND;
-                } else if (jokerCount == 1) {
-                    score = FOUR_OF_A_KIND;
-                } else {
-                    score = FULL_HOUSE;
-                }
+                score = FULL_HOUSE;
             }
-        } else if (differentCards == 3) {
-            if (maxCount == TWO_PAIR) {
-                if (jokerCount > 0) {
-                    score = FOUR_OF_A_KIND;
-                } else {
-                    score = THREE_OF_A_KIND;
-                }
-            } else {
-                if (jokerCount > 1) {
-                    score = FOUR_OF_A_KIND;
-                } else if (jokerCount == 1) {
-                    score = FULL_HOUSE;
-                } else {
-                    score = TWO_PAIR;
-                }
-            }
-        } else if (differentCards == 4) {
-            if (jokerCount > 0) {
+        } else if (differentNormalCards == 3) {
+            if (maxCount == 3) {
                 score = THREE_OF_A_KIND;
             } else {
-                score = ONE_PAIR;
+                score = TWO_PAIR;
             }
-        } else if (differentCards == 5) {
-            if (jokerCount > 0) {
-                score = ONE_PAIR;
-            } else {
-                score = HIGH_CARD;
-            }
+        } else if (differentNormalCards == 4) {
+            score = ONE_PAIR;
+        } else if (differentNormalCards == 5) {
+            score = HIGH_CARD;
         }
         return score;
     }
