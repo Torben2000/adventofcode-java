@@ -15,6 +15,15 @@ public class Day08Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
+                Arguments.of(List.of("RL",
+                        "",
+                        "AAA = (BBB, CCC)",
+                        "BBB = (DDD, EEE)",
+                        "CCC = (ZZZ, GGG)",
+                        "DDD = (DDD, DDD)",
+                        "EEE = (EEE, EEE)",
+                        "GGG = (GGG, GGG)",
+                        "ZZZ = (ZZZ, ZZZ)"), 2, null),
                 Arguments.of(List.of("LLR",
                         "",
                         "AAA = (BBB, BBB)",
