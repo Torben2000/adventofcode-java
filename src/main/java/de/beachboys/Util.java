@@ -12,6 +12,7 @@ import java.io.Writer;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public final class Util {
@@ -307,7 +308,7 @@ public final class Util {
                 } else if (nextNextSteps.size() == 1) {
                     stepCounter++;
                     previousPosition = currentPosition;
-                    currentPosition = nextNextSteps.get(0);
+                    currentPosition = nextNextSteps.getFirst();
                 } else {
                     break;
                 }
@@ -394,6 +395,24 @@ public final class Util {
             return Long.parseLong(valueAsString);
         }
         return defaultValue;
+    }
+
+    public static <T> T manipulateStateMultipleTimesOptimized(long totalRounds, T state, UnaryOperator<T> stateModifier) {
+        Map<T, Long> history = new HashMap<>();
+        for (long currentRound = 1; currentRound <= totalRounds; currentRound++) {
+            state = stateModifier.apply(state);
+
+            if (history.containsKey(state)) {
+                long firstOccurrence = history.get(state);
+                long cycleLength = currentRound - firstOccurrence;
+                long cycles = (totalRounds - firstOccurrence) / cycleLength;
+                long indexToUse = totalRounds - (cycles * cycleLength);
+
+                return history.entrySet().stream().filter(e -> e.getValue().equals(indexToUse)).map(Map.Entry::getKey).findFirst().orElseThrow();
+            }
+            history.put(state, currentRound);
+        }
+        return state;
     }
 
     private static class GraphBuilderQueueElement {

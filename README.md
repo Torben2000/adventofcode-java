@@ -18,7 +18,8 @@
 - JSON parsing/writing etc. via json.org lib
 - Simple CSV parsing (to String/int/long)
 - Direction enums to help with navigating using square or hex fields
-- Painting of 2D ASCII images with a few different input possibilities
+- Running lots of repeating state manipulations with speed optimization via cycle detection
+- Painting and parsing of 2D ASCII images with a few different possibilities
 - "OCR" for these images that supports 6 and 10 pixel high fonts (see [details](src/main/resources/ocr/README.md))
 - Math util functions for least common multiple and greatest common divisor
 - Math util functions for chinese remainder theorem

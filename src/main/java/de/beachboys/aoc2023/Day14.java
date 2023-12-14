@@ -14,37 +14,21 @@ public class Day14 extends Day {
 
     public Object part1(List<String> input) {
         Set<Pair<Integer, Integer>> roundedRocks = parseInputAndGetRoundedRocks(input);
-        roundedRocks = slideNorth(roundedRocks);
-        return getScore(roundedRocks);
+        return getScore(slideNorth(roundedRocks));
     }
 
     public Object part2(List<String> input) {
-
         Set<Pair<Integer, Integer>> roundedRocks = parseInputAndGetRoundedRocks(input);
+        return getScore(Util.manipulateStateMultipleTimesOptimized(1000000000, roundedRocks, this::rotate));
+    }
 
-
-        Map<Set<Pair<Integer, Integer>>, Integer> history = new HashMap<>();
-
-        int totalRounds = 1000000000;
-        for (int currentRound = 0; currentRound < totalRounds; currentRound++) {
-            roundedRocks = slideNorth(roundedRocks);
-            roundedRocks = slideWest(roundedRocks);
-            roundedRocks = slideSouth(roundedRocks);
-            roundedRocks = slideEast(roundedRocks);
-
-            if (history.containsKey(roundedRocks)) {
-                int firstOccurrence = history.get(roundedRocks);
-                int cycleLength = currentRound - firstOccurrence;
-                int cycles = (totalRounds - firstOccurrence) / cycleLength;
-                int indexToUse = totalRounds - (cycles * cycleLength) - 1;
-
-                roundedRocks = history.entrySet().stream().filter(e -> e.getValue().equals(indexToUse)).map(Map.Entry::getKey).findFirst().orElseThrow();
-                return getScore(roundedRocks);
-            }
-            history.put(roundedRocks, currentRound);
-        }
-        throw new IllegalArgumentException();
-     }
+    private Set<Pair<Integer, Integer>> rotate(Set<Pair<Integer, Integer>> roundedRocks) {
+        roundedRocks = slideNorth(roundedRocks);
+        roundedRocks = slideWest(roundedRocks);
+        roundedRocks = slideSouth(roundedRocks);
+        roundedRocks = slideEast(roundedRocks);
+        return roundedRocks;
+    }
 
     private Set<Pair<Integer, Integer>> slideEast(Set<Pair<Integer, Integer>> roundedRocks) {
         Set<Pair<Integer, Integer>> newRoundedRocks;

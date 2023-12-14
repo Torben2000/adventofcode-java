@@ -10,43 +10,38 @@ public class Day16 extends Day {
 
     public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
+    List<Consumer<StringBuilder>> moves;
+
     public Object part1(List<String> input) {
-        int numberOfPrograms = Util.getIntValueFromUser("Number of programs", 16, io);
-        StringBuilder programLine = new StringBuilder(ALPHABET.substring(0, numberOfPrograms));
-        List<Consumer<StringBuilder>> moves = buildMoveList(input, numberOfPrograms);
-        executeMoves(programLine, moves);
-        return programLine.toString();
+        String programLine = parseInputAndReturnInitialProgramLine(input);
+        return executeMoves(programLine);
     }
 
     public Object part2(List<String> input) {
-        int numberOfPrograms = Util.getIntValueFromUser("Number of programs", 16, io);
-        StringBuilder programLine = new StringBuilder(ALPHABET.substring(0, numberOfPrograms));
-        List<Consumer<StringBuilder>> moves = buildMoveList(input, numberOfPrograms);
+        String programLine = parseInputAndReturnInitialProgramLine(input);
 
-        Map<String, Integer> cache = new HashMap<>();
-        for (int i = 0; i < 1000000000; i++) {
-            executeMoves(programLine, moves);
-            String currentProgramLine = programLine.toString();
-            if (cache.containsKey(currentProgramLine)) {
-                int firstOccurrence = cache.get(currentProgramLine);
-                int cycleLength = i - firstOccurrence;
-                int indexToUse = (999999999 + firstOccurrence) % cycleLength;
-                return cache.entrySet().stream().filter(entry -> indexToUse == entry.getValue()).map(Map.Entry::getKey).findFirst().orElseThrow();
-            }
-            cache.put(currentProgramLine, i);
-        }
-        return "not found";
+
+        return Util.manipulateStateMultipleTimesOptimized(1000000000, programLine, this::executeMoves);
     }
 
-    private void executeMoves(StringBuilder programLine, List<Consumer<StringBuilder>> moves) {
+    private String parseInputAndReturnInitialProgramLine(List<String> input) {
+        int numberOfPrograms = Util.getIntValueFromUser("Number of programs", 16, io);
+        String programLine = ALPHABET.substring(0, numberOfPrograms);
+        moves = buildMoveList(input, numberOfPrograms);
+        return programLine;
+    }
+
+    private String executeMoves(String programLine) {
+        StringBuilder newProgramLine = new StringBuilder(programLine);
         for (Consumer<StringBuilder> move : moves) {
-            move.accept(programLine);
+            move.accept(newProgramLine);
         }
+        return newProgramLine.toString();
     }
 
     private List<Consumer<StringBuilder>> buildMoveList(List<String> input, int numberOfPrograms) {
         List<Consumer<StringBuilder>> moves = new LinkedList<>();
-        for (String move : input.get(0).split(",")) {
+        for (String move : input.getFirst().split(",")) {
             switch (move.charAt(0)) {
                 case 's':
                     moves.add(getMoveS(numberOfPrograms, numberOfPrograms - Integer.parseInt(move.substring(1))));
