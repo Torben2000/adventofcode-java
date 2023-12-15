@@ -1,6 +1,7 @@
 package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
+import de.beachboys.Direction;
 import de.beachboys.Util;
 import org.javatuples.Pair;
 
@@ -14,7 +15,7 @@ public class Day14 extends Day {
 
     public Object part1(List<String> input) {
         Set<Pair<Integer, Integer>> roundedRocks = parseInputAndGetRoundedRocks(input);
-        return getScore(slideNorth(roundedRocks));
+        return getScore(slide(roundedRocks, Direction.NORTH, Comparator.comparing(Pair::getValue1)));
     }
 
     public Object part2(List<String> input) {
@@ -23,110 +24,33 @@ public class Day14 extends Day {
     }
 
     private Set<Pair<Integer, Integer>> rotate(Set<Pair<Integer, Integer>> roundedRocks) {
-        roundedRocks = slideNorth(roundedRocks);
-        roundedRocks = slideWest(roundedRocks);
-        roundedRocks = slideSouth(roundedRocks);
-        roundedRocks = slideEast(roundedRocks);
+        Comparator<Pair<Integer, Integer>> orderByX = Comparator.comparing(Pair::getValue0);
+        Comparator<Pair<Integer, Integer>> orderByY = Comparator.comparing(Pair::getValue1);
+        roundedRocks = slide(roundedRocks, Direction.NORTH, orderByY);
+        roundedRocks = slide(roundedRocks, Direction.WEST, orderByX);
+        roundedRocks = slide(roundedRocks, Direction.SOUTH, orderByY.reversed());
+        roundedRocks = slide(roundedRocks, Direction.EAST, orderByX.reversed());
         return roundedRocks;
     }
 
-    private Set<Pair<Integer, Integer>> slideEast(Set<Pair<Integer, Integer>> roundedRocks) {
+    private Set<Pair<Integer, Integer>> slide(Set<Pair<Integer, Integer>> roundedRocks, Direction direction, Comparator<Pair<Integer, Integer>> orderToMoveRocks) {
         Set<Pair<Integer, Integer>> newRoundedRocks;
         newRoundedRocks = new HashSet<>();
-        for (int x = width - 1; x >= 0; x--) {
-            for (int y = height - 1; y >= 0; y--) {
-                if (roundedRocks.contains(Pair.with(x, y))) {
-                    boolean found = false;
-                    for (int i = x + 1; i < height; i++) {
-                        if (cubeShapedRocks.contains(Pair.with(i, y)) || newRoundedRocks.contains(Pair.with(i, y))) {
-                            newRoundedRocks.add(Pair.with(i - 1, y));
-                            found = true;
-                            break;
-                        }
+        List<Pair<Integer, Integer>> sortedRocks = roundedRocks.stream().sorted(orderToMoveRocks).toList();
 
-                    }
-                    if (!found) {
-                        newRoundedRocks.add(Pair.with(width - 1, y));
-                    }
+        for (Pair<Integer, Integer> sortedRock : sortedRocks) {
+            Pair<Integer, Integer> newRock = sortedRock;
+            while (true) {
+                Pair<Integer, Integer> newRockPos = direction.move(newRock, 1);
+                if (cubeShapedRocks.contains(newRockPos) || newRoundedRocks.contains(newRockPos)
+                        || !Util.isInRectangle(newRockPos, Pair.with(0, 0), Pair.with(width - 1, height - 1))) {
+                    newRoundedRocks.add(newRock);
+                    break;
                 }
+                newRock = newRockPos;
             }
         }
-        roundedRocks = newRoundedRocks;
-        return roundedRocks;
-    }
-
-    private Set<Pair<Integer, Integer>> slideSouth(Set<Pair<Integer, Integer>> roundedRocks) {
-        Set<Pair<Integer, Integer>> newRoundedRocks;
-        newRoundedRocks = new HashSet<>();
-        for (int y = height - 1; y >= 0; y--) {
-            for (int x = width - 1; x >= 0; x--) {
-                if (roundedRocks.contains(Pair.with(x, y))) {
-                    boolean found = false;
-                    for (int i = y + 1; i < height; i++) {
-                        if (cubeShapedRocks.contains(Pair.with(x, i)) || newRoundedRocks.contains(Pair.with(x, i))) {
-                            newRoundedRocks.add(Pair.with(x, i - 1));
-                            found = true;
-                            break;
-                        }
-
-                    }
-                    if (!found) {
-                        newRoundedRocks.add(Pair.with(x, height - 1));
-                    }
-                }
-            }
-        }
-        roundedRocks = newRoundedRocks;
-        return roundedRocks;
-    }
-
-    private Set<Pair<Integer, Integer>> slideWest(Set<Pair<Integer, Integer>> roundedRocks) {
-        Set<Pair<Integer, Integer>> newRoundedRocks;
-        newRoundedRocks = new HashSet<>();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if (roundedRocks.contains(Pair.with(x, y))) {
-                    boolean found = false;
-                    for (int i = x - 1; i >= 0; i--) {
-                        if (cubeShapedRocks.contains(Pair.with(i, y)) || newRoundedRocks.contains(Pair.with(i, y))) {
-                            newRoundedRocks.add(Pair.with(i + 1, y));
-                            found = true;
-                            break;
-                        }
-
-                    }
-                    if (!found) {
-                        newRoundedRocks.add(Pair.with(0, y));
-                    }
-                }
-            }
-        }
-        roundedRocks = newRoundedRocks;
-        return roundedRocks;
-    }
-
-    private Set<Pair<Integer, Integer>> slideNorth(Set<Pair<Integer, Integer>> roundedRocks) {
-        Set<Pair<Integer, Integer>> newRoundedRocks;
-        newRoundedRocks = new HashSet<>();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (roundedRocks.contains(Pair.with(x, y))) {
-                    boolean found = false;
-                    for (int i = y - 1; i >= 0; i--) {
-                        if (cubeShapedRocks.contains(Pair.with(x, i)) || newRoundedRocks.contains(Pair.with(x, i))) {
-                            newRoundedRocks.add(Pair.with(x, i + 1));
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        newRoundedRocks.add(Pair.with(x, 0));
-                    }
-                }
-            }
-        }
-        roundedRocks = newRoundedRocks;
-        return roundedRocks;
+        return newRoundedRocks;
     }
 
     private long getScore(Set<Pair<Integer, Integer>> roundedRocks) {
