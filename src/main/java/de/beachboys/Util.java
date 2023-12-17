@@ -157,7 +157,7 @@ public final class Util {
     }
 
     public static int getShortestPath(Set<Pair<Integer, Integer>> start, Set<Pair<Integer, Integer>> end, BiPredicate<Pair<Integer, Integer>, Pair<Integer, Integer>> canGoFromPositionToNeighbor, TriFunction<Integer, Pair<Integer, Integer>, Pair<Integer, Integer>, Integer> getNeighborDistanceFromPositionDistance) {
-        Map<Pair<Integer, Integer>, Integer> distances = new HashMap<>();
+        Set<Pair<Integer, Integer>> seenPositions = new HashSet<>();
         Map<Integer, Set<Pair<Integer, Integer>>> queue = new HashMap<>();
         queue.put(0, start);
         for (int currentDistance = 0; currentDistance < Integer.MAX_VALUE; currentDistance++) {
@@ -166,12 +166,12 @@ public final class Util {
                     return currentDistance;
                 }
                 for (Pair<Integer, Integer> directNeighbor : Direction.getDirectNeighbors(pos)) {
-                    if (!distances.containsKey(directNeighbor) && canGoFromPositionToNeighbor.test(pos, directNeighbor)) {
+                    if (!seenPositions.contains(directNeighbor) && canGoFromPositionToNeighbor.test(pos, directNeighbor)) {
                         int neighborDistance = getNeighborDistanceFromPositionDistance.apply(currentDistance, pos, directNeighbor);
                         Set<Pair<Integer, Integer>> set = queue.getOrDefault(neighborDistance, new HashSet<>());
                         set.add(directNeighbor);
                         queue.put(neighborDistance, set);
-                        distances.put(directNeighbor, neighborDistance);
+                        seenPositions.add(directNeighbor);
                     }
                 }
             }
