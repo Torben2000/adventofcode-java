@@ -10,55 +10,31 @@ import java.util.*;
 public class Day10 extends Day {
 
     private Map<Pair<Integer, Integer>, String> map;
-    private Pair<Integer, Integer> start;
-    private final Set<Pair<Integer, Integer>> pipes = new HashSet<>();
+    private final List<Pair<Integer, Integer>> corners = new ArrayList<>();
     private Direction startLeavingDir;
 
 
     public Object part1(List<String> input) {
         parseInput(input);
-        return pipes.size() / 2;
+        return Util.getPolygonLineLength(corners) / 2;
     }
 
     public Object part2(List<String> input) {
         parseInput(input);
-
-        Set<Pair<Integer, Integer>> leftFromPipes = new HashSet<>();
-        Set<Pair<Integer, Integer>> rightFromPipes = new HashSet<>();
-
-        Pair<Integer, Integer> pos = start;
-        Direction enteringDirection = startLeavingDir.getOpposite();
-        for (int i = 0; i < pipes.size(); i++) {
-            Direction leavingDirection = getLeavingDirection(pos, enteringDirection);
-            for (Direction leftDir : getDirectionsNextToPipe(enteringDirection, leavingDirection, true)) {
-                fillSetNextToPipes(leftFromPipes, leftDir, pos);
-            }
-            for (Direction rightDir : getDirectionsNextToPipe(enteringDirection, leavingDirection, false)) {
-                fillSetNextToPipes(rightFromPipes, rightDir, pos);
-            }
-
-            enteringDirection = leavingDirection;
-            pos = enteringDirection.move(pos, 1);
-        }
-
-        // other checks might be needed for other input where (0, 0) is in pipes
-        if (leftFromPipes.contains(Pair.with(0, 0))) {
-            return rightFromPipes.size();
-        }
-        return leftFromPipes.size();
+        return Util.getPolygonSize(corners, false);
     }
 
     private void parseInput(List<String> input) {
         map = Util.buildImageMap(input);
-        start = map.entrySet().stream().filter(e -> "S".equals(e.getValue())).map(Map.Entry::getKey).findFirst().orElseThrow();
-        pipes.clear();
+        Pair<Integer, Integer> start = map.entrySet().stream().filter(e -> "S".equals(e.getValue())).map(Map.Entry::getKey).findFirst().orElseThrow();
+        corners.clear();
+        corners.add(start);
         Pair<Integer, Integer> pos = start;
         for (Direction dir : Direction.values()) {
             Pair<Integer, Integer> newPos = dir.move(start, 1);
             String charAtNewPos = map.getOrDefault(newPos, ".");
             if (canEnter(charAtNewPos, dir)) {
                 pos = newPos;
-                pipes.add(pos);
                 startLeavingDir = dir;
                 break;
             }
@@ -66,9 +42,12 @@ public class Day10 extends Day {
 
         Direction dir = startLeavingDir;
         while (!"S".equals(map.get(pos))) {
-            dir = getLeavingDirection(pos, dir);
+            Direction leavingDirection = getLeavingDirection(pos, dir);
+            if (dir != leavingDirection) {
+                corners.add(pos);
+            }
+            dir = leavingDirection;
             pos = dir.move(pos, 1);
-            pipes.add(pos);
         }
 
         map.put(pos, getPipeChar(startLeavingDir, dir));
@@ -137,29 +116,6 @@ public class Day10 extends Day {
             return "F";
         }
         throw new IllegalArgumentException();
-    }
-
-    private Set<Direction> getDirectionsNextToPipe(Direction enteringDirection, Direction leavingDirection, boolean leftFromPipe) {
-        Set<Direction> directions = new HashSet<>();
-        Direction first = leftFromPipe ? leavingDirection.turnLeft() : leavingDirection.turnRight();
-        if (!enteringDirection.getOpposite().equals(first)) {
-            directions.add(first);
-            Direction second = leavingDirection.getOpposite();
-            if (!enteringDirection.getOpposite().equals(second)) {
-                directions.add(second);
-            }
-        }
-        return directions;
-    }
-
-    private void fillSetNextToPipes(Set<Pair<Integer, Integer>> set, Direction leavingDirection, Pair<Integer, Integer> positionToLeave) {
-        Pair<Integer, Integer> pos = leavingDirection.move(positionToLeave, 1);
-        if (!set.contains(pos) && !pipes.contains(pos) && map.containsKey(pos)) {
-            set.add(pos);
-            for (Direction direction : Direction.values()) {
-                fillSetNextToPipes(set, direction, pos);
-            }
-        }
     }
 
 }
