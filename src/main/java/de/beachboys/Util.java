@@ -156,6 +156,37 @@ public final class Util {
         return line;
     }
 
+    public static long getPolygonSize(List<Pair<Integer, Integer>> polygonPoints, boolean withLines) {
+        // inner size up to middle of line
+        long result = 0;
+        for (int i = 0; i < polygonPoints.size(); i++) {
+            Pair<Integer, Integer> p1 = polygonPoints.get(i);
+            Pair<Integer, Integer> p2 = polygonPoints.get((i + 1) % polygonPoints.size());
+            result += (long) p2.getValue1() * p1.getValue0() - (long) p1.getValue1() * p2.getValue0();
+        }
+        result = Math.abs(result) / 2;
+
+
+        if (withLines) {
+            result += getPolygonLineLength(polygonPoints) / 2;
+        } else {
+            result -= getPolygonLineLength(polygonPoints) / 2;
+        }
+        // +1 for 4 outer corners
+        return result + 1;
+    }
+
+    public static long getPolygonLineLength(List<Pair<Integer, Integer>> polygonPoints) {
+        long result = 0;
+        for (int i = 0; i < polygonPoints.size(); i++) {
+            Pair<Integer, Integer> p1 = polygonPoints.get(i);
+            Pair<Integer, Integer> p2 = polygonPoints.get((i + 1) % polygonPoints.size());
+            result += getManhattanDistance(p1, p2);
+        }
+        return result;
+    }
+
+
     public static int getShortestPath(Set<Pair<Integer, Integer>> start, Set<Pair<Integer, Integer>> end, BiPredicate<Pair<Integer, Integer>, Pair<Integer, Integer>> canGoFromPositionToNeighbor, TriFunction<Integer, Pair<Integer, Integer>, Pair<Integer, Integer>, Integer> getNeighborDistanceFromPositionDistance) {
         Set<Pair<Integer, Integer>> seenPositions = new HashSet<>();
         Map<Integer, Set<Pair<Integer, Integer>>> queue = new HashMap<>();
