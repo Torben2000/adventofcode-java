@@ -12,12 +12,6 @@ import java.util.regex.Pattern;
 
 public class Day18 extends Day {
 
-    private Set<Pair<Integer, Integer>> outside;
-    private Set<Pair<Integer, Integer>> history;
-    private Pair<Integer, Integer> topLeft;
-    private Pair<Integer, Integer> bottomRight;
-    private Set<Pair<Integer, Integer>> set;
-
     public Object part1(List<String> input) {
         return runLogic(input, (d, s, c) -> Pair.with(d, s));
     }
@@ -29,7 +23,7 @@ public class Day18 extends Day {
     }
 
     private static long runLogic(List<String> input, TriFunction<Direction, Integer, String, Pair<Direction, Integer>> directionAndStepsModifier) {
-        Pattern inputPattern = Pattern.compile("(.) (.*) \\(#(.{6})\\)");
+        Pattern inputPattern = Pattern.compile("([RLUD]) ([0-9]+) \\(#([0-f]{6})\\)");
 
         Pair<Integer, Integer> pos = Pair.with(0,0);
         List<Pair<Integer, Integer>> polygonPoints = new ArrayList<>();
