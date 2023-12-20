@@ -218,6 +218,9 @@ public final class Util {
     }
 
     public static long leastCommonMultiple(long long1, long long2) {
+        if (long1 == 0 || long2 == 0) {
+            return 0;
+        }
         return long1 * (long2 / greatestCommonDivisor(long1, long2));
     }
 

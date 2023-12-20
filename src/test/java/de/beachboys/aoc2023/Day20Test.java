@@ -15,15 +15,33 @@ public class Day20Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("broadcaster -> a, b, c",
+                        "%a -> b",
+                        "%b -> c",
+                        "%c -> inv",
+                        "&inv -> a"), 32000000, null),
+                Arguments.of(List.of("broadcaster -> a",
+                        "%a -> inv, con",
+                        "&inv -> b",
+                        "%b -> con",
+                        "&con -> output"), 11687500, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("broadcaster -> a, b, c",
+                        "%a -> b",
+                        "%b -> c",
+                        "%c -> inv",
+                        "&inv -> a"), "no rx", null),
+                Arguments.of(List.of("broadcaster -> a",
+                        "%a -> inv, con1",
+                        "&inv -> b",
+                        "%b -> con2",
+                        "&con1 -> con",
+                        "&con2 -> con",
+                        "&con -> rx"), 6, null)
         );
     }
 
