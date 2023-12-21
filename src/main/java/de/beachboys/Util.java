@@ -210,6 +210,18 @@ public final class Util {
         return Integer.MAX_VALUE;
     }
 
+    public static Pair<Integer, Integer> getNormalizedPositionOnRepeatingPattern(Pair<Integer, Integer> pos, int width, int height) {
+        int normalizedX = pos.getValue0() % width;
+        while (normalizedX < 0) {
+            normalizedX += width;
+        }
+        int normalizedY = pos.getValue1() % height;
+        while (normalizedY < 0) {
+            normalizedY += height;
+        }
+        return Pair.with(normalizedX, normalizedY);
+    }
+
     public static long greatestCommonDivisor(long long1, long long2) {
         if (long1 == long2 || long2 == 0) {
             return long1;
