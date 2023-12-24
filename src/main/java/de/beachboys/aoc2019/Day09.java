@@ -11,7 +11,7 @@ public class Day09 extends Day {
     private final IntcodeComputer computer = new IntcodeComputer();
 
     public Object part1(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         computer.runLogic(new ArrayList<>(list), io);
         return computer.getLastOutput();
 

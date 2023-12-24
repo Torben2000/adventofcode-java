@@ -21,7 +21,7 @@ public class Day16 extends Day {
 
     private List<Integer> registers = new ArrayList<>(List.of(0, 0, 0, 0));
     private final Map<String, Consumer<Tuple3<Integer, Integer, Integer>>> operations = new HashMap<>();
-    List<TestData> testDataList = new ArrayList<>();
+    final List<TestData> testDataList = new ArrayList<>();
     private final List<List<Integer>> program = new ArrayList<>();
     private final Map<Integer, String> opCodeMappings = new HashMap<>();
 
@@ -51,7 +51,7 @@ public class Day16 extends Day {
         buildOperationMap();
         buildOpCodeMappingFromTestData();
         runProgram();
-        return registers.get(0);
+        return registers.getFirst();
     }
 
     private void runProgram() {
@@ -152,21 +152,11 @@ public class Day16 extends Day {
     }
 
     private Matcher getMatcher(ParseMode parseMode, String line) {
-        Matcher m;
-        switch (parseMode) {
-            case BEFORE:
-                m = beforePattern.matcher(line);
-                break;
-            case OPERATION:
-                m = operationPattern.matcher(line);
-                break;
-            case AFTER:
-                m = afterPattern.matcher(line);
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-        return m;
+        return switch (parseMode) {
+            case BEFORE -> beforePattern.matcher(line);
+            case OPERATION -> operationPattern.matcher(line);
+            case AFTER -> afterPattern.matcher(line);
+        };
     }
 
     private List<Integer> getIntegerList(Matcher m) {

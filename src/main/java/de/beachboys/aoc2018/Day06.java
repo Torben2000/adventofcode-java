@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day06 extends Day {
 
@@ -71,7 +70,7 @@ public class Day06 extends Day {
     }
 
     private Map<Integer, Integer> countNonInfiniteAreas(Map<Tuple2<Integer, Integer>, Integer> closestPositions, Set<Integer> infiniteAreas) {
-        List<Integer> areaIds = closestPositions.values().stream().filter(Predicate.not(infiniteAreas::contains)).collect(Collectors.toList());
+        List<Integer> areaIds = closestPositions.values().stream().filter(Predicate.not(infiniteAreas::contains)).toList();
         Map<Integer, Integer> counter = new HashMap<>();
         for (Integer areaId : areaIds) {
             counter.merge(areaId, 1, Integer::sum);

@@ -18,7 +18,7 @@ public class Day25 extends Day {
     public static final String EMPTY = ".";
 
     public Object part1(List<String> input) {
-        int width = input.get(0).length();
+        int width = input.getFirst().length();
         int height = input.size();
 
         Map<Tuple2<Integer, Integer>, String> map = Util.buildImageMap(input);

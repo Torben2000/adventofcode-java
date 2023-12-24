@@ -29,10 +29,10 @@ public class Day17 extends Day {
     }
 
     private void countPossibilitiesPerNumberOfContainers(int totalEggnog, List<Integer> containers, int currentContainerCount) {
-        if (containers.size() == 0) {
+        if (containers.isEmpty()) {
             return;
         }
-        Integer currentContainer = containers.get(0);
+        Integer currentContainer = containers.getFirst();
         List<Integer> containersWithoutCurrentContainer = containers.subList(1, containers.size());
 
         countPossibilitiesPerNumberOfContainers(totalEggnog, containersWithoutCurrentContainer, currentContainerCount);

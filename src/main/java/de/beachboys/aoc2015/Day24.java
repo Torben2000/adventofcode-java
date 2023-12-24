@@ -5,7 +5,6 @@ import de.beachboys.Day;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Day24 extends Day {
 
@@ -27,7 +26,7 @@ public class Day24 extends Day {
     }
 
     private Object runLogic(List<String> input, int numberOfDepartments) {
-        allPackages = input.stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).collect(Collectors.toUnmodifiableList());
+        allPackages = input.stream().map(Long::valueOf).sorted(Comparator.reverseOrder()).toList();
 
         weightPerDepartment = allPackages.stream().mapToLong(Long::longValue).sum() / numberOfDepartments;
 
@@ -37,10 +36,10 @@ public class Day24 extends Day {
     }
 
     private void fillPossibilitiesForFirstDepartment(List<Long> packagesInFirstDepartment, List<Long> possiblePackages, int totalDepartments) {
-        if (possiblePackages.size() == 0 || minFirstDepartmentPackageCount < packagesInFirstDepartment.size()) {
+        if (possiblePackages.isEmpty() || minFirstDepartmentPackageCount < packagesInFirstDepartment.size()) {
             return;
         }
-        Long currentPackage = possiblePackages.get(0);
+        Long currentPackage = possiblePackages.getFirst();
         List<Long> packagesWithoutCurrentPackage = possiblePackages.subList(1, possiblePackages.size());
 
         List<Long> newPackagesInFirstDepartment = new ArrayList<>(packagesInFirstDepartment);
@@ -61,10 +60,10 @@ public class Day24 extends Day {
     }
 
     private boolean isPossibleToDistribute(List<Long> packagesInDepartment, List<Long> possiblePackages, List<Long> packagesInEarlierDepartments, int remainingDepartments) {
-        if (possiblePackages.size() == 0) {
+        if (possiblePackages.isEmpty()) {
             return false;
         }
-        Long currentPackage = possiblePackages.get(0);
+        Long currentPackage = possiblePackages.getFirst();
         List<Long> packagesWithoutCurrentPackage = possiblePackages.subList(1, possiblePackages.size());
 
 

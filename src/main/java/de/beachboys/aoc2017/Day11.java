@@ -23,7 +23,7 @@ public class Day11 extends Day {
     }
 
     private Tuple3<Integer, Integer, Integer> runLogic(List<String> input) {
-        List<String> directions = Util.parseCsv(input.get(0));
+        List<String> directions = Util.parseCsv(input.getFirst());
         Tuple3<Integer, Integer, Integer> currentPosition = Tuple.tuple(0, 0, 0);
         maxDistance = 0;
         for (String directionString : directions) {

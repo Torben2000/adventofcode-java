@@ -127,20 +127,11 @@ public final class Util {
     }
 
     public static boolean isInRectangle(Tuple2<Integer, Integer> positionToCheck, Tuple2<Integer, Integer> cornerOfRectangle, Tuple2<Integer, Integer> oppositeCornerOfRectangle) {
-        boolean returnValue = true;
-        if (positionToCheck.v1 < cornerOfRectangle.v1 && positionToCheck.v1 < oppositeCornerOfRectangle.v1) {
-            returnValue = false;
-        }
-        if (positionToCheck.v1 > cornerOfRectangle.v1 && positionToCheck.v1 > oppositeCornerOfRectangle.v1) {
-            returnValue = false;
-        }
-        if (positionToCheck.v2 < cornerOfRectangle.v2 && positionToCheck.v2 < oppositeCornerOfRectangle.v2) {
-            returnValue = false;
-        }
-        if (positionToCheck.v2 > cornerOfRectangle.v2 && positionToCheck.v2 > oppositeCornerOfRectangle.v2) {
-            returnValue = false;
-        }
-        return returnValue;
+
+        return (positionToCheck.v1 >= cornerOfRectangle.v1 || positionToCheck.v1 >= oppositeCornerOfRectangle.v1)
+                && (positionToCheck.v1 <= cornerOfRectangle.v1 || positionToCheck.v1 <= oppositeCornerOfRectangle.v1)
+                && (positionToCheck.v2 >= cornerOfRectangle.v2 || positionToCheck.v2 >= oppositeCornerOfRectangle.v2)
+                && (positionToCheck.v2 <= cornerOfRectangle.v2 || positionToCheck.v2 <= oppositeCornerOfRectangle.v2);
     }
 
     public static List<Tuple2<Integer, Integer>> drawLine(Tuple2<Integer, Integer> start, Tuple2<Integer, Integer> end) {
@@ -240,7 +231,7 @@ public final class Util {
 
     /**
      * Based on
-     * https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
+     * <a href="https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/">...</a>
      */
     public static long modInverse(long a, long m)
     {
@@ -291,7 +282,7 @@ public final class Util {
 
     /**
      * Based on
-     * https://www.geeksforgeeks.org/chinese-remainder-theorem-set-2-implementation/
+     * <a href="https://www.geeksforgeeks.org/chinese-remainder-theorem-set-2-implementation/">...</a>
      */
     private static long chineseRemainderTheorem(long[] numbers, long[] remainders) {
         long product = 1;
@@ -325,15 +316,15 @@ public final class Util {
     }
 
     private static void buildGraph(Queue<GraphBuilderQueueElement> queue, Graph<String, DefaultWeightedEdge> graph, Map<Tuple2<Integer, Integer>, String> map, GraphBuilderQueueElement queueElement, GraphConstructionHelper helper) {
-        String newNodeName = helper.getNodeName(queueElement.getNodePosition(), queueElement.getParentNode());
-        if (newNodeName == null || newNodeName.equals(queueElement.getParentNode())) {
+        String newNodeName = helper.getNodeName(queueElement.nodePosition(), queueElement.parentNode());
+        if (newNodeName == null || newNodeName.equals(queueElement.parentNode())) {
             return;
         }
         graph.addVertex(newNodeName);
-        if (queueElement.getParentNode() != null) {
-            double newEdgeWeight = queueElement.getDistanceToParent() + 1.0;
-            if (graph.containsEdge(queueElement.getParentNode(), newNodeName)) {
-                DefaultWeightedEdge existingEdge = graph.getEdge(queueElement.getParentNode(), newNodeName);
+        if (queueElement.parentNode() != null) {
+            double newEdgeWeight = queueElement.distanceToParent() + 1.0;
+            if (graph.containsEdge(queueElement.parentNode(), newNodeName)) {
+                DefaultWeightedEdge existingEdge = graph.getEdge(queueElement.parentNode(), newNodeName);
                 double existingEdgeWeight = graph.getEdgeWeight(existingEdge);
                 if (existingEdgeWeight > newEdgeWeight) {
                     graph.setEdgeWeight(existingEdge, Math.min(existingEdgeWeight, newEdgeWeight));
@@ -341,11 +332,11 @@ public final class Util {
                 //don't continue here as we already walked that path...
                 return;
             }
-            addEdge(graph, queueElement.getParentNode(), newNodeName, newEdgeWeight);
+            addEdge(graph, queueElement.parentNode(), newNodeName, newEdgeWeight);
         }
-        for (Tuple2<Integer, Integer> nextStep : queueElement.getNextSteps()) {
+        for (Tuple2<Integer, Integer> nextStep : queueElement.nextSteps()) {
             int stepCounter = 0;
-            Tuple2<Integer, Integer> previousPosition = queueElement.getNodePosition();
+            Tuple2<Integer, Integer> previousPosition = queueElement.nodePosition();
             Tuple2<Integer, Integer> currentPosition = nextStep;
 
             while (true) {
@@ -463,33 +454,7 @@ public final class Util {
         return state;
     }
 
-    private static class GraphBuilderQueueElement {
-        private final Tuple2<Integer, Integer> nodePosition;
-        private final List<Tuple2<Integer, Integer>> nextSteps;
-        private final String parentNode;
-        private final int distanceToParent;
-
-        private GraphBuilderQueueElement(Tuple2<Integer, Integer> nodePosition, List<Tuple2<Integer, Integer>> nextSteps, String parentNode, int distanceToParent) {
-            this.nodePosition = nodePosition;
-            this.nextSteps = nextSteps;
-            this.parentNode = parentNode;
-            this.distanceToParent = distanceToParent;
-        }
-
-        public Tuple2<Integer, Integer> getNodePosition() {
-            return nodePosition;
-        }
-
-        public List<Tuple2<Integer, Integer>> getNextSteps() {
-            return nextSteps;
-        }
-
-        public String getParentNode() {
-            return parentNode;
-        }
-
-        public int getDistanceToParent() {
-            return distanceToParent;
-        }
-    }
+    private record GraphBuilderQueueElement(Tuple2<Integer, Integer> nodePosition,
+                                            List<Tuple2<Integer, Integer>> nextSteps, String parentNode,
+                                            int distanceToParent) {}
 }

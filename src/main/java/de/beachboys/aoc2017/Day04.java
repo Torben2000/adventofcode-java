@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Day04 extends Day {
 
@@ -22,7 +21,7 @@ public class Day04 extends Day {
     private int runLogic(List<String> input, Function<String, String> modifyWordForDuplicityCheck) {
         int numOfValidPassphrases = 0;
         for (String passPhrase : input) {
-            List<String> wordList = Util.parseToList(passPhrase, " ").stream().map(modifyWordForDuplicityCheck).collect(Collectors.toList());
+            List<String> wordList = Util.parseToList(passPhrase, " ").stream().map(modifyWordForDuplicityCheck).toList();
             Set<String> wordSet = new HashSet<>(wordList);
             if (wordList.size() == wordSet.size()) {
                 numOfValidPassphrases++;

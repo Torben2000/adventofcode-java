@@ -89,8 +89,8 @@ public class Day16 extends Day {
         boolean changeDone = true;
         while (changeDone) {
             changeDone = false;
-            List<Integer> uniqueIndices = possibleRulesForFields.values().stream().filter(set -> set.size() == 1).map(set -> set.stream().findFirst().orElseThrow()).collect(Collectors.toList());
-            List<Set<Integer>> notUniqueSets = possibleRulesForFields.values().stream().filter(set -> set.size() != 1).collect(Collectors.toList());
+            Set<Integer> uniqueIndices = possibleRulesForFields.values().stream().filter(set -> set.size() == 1).map(set -> set.stream().findFirst().orElseThrow()).collect(Collectors.toSet());
+            List<Set<Integer>> notUniqueSets = possibleRulesForFields.values().stream().filter(set -> set.size() != 1).toList();
             for (Set<Integer> values : notUniqueSets) {
                 changeDone |= values.removeAll(uniqueIndices);
             }

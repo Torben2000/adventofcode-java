@@ -76,7 +76,7 @@ public class Day12 extends Day {
 
     private Set<Integer> parseInitialState(List<String> input) {
         Set<Integer> currentState = new HashSet<>();
-        char[] initialState = input.get(0).substring("initial state: ".length()).toCharArray();
+        char[] initialState = input.getFirst().substring("initial state: ".length()).toCharArray();
         for (int i = 0; i < initialState.length; i++) {
             if('#' == initialState[i]) {
                 currentState.add(i);

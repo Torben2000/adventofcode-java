@@ -22,7 +22,7 @@ public class Day05 extends Day {
 
     private static String runLogic(List<String> input, boolean isCrateMover9001) {
         crateStacks.clear();
-        for (int i = 0; i < (input.get(0).length() + 1) / 4; i++) {
+        for (int i = 0; i < (input.getFirst().length() + 1) / 4; i++) {
             crateStacks.add(new LinkedList<>());
         }
         boolean parsedInitialState = false;

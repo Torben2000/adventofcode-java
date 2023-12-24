@@ -11,7 +11,7 @@ public class Day25 extends Day {
     public Object part1(List<String> input) {
         long col = 1;
         long row = 1;
-        Matcher m = Pattern.compile("To continue, please consult the code grid in the manual. +Enter the code at row ([0-9]+), column ([0-9]+).").matcher(input.get(0));
+        Matcher m = Pattern.compile("To continue, please consult the code grid in the manual. +Enter the code at row ([0-9]+), column ([0-9]+).").matcher(input.getFirst());
         if (m.matches()) {
             row = Integer.parseInt(m.group(1));
             col = Integer.parseInt(m.group(2));

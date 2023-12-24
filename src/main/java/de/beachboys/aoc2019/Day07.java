@@ -16,7 +16,7 @@ public class Day07 extends Day {
     public Object part1(List<String> input) {
         inputList = new ArrayList<>(List.of("", "", "", "", "", "", "", "", "", "", "", ""));
         inputIndex = 0;
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
 
         IOHelper io = new IOHelper() {
             @Override
@@ -64,7 +64,7 @@ public class Day07 extends Day {
     public Object part2(List<String> input) {
         inputList = new ArrayList<>(List.of("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
         inputIndex = 0;
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
 
         IOHelper io = new IOHelper() {
             @Override

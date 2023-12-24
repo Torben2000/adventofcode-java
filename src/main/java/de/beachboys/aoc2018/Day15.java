@@ -145,7 +145,7 @@ public class Day15 extends Day {
     }
 
     private static class Unit {
-        boolean isGoblin;
+        final boolean isGoblin;
         int hitPoints = 200;
         Tuple2<Integer, Integer> position;
 

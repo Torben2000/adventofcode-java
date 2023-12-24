@@ -30,7 +30,7 @@ public class Day20 extends Day {
             "#    ##    ##    ###",
             " #  #  #  #  #  #   ");
     public static final Map<Tuple2<Integer, Integer>, String> MONSTER_MAP = Util.buildImageMap(MONSTER_IMAGE);
-    public static final int MONSTER_WIDTH = MONSTER_IMAGE.get(0).length();
+    public static final int MONSTER_WIDTH = MONSTER_IMAGE.getFirst().length();
     public static final int MONSTER_HEIGHT = MONSTER_IMAGE.size();
 
     public Object part1(List<String> input) {
@@ -39,7 +39,7 @@ public class Day20 extends Day {
         List<Integer> possibleOuterEdges = edgeIdToTiles.values().stream()
                 .filter(tiles -> tiles.size() == 1)
                 .map(tiles -> tiles.stream().findFirst().orElseThrow().v1)
-                .collect(Collectors.toList());
+                .toList();
 
         return possibleOuterEdges.stream()
                 .collect(Collectors.groupingBy(e -> e, Collectors.counting()))
@@ -143,39 +143,21 @@ public class Day20 extends Day {
     }
 
     private int convertXValue(Tuple2<Integer, Integer> positionForNorth, Edge northEdge, int maxWidth) {
-        switch (northEdge) {
-            case EAST:
-            case WEST_BACK:
-                return positionForNorth.v2;
-            case NORTH:
-            case SOUTH_BACK:
-                return positionForNorth.v1;
-            case SOUTH:
-            case NORTH_BACK:
-                return maxWidth - positionForNorth.v1;
-            case WEST:
-            case EAST_BACK:
-                return maxWidth - positionForNorth.v2;
-        }
-        throw new IllegalArgumentException();
+        return switch (northEdge) {
+            case EAST, WEST_BACK -> positionForNorth.v2;
+            case NORTH, SOUTH_BACK -> positionForNorth.v1;
+            case SOUTH, NORTH_BACK -> maxWidth - positionForNorth.v1;
+            case WEST, EAST_BACK -> maxWidth - positionForNorth.v2;
+        };
     }
 
     private int convertYValue(Tuple2<Integer, Integer> positionForNorth, Edge northEdge, int maxHeight) {
-        switch (northEdge) {
-            case EAST:
-            case EAST_BACK:
-                return maxHeight - positionForNorth.v1;
-            case NORTH:
-            case NORTH_BACK:
-                return positionForNorth.v2;
-            case SOUTH:
-            case SOUTH_BACK:
-                return maxHeight - positionForNorth.v2;
-            case WEST:
-            case WEST_BACK:
-                return positionForNorth.v1;
-        }
-        throw new IllegalArgumentException();
+        return switch (northEdge) {
+            case EAST, EAST_BACK -> maxHeight - positionForNorth.v1;
+            case NORTH, NORTH_BACK -> positionForNorth.v2;
+            case SOUTH, SOUTH_BACK -> maxHeight - positionForNorth.v2;
+            case WEST, WEST_BACK -> positionForNorth.v1;
+        };
     }
 
     private Tuple2<Integer, Edge> findNorthEdge(Set<Tuple2<Integer, Edge>> northPossibilities, Set<Tuple2<Integer, Edge>> westPossibilities) {
@@ -191,47 +173,29 @@ public class Day20 extends Day {
     }
 
     private Edge getOppositeEdge(Edge edge) {
-        switch (edge) {
-            case EAST:
-                return Edge.WEST;
-            case NORTH:
-                return Edge.SOUTH;
-            case SOUTH:
-                return Edge.NORTH;
-            case WEST:
-                return Edge.EAST;
-            case EAST_BACK:
-                return Edge.WEST_BACK;
-            case NORTH_BACK:
-                return Edge.SOUTH_BACK;
-            case WEST_BACK:
-                return Edge.EAST_BACK;
-            case SOUTH_BACK:
-                return Edge.NORTH_BACK;
-        }
-        throw new IllegalArgumentException();
+        return switch (edge) {
+            case EAST -> Edge.WEST;
+            case NORTH -> Edge.SOUTH;
+            case SOUTH -> Edge.NORTH;
+            case WEST -> Edge.EAST;
+            case EAST_BACK -> Edge.WEST_BACK;
+            case NORTH_BACK -> Edge.SOUTH_BACK;
+            case WEST_BACK -> Edge.EAST_BACK;
+            case SOUTH_BACK -> Edge.NORTH_BACK;
+        };
     }
 
     private Edge getEastEdgeBasedOnNorthEdge(Edge northEdge) {
-        switch (northEdge) {
-            case EAST:
-                return Edge.SOUTH;
-            case NORTH:
-                return Edge.EAST;
-            case SOUTH:
-                return Edge.WEST;
-            case WEST:
-                return Edge.NORTH;
-            case EAST_BACK:
-                return Edge.NORTH_BACK;
-            case NORTH_BACK:
-                return Edge.WEST_BACK;
-            case WEST_BACK:
-                return Edge.SOUTH_BACK;
-            case SOUTH_BACK:
-                return Edge.EAST_BACK;
-        }
-        throw new IllegalArgumentException();
+        return switch (northEdge) {
+            case EAST -> Edge.SOUTH;
+            case NORTH -> Edge.EAST;
+            case SOUTH -> Edge.WEST;
+            case WEST -> Edge.NORTH;
+            case EAST_BACK -> Edge.NORTH_BACK;
+            case NORTH_BACK -> Edge.WEST_BACK;
+            case WEST_BACK -> Edge.SOUTH_BACK;
+            case SOUTH_BACK -> Edge.EAST_BACK;
+        };
     }
 
     private void prepareData(List<String> input) {

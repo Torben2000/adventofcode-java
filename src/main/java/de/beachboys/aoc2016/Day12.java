@@ -2,9 +2,7 @@ package de.beachboys.aoc2016;
 
 import de.beachboys.Day;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Day12 extends Day {
 

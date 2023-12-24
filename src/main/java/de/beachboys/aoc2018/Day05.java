@@ -9,11 +9,11 @@ import java.util.Set;
 public class Day05 extends Day {
 
     public Object part1(List<String> input) {
-        return runAllReactions(input.get(0)).length();
+        return runAllReactions(input.getFirst()).length();
     }
 
     public Object part2(List<String> input) {
-        String polymer = runAllReactions(input.get(0));
+        String polymer = runAllReactions(input.getFirst());
 
         Set<String> units = getLowerCaseUnitsFromPolymer(polymer);
 

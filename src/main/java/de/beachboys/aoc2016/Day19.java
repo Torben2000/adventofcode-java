@@ -10,7 +10,7 @@ public class Day19 extends Day {
 
     private static class Elf {
 
-        public int number;
+        public final int number;
         public Elf leftElfWithPresent;
 
         public Elf(int number) {
@@ -49,7 +49,7 @@ public class Day19 extends Day {
     }
 
     private void buildElfList(List<String> input) {
-        numberOfElves = Integer.parseInt(input.get(0));
+        numberOfElves = Integer.parseInt(input.getFirst());
         Elf previousElf = new Elf(-1);
         for (int i = 1; i <= numberOfElves; i++) {
             Elf elf = new Elf(i);

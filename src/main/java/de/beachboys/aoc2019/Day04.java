@@ -9,7 +9,7 @@ public class Day04 extends Day {
 
     @Override
     public Object part1(List<String> input) {
-        List<Integer> splitInput = Util.parseToIntList(input.get(0), "-");
+        List<Integer> splitInput = Util.parseToIntList(input.getFirst(), "-");
         int counter = 0;
         for (int i = splitInput.get(0); i <= splitInput.get(1); i++) {
             int[] digits = getDigits(i);
@@ -52,7 +52,7 @@ public class Day04 extends Day {
 
     @Override
     public Object part2(List<String> input) {
-        List<Integer> splitInput = Util.parseToIntList(input.get(0), "-");
+        List<Integer> splitInput = Util.parseToIntList(input.getFirst(), "-");
         int counter = 0;
         for (int i = splitInput.get(0); i <= splitInput.get(1); i++) {
             int[] digits = getDigits(i);

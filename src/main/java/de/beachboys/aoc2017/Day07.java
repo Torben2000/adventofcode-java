@@ -5,7 +5,6 @@ import de.beachboys.Day;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day07 extends Day {
 
@@ -25,7 +24,7 @@ public class Day07 extends Day {
         if (correctedWeights.size() != 1) {
             throw new IllegalStateException("this should not happen");
         }
-        return correctedWeights.get(0);
+        return correctedWeights.getFirst();
     }
 
     private String parseInputAndReturnProgramAtBottom(List<String> input) {
@@ -78,9 +77,15 @@ public class Day07 extends Day {
         if (distinctValues.size() == 2) {
             int differenceBetweenWeightWithProgramsOnTopAndIndividualWeight = 0;
             for (Integer weight : distinctValues) {
-                List<String> matchingPrograms = weightsOfProgramsOnTop.entrySet().stream().filter(entry -> entry.getValue().equals(weight)).map(Map.Entry::getKey).collect(Collectors.toList());
+                List<String> matchingPrograms = new ArrayList<>();
+                for (Map.Entry<String, Integer> entry : weightsOfProgramsOnTop.entrySet()) {
+                    if (entry.getValue().equals(weight)) {
+                        String key = entry.getKey();
+                        matchingPrograms.add(key);
+                    }
+                }
                 if (matchingPrograms.size() == 1) {
-                    differenceBetweenWeightWithProgramsOnTopAndIndividualWeight = weight - weights.get(matchingPrograms.get(0));
+                    differenceBetweenWeightWithProgramsOnTopAndIndividualWeight = weight - weights.get(matchingPrograms.getFirst());
                 } else {
                     correctWeightForProgramOnTop = weight;
                 }

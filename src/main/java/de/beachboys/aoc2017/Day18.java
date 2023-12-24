@@ -104,7 +104,7 @@ public class Day18 extends Day {
 
         public void runProgram(List<String> program) {
             while (!killSwitch && instructionPointer < program.size()) {
-                instructionPointer += executeInstruction(program.get(instructionPointer));
+                instructionPointer += (int) executeInstruction(program.get(instructionPointer));
             }
         }
 

@@ -22,7 +22,7 @@ public class Day17 extends Day {
     }
 
     private Set<Tuple2<Integer, Integer>> runLogic(List<String> input) {
-        String[] xy = input.get(0).substring("target area: x=".length()).split(", y=");
+        String[] xy = input.getFirst().substring("target area: x=".length()).split(", y=");
         String[]xS = xy[0].split(Pattern.quote(".."));
         String[]yS = xy[1].split(Pattern.quote(".."));
         int minX = Integer.parseInt(xS[0]);

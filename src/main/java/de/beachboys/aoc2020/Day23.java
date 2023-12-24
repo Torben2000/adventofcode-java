@@ -10,7 +10,7 @@ import java.util.Map;
 public class Day23 extends Day {
 
     private static class Node {
-        public int value;
+        public final int value;
         public Node next;
 
         public Node(int value) {
@@ -54,7 +54,7 @@ public class Day23 extends Day {
     private void buildCupMapAndShuffle(List<Integer> cups, int numCycles) {
         buildCupMap(cups);
 
-        int currentCup = cups.get(0);
+        int currentCup = cups.getFirst();
         int numCups = map.size();
         for (int i = 0; i < numCycles; i++) {
             Node currentNode = map.get(currentCup);
@@ -92,8 +92,8 @@ public class Day23 extends Day {
 
     private List<Integer> buildCupListFromInput(List<String> input) {
         List<Integer> cups = new LinkedList<>();
-        for (int i = 0; i < input.get(0).length(); i++) {
-            cups.add(Integer.valueOf(input.get(0).substring(i, i + 1)));
+        for (int i = 0; i < input.getFirst().length(); i++) {
+            cups.add(Integer.valueOf(input.getFirst().substring(i, i + 1)));
         }
         return cups;
     }

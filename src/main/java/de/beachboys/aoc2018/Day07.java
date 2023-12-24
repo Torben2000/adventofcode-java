@@ -39,7 +39,7 @@ public class Day07 extends Day {
 
         while (!remainingSteps.isEmpty()) {
             TreeSet<String> possibilities = getPossibilitiesPart2(remainingSteps, runningSteps);
-            if (runningSteps.size() < workers && possibilities.size() > 0) {
+            if (runningSteps.size() < workers && !possibilities.isEmpty()) {
                 String nextStep = possibilities.first();
                 runningSteps.put(buildTargetTimestamp(timestamp, durationOffset, nextStep), nextStep);
             } else {

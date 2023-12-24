@@ -7,7 +7,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day20 extends Day {
 
@@ -29,16 +28,16 @@ public class Day20 extends Day {
         List<Particle> particles = parseParticleList(input);
 
         final int minTotalAcceleration = particles.stream().mapToInt(this::getTotalAcceleration).min().orElseThrow();
-        List<Particle> particlesWithMinAcceleration = particles.stream().filter(particle -> minTotalAcceleration == getTotalAcceleration(particle)).collect(Collectors.toList());
+        List<Particle> particlesWithMinAcceleration = particles.stream().filter(particle -> minTotalAcceleration == getTotalAcceleration(particle)).toList();
 
         final int minTotalVelocity = particlesWithMinAcceleration.stream().mapToInt(this::getTotalVelocityOffset).min().orElseThrow();
-        List<Particle> particlesWithMinAccelerationAndMinVelocity = particlesWithMinAcceleration.stream().filter(particle -> minTotalVelocity == getTotalVelocityOffset(particle)).collect(Collectors.toList());
+        List<Particle> particlesWithMinAccelerationAndMinVelocity = particlesWithMinAcceleration.stream().filter(particle -> minTotalVelocity == getTotalVelocityOffset(particle)).toList();
 
         if (particlesWithMinAccelerationAndMinVelocity.size() > 1) {
             return "more than one match";
         }
 
-        return particles.indexOf(particlesWithMinAccelerationAndMinVelocity.get(0));
+        return particles.indexOf(particlesWithMinAccelerationAndMinVelocity.getFirst());
     }
 
     public Object part2(List<String> input) {

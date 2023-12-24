@@ -11,7 +11,7 @@ public class Day01 extends Day {
 
     public Object part1(List<String> input) {
         List<Integer> sortedCaloriesOfAllElves = getSortedCaloriesOfAllElves(input);
-        return sortedCaloriesOfAllElves.get(0);
+        return sortedCaloriesOfAllElves.getFirst();
     }
 
     public Object part2(List<String> input) {

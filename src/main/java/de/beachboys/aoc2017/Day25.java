@@ -13,15 +13,8 @@ import java.util.regex.Pattern;
 
 public class Day25 extends Day {
 
-    private static class State {
-        private final Tuple3<Integer, Direction, String> actionsForZero;
-        private final Tuple3<Integer, Direction, String> actionsForOne;
-
-        public State(Tuple3<Integer, Direction, String> actionsForZero, Tuple3<Integer, Direction, String> actionsForOne) {
-            this.actionsForZero = actionsForZero;
-            this.actionsForOne = actionsForOne;
-        }
-    }
+    private record State(Tuple3<Integer, Direction, String> actionsForZero,
+                         Tuple3<Integer, Direction, String> actionsForOne) {}
 
     private final Map<String, State> states = new HashMap<>();
     private final Map<Integer, Integer> tape = new HashMap<>();

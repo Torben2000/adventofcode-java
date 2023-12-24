@@ -85,13 +85,13 @@ public class Day21 extends Day {
                 String monkey2 = split[3];
                 switch (split[2]) {
                     case "+":
-                        operation = (l1, l2) -> l1 + l2;
+                        operation = Long::sum;
                         reverseOperationForParameter1 = (l1, l2) -> l1 - l2;
                         reverseOperationForParameter2 = (l1, l2) -> l1 - l2;
                         break;
                     case "-":
                         operation = (l1, l2) -> l1 - l2;
-                        reverseOperationForParameter1 = (l1, l2) -> l1 + l2;
+                        reverseOperationForParameter1 = Long::sum;
                         reverseOperationForParameter2 = (l1, l2) -> l2 - l1;
                         break;
                     case "*":

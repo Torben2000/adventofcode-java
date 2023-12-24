@@ -15,7 +15,7 @@ public class Day03 extends Day {
         int x = 0;
         int y = 0;
         houses.add(Tuple.tuple(x, y));
-        String calls = input.get(0);
+        String calls = input.getFirst();
         for (int i = 0; i < calls.length(); i++) {
             switch (calls.charAt(i)) {
                 case '^':
@@ -43,7 +43,7 @@ public class Day03 extends Day {
         int roboX = 0;
         int roboY = 0;
         houses.add(Tuple.tuple(x, y));
-        String calls = input.get(0);
+        String calls = input.getFirst();
         boolean isSanta = true;
         for (int i = 0; i < calls.length(); i++) {
             if (isSanta) {

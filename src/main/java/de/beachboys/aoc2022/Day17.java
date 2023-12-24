@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 
 public class Day17 extends Day {
 
-    Map<PatternKey, Tuple2<Integer, Integer>> patterns = new HashMap<>();
+    final Map<PatternKey, Tuple2<Integer, Integer>> patterns = new HashMap<>();
 
-    Map<Integer, Integer> heights = new HashMap<>();
+    final Map<Integer, Integer> heights = new HashMap<>();
 
     public Object part1(List<String> input) {
         return runLogic(input, 2022, false);
@@ -25,7 +25,7 @@ public class Day17 extends Day {
 
     private long runLogic(List<String> input, long target, boolean optimizeForLargeNumbers) {
         List<Set<Tuple2<Integer, Integer>>> rockShapes = getRockShapes();
-        List<Direction> jetDirections = Util.parseToList(input.get(0), "").stream().map(Direction::fromString).collect(Collectors.toList());
+        List<Direction> jetDirections = Util.parseToList(input.getFirst(), "").stream().map(Direction::fromString).toList();
         Set<Tuple2<Integer, Integer>> restingRocks = prepareRestingRocksWithBase();
 
 
@@ -165,9 +165,9 @@ public class Day17 extends Day {
 
     private static class PatternKey {
 
-        Set<Tuple2<Integer, Integer>> pattern;
-        int currentRockShape;
-        int currentJetDirection;
+        final Set<Tuple2<Integer, Integer>> pattern;
+        final int currentRockShape;
+        final int currentJetDirection;
 
         public PatternKey(Set<Tuple2<Integer, Integer>> pattern, int currentRockShape, int currentJetDirection) {
             this.pattern = pattern;

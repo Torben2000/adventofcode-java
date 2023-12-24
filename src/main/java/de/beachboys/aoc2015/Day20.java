@@ -18,7 +18,7 @@ public class Day20 extends Day {
     }
 
     private int runLogic(List<String> input, int presentsPerHouse, Function<Integer, Set<Integer>> getVisitingElves) {
-        int minSumOfCurrentHouse = Integer.parseInt(input.get(0));
+        int minSumOfCurrentHouse = Integer.parseInt(input.getFirst());
         int currentHouse = 0;
         int sumOfCurrentHouse = 0;
         while (sumOfCurrentHouse < minSumOfCurrentHouse) {

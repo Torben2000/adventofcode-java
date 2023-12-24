@@ -7,7 +7,7 @@ import java.util.List;
 public class Day01 extends Day {
 
     public Object part1(List<String> input) {
-        String instructions = input.get(0);
+        String instructions = input.getFirst();
         int floor = 0;
         for (int i = 0; i < instructions.length(); i++) {
             char character = instructions.charAt(i);
@@ -21,7 +21,7 @@ public class Day01 extends Day {
     }
 
     public Object part2(List<String> input) {
-        String instructions = input.get(0);
+        String instructions = input.getFirst();
         int floor = 0;
         for (int i = 0; i < instructions.length(); i++) {
             char character = instructions.charAt(i);

@@ -9,12 +9,12 @@ import java.util.regex.Pattern;
 public class Day12 extends Day {
 
     public Object part1(List<String> input) {
-        String json = input.get(0);
+        String json = input.getFirst();
         return getSumOfAllInts(json);
     }
 
     public Object part2(List<String> input) {
-        String json = input.get(0);
+        String json = input.getFirst();
         while (json.contains(":\"red\"")) {
             int foundIndex = json.indexOf(":\"red\"");
             int objectStartIndex = json.substring(0, foundIndex).lastIndexOf("{");

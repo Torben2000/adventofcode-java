@@ -26,7 +26,7 @@ public class Day18 extends Day {
 
     private int runLogic(List<String> input, Runnable conwaySetManipulator) {
         int numberOfSteps = Util.getIntValueFromUser("Number of steps", 100, io);
-        width = input.get(0).length();
+        width = input.getFirst().length();
         height = input.size();
         conwaySet = Util.buildConwaySet(input, "#");
         conwaySetManipulator.run();

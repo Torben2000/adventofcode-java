@@ -31,125 +31,37 @@ public class Day02 extends Day {
     }
 
     private String moveToKeyPart1(String currentKey, String command) {
-        switch (command + currentKey) {
-            case "U1":
-            case "U4":
-            case "L1":
-            case "L2":
-                return "1";
-            case "U2":
-            case "U5":
-            case "L3":
-            case "R1":
-                return "2";
-            case "U3":
-            case "U6":
-            case "R2":
-            case "R3":
-                return "3";
-            case "U7":
-            case "L4":
-            case "L5":
-            case "D1":
-                return "4";
-            case "U8":
-            case "L6":
-            case "R4":
-            case "D2":
-                return "5";
-            case "U9":
-            case "R5":
-            case "R6":
-            case "D3":
-                return "6";
-            case "L7":
-            case "L8":
-            case "D4":
-            case "D7":
-                return "7";
-            case "R7":
-            case "L9":
-            case "D5":
-            case "D8":
-                return "8";
-            case "D9":
-            case "R8":
-            case "R9":
-            case "D6":
-                return "9";
-        }
-        throw new IllegalArgumentException();
+        return switch (command + currentKey) {
+            case "U1", "U4", "L1", "L2" -> "1";
+            case "U2", "U5", "L3", "R1" -> "2";
+            case "U3", "U6", "R2", "R3" -> "3";
+            case "U7", "L4", "L5", "D1" -> "4";
+            case "U8", "L6", "R4", "D2" -> "5";
+            case "U9", "R5", "R6", "D3" -> "6";
+            case "L7", "L8", "D4", "D7" -> "7";
+            case "R7", "L9", "D5", "D8" -> "8";
+            case "D9", "R8", "R9", "D6" -> "9";
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     private String moveToKeyPart2(String currentKey, String command) {
-        switch (command + currentKey) {
-            case "U1":
-            case "U3":
-            case "L1":
-            case "R1":
-                return "1";
-            case "U2":
-            case "U6":
-            case "L2":
-            case "L3":
-                return "2";
-            case "U7":
-            case "L4":
-            case "R2":
-            case "D1":
-                return "3";
-            case "U4":
-            case "U8":
-            case "R3":
-            case "R4":
-                return "4";
-            case "U5":
-            case "L5":
-            case "L6":
-            case "D5":
-                return "5";
-            case "UA":
-            case "L7":
-            case "R5":
-            case "D2":
-                return "6";
-            case "UB":
-            case "L8":
-            case "R6":
-            case "D3":
-                return "7";
-            case "UC":
-            case "L9":
-            case "R7":
-            case "D4":
-                return "8";
-            case "U9":
-            case "R8":
-            case "R9":
-            case "D9":
-                return "9";
-            case "LA":
-            case "LB":
-            case "D6":
-            case "DA":
-                return "A";
-            case "UD":
-            case "LC":
-            case "RA":
-            case "D7":
-                return "B";
-            case "RB":
-            case "RC":
-            case "D8":
-            case "DC":
-                return "C";
-            case "LD":
-            case "RD":
-            case "DB":
-            case "DD":
-                return "D";
-        }
-        throw new IllegalArgumentException();
+        return switch (command + currentKey) {
+            case "U1", "U3", "L1", "R1" -> "1";
+            case "U2", "U6", "L2", "L3" -> "2";
+            case "U7", "L4", "R2", "D1" -> "3";
+            case "U4", "U8", "R3", "R4" -> "4";
+            case "U5", "L5", "L6", "D5" -> "5";
+            case "UA", "L7", "R5", "D2" -> "6";
+            case "UB", "L8", "R6", "D3" -> "7";
+            case "UC", "L9", "R7", "D4" -> "8";
+            case "U9", "R8", "R9", "D9" -> "9";
+            case "LA", "LB", "D6", "DA" -> "A";
+            case "UD", "LC", "RA", "D7" -> "B";
+            case "RB", "RC", "D8", "DC" -> "C";
+            case "LD", "RD", "DB", "DD" -> "D";
+            default -> throw new IllegalArgumentException();
+        };
     }
 
 }

@@ -36,7 +36,7 @@ public class Day14 extends Day {
                     leadingReindeers.clear();
                 }
                 if (totalDistance >= maxDistance) {
-                    leadingReindeers.add(reindeer.getName());
+                    leadingReindeers.add(reindeer.name());
                 }
             }
             for (String leadingReindeer : leadingReindeers) {
@@ -68,39 +68,11 @@ public class Day14 extends Day {
     }
 
     private int getTotalDistance(int raceDuration, Reindeer reindeer) {
-        int cycleTime = reindeer.getFlyDuration() + reindeer.getRestDuration();
+        int cycleTime = reindeer.flyDuration() + reindeer.restDuration();
         int completeCycles = raceDuration / cycleTime;
         int remainingTime = raceDuration % cycleTime;
-        return (completeCycles * reindeer.getFlyDuration() + Math.min(remainingTime, reindeer.getFlyDuration())) * reindeer.getSpeed();
+        return (completeCycles * reindeer.flyDuration() + Math.min(remainingTime, reindeer.flyDuration())) * reindeer.speed();
     }
 
-    private static class Reindeer {
-        private final String name;
-        private final int speed;
-        private final int flyDuration;
-        private final int restDuration;
-
-        private Reindeer(String name, int speed, int flyDuration, int restDuration) {
-            this.name = name;
-            this.speed = speed;
-            this.flyDuration = flyDuration;
-            this.restDuration = restDuration;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getSpeed() {
-            return speed;
-        }
-
-        public int getFlyDuration() {
-            return flyDuration;
-        }
-
-        public int getRestDuration() {
-            return restDuration;
-        }
-    }
+    private record Reindeer(String name, int speed, int flyDuration, int restDuration) {}
 }

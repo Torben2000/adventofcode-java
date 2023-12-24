@@ -18,7 +18,7 @@ public class Day22 extends Day {
         REVERSE, CUT, DEAL
     }
 
-    Map<Long, List<Tuple2<OpType, Long>>> opsPerNumOfRuns = new HashMap<>();
+    final Map<Long, List<Tuple2<OpType, Long>>> opsPerNumOfRuns = new HashMap<>();
 
     public Object part1(List<String> input) {
         long deckSize = Util.getLongValueFromUser("Deck size",10007, io);

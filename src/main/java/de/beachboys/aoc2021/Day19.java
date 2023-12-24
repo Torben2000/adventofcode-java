@@ -154,7 +154,7 @@ public class Day19 extends Day {
                 Tuple2<Integer, Function<Tuple3<Integer, Integer, Integer>, Tuple3<Integer, Integer, Integer>>> transformationTarget = map.get(posId);
                 Integer targetPosId = transformationTarget.v1;
                 if (posId < targetPosId || posId != map.get(targetPosId).v1) {
-                    Set<Tuple3<Integer, Integer, Integer>> transformedPositions = positions.stream().map(pos -> transformationTarget.v2.apply(pos)).collect(Collectors.toSet());
+                    Set<Tuple3<Integer, Integer, Integer>> transformedPositions = positions.stream().map(transformationTarget.v2).collect(Collectors.toSet());
                     newPositions.putIfAbsent(transformationTarget.v1, new HashSet<>());
                     newPositions.get(transformationTarget.v1).addAll(transformedPositions);
                     changeHappened = true;

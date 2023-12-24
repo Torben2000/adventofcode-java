@@ -61,7 +61,7 @@ public class Day25 extends Day {
     private String output = "";
 
     public Object part1(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         runComputer(list);
         Matcher matcher = Pattern.compile("([0-9]+)").matcher(output);
         String returnValue = "Code not found";

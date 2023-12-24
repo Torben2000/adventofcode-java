@@ -173,17 +173,13 @@ public class Day11 extends Day {
     }
 
     private int getFloor(String floorAsString) {
-        switch (floorAsString) {
-            case "first":
-                return 1;
-            case "second":
-                return 2;
-            case "third":
-                return 3;
-            case "fourth":
-                return 4;
-        }
-        throw new IllegalArgumentException();
+        return switch (floorAsString) {
+            case "first" -> 1;
+            case "second" -> 2;
+            case "third" -> 3;
+            case "fourth" -> 4;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     private static class State {
@@ -192,7 +188,7 @@ public class Day11 extends Day {
 
         int stepsUntilThisState = 0;
 
-        Map<Integer, Set<Tuple2<Type, String>>> stuffPerFloor = new HashMap<>();
+        final Map<Integer, Set<Tuple2<Type, String>>> stuffPerFloor = new HashMap<>();
 
         private String equivalenceRepresentation;
 
@@ -241,7 +237,7 @@ public class Day11 extends Day {
         }
 
         private List<Integer> getIdsFromContentOfFloor(int floor, Type type, Map<String, Integer> nameToIdMap, AtomicInteger idCounter) {
-            List<String> elementNames = stuffPerFloor.get(floor).stream().filter(p -> p.v1 == type).map(Tuple2::v2).sorted().collect(Collectors.toList());
+            List<String> elementNames = stuffPerFloor.get(floor).stream().filter(p -> p.v1 == type).map(Tuple2::v2).sorted().toList();
             List<Integer> ids = new ArrayList<>();
             for (String elementName : elementNames) {
                 if (!nameToIdMap.containsKey(elementName)) {

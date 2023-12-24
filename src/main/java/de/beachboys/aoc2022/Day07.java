@@ -13,7 +13,7 @@ public class Day07 extends Day {
     }
     public Object part2(List<String> input) {
         List<Directory> allDirectories = parseFilesystem(input);
-        long neededSpace = allDirectories.get(0).getSize() - 40000000;
+        long neededSpace = allDirectories.getFirst().getSize() - 40000000;
         return allDirectories.stream().map(Directory::getSize).filter(size -> size >= neededSpace).min(Long::compareTo).orElseThrow();
     }
 
@@ -50,10 +50,10 @@ public class Day07 extends Day {
 
     private static class Directory {
 
-        String name;
-        Directory parent;
-        List<Directory> dirs = new ArrayList<>();
-        List<File> files = new ArrayList<>();
+        final String name;
+        final Directory parent;
+        final List<Directory> dirs = new ArrayList<>();
+        final List<File> files = new ArrayList<>();
         long size;
 
         Directory(String name, Directory parent) {
@@ -77,8 +77,8 @@ public class Day07 extends Day {
 
     private static class File {
 
-        String name;
-        int size;
+        final String name;
+        final int size;
 
         File(String name, int size) {
             this.name = name;

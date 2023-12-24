@@ -18,7 +18,7 @@ public class Day13 extends Day {
 
     public Object part1(List<String> input) {
         parseInput(input);
-        return foldPaper(dots, foldInstructions.get(0)).size();
+        return foldPaper(dots, foldInstructions.getFirst()).size();
     }
 
     public Object part2(List<String> input) {

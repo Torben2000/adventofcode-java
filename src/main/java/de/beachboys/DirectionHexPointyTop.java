@@ -21,28 +21,15 @@ public enum DirectionHexPointyTop {
     }
 
     public static DirectionHexPointyTop fromString(String directionString) {
-        switch (directionString.toLowerCase()) {
-            case "e":
-            case "east":
-                return DirectionHexPointyTop.EAST;
-            case "ne":
-            case "northeast":
-                return DirectionHexPointyTop.NORTHEAST;
-            case "se":
-            case "southeast":
-                return DirectionHexPointyTop.SOUTHEAST;
-            case "w":
-            case "west":
-                return DirectionHexPointyTop.WEST;
-            case "sw":
-            case "southwest":
-                return DirectionHexPointyTop.SOUTHWEST;
-            case "nw":
-            case "northwest":
-                return DirectionHexPointyTop.NORTHWEST;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (directionString.toLowerCase()) {
+            case "e", "east" -> DirectionHexPointyTop.EAST;
+            case "ne", "northeast" -> DirectionHexPointyTop.NORTHEAST;
+            case "se", "southeast" -> DirectionHexPointyTop.SOUTHEAST;
+            case "w", "west" -> DirectionHexPointyTop.WEST;
+            case "sw", "southwest" -> DirectionHexPointyTop.SOUTHWEST;
+            case "nw", "northwest" -> DirectionHexPointyTop.NORTHWEST;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     public Tuple3<Integer, Integer, Integer> move(Tuple3<Integer, Integer, Integer> currentPosition, int distance) {
@@ -57,57 +44,36 @@ public enum DirectionHexPointyTop {
     }
 
     public DirectionHexPointyTop turnLeft() {
-        switch (this) {
-            case NORTHWEST:
-                return WEST;
-            case WEST:
-                return SOUTHWEST;
-            case SOUTHWEST:
-                return SOUTHEAST;
-            case SOUTHEAST:
-                return EAST;
-            case EAST:
-                return NORTHEAST;
-            case NORTHEAST:
-                return NORTHWEST;
-        }
-        throw new IllegalStateException();
+        return switch (this) {
+            case NORTHWEST -> WEST;
+            case WEST -> SOUTHWEST;
+            case SOUTHWEST -> SOUTHEAST;
+            case SOUTHEAST -> EAST;
+            case EAST -> NORTHEAST;
+            case NORTHEAST -> NORTHWEST;
+        };
     }
 
     public DirectionHexPointyTop turnRight() {
-        switch (this) {
-            case NORTHWEST:
-                return NORTHEAST;
-            case WEST:
-                return NORTHWEST;
-            case SOUTHWEST:
-                return WEST;
-            case SOUTHEAST:
-                return SOUTHWEST;
-            case EAST:
-                return SOUTHEAST;
-            case NORTHEAST:
-                return EAST;
-        }
-        throw new IllegalStateException();
+        return switch (this) {
+            case NORTHWEST -> NORTHEAST;
+            case WEST -> NORTHWEST;
+            case SOUTHWEST -> WEST;
+            case SOUTHEAST -> SOUTHWEST;
+            case EAST -> SOUTHEAST;
+            case NORTHEAST -> EAST;
+        };
     }
 
     public DirectionHexPointyTop getOpposite() {
-        switch (this) {
-            case WEST:
-                return EAST;
-            case NORTHWEST:
-                return SOUTHEAST;
-            case SOUTHWEST:
-                return NORTHEAST;
-            case EAST:
-                return WEST;
-            case SOUTHEAST:
-                return NORTHWEST;
-            case NORTHEAST:
-                return SOUTHWEST;
-        }
-        throw new IllegalStateException();
+        return switch (this) {
+            case WEST -> EAST;
+            case NORTHWEST -> SOUTHEAST;
+            case SOUTHWEST -> NORTHEAST;
+            case EAST -> WEST;
+            case SOUTHEAST -> NORTHWEST;
+            case NORTHEAST -> SOUTHWEST;
+        };
     }
 
     public static Set<Tuple3<Integer, Integer, Integer>> getDirectNeighbors(Tuple3<Integer, Integer, Integer> position) {

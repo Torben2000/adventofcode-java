@@ -77,7 +77,7 @@ public class Day19 extends Day {
     }
 
     private void initComputer(List<String> input) {
-        program = Util.parseLongCsv(input.get(0));
+        program = Util.parseLongCsv(input.getFirst());
     }
 
     private IOHelper buildCustomIo() {

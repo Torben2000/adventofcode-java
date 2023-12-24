@@ -43,7 +43,7 @@ public class Day11 extends Day {
     }
 
     private void fillSummedAreaTable(List<String> input) {
-        int serialNumber = Integer.parseInt(input.get(0));
+        int serialNumber = Integer.parseInt(input.getFirst());
         summedAreaTable[0][0] = 0;
         for (int i = 1; i <= 300; i++) {
             summedAreaTable[0][i] = 0;

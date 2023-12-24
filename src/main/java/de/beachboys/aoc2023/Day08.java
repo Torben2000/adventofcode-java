@@ -13,13 +13,13 @@ import java.util.Map;
 public class Day08 extends Day {
 
     public Object part1(List<String> input) {
-        char[] instructions = input.get(0).toCharArray();
+        char[] instructions = input.getFirst().toCharArray();
         Map<String, Tuple2<String, String>> networkMap = getNetworkMap(input);
         return runLogic(List.of("AAA"), networkMap, instructions);
     }
 
     public Object part2(List<String> input) {
-        char[] instructions = input.get(0).toCharArray();
+        char[] instructions = input.getFirst().toCharArray();
         Map<String, Tuple2<String, String>> networkMap = getNetworkMap(input);
         List<String> currentNodes = new ArrayList<>();
         for (String node : networkMap.keySet()) {

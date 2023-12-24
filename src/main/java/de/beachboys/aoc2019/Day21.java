@@ -46,7 +46,7 @@ public class Day21 extends Day {
     }
 
     private int getDamage(List<String> input, String programCode) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         this.inputCharacters = (programCode + "\n").chars().boxed().collect(Collectors.toList());
         runComputer(list);
         io.logDebug(Util.paintMap(Util.buildImageMap(imageString)));

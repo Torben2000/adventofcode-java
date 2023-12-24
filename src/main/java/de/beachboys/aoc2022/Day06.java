@@ -16,7 +16,7 @@ public class Day06 extends Day {
     }
 
     private static Object runLogic(List<String> input, int markerLength) {
-        String datastream = input.get(0);
+        String datastream = input.getFirst();
         for (int i = 0; i < datastream.length() - markerLength; i++) {
             String possibleMarker = datastream.substring(i, i + markerLength);
             Set<Integer> set = possibleMarker.chars().boxed().collect(Collectors.toSet());

@@ -25,7 +25,7 @@ public class Day06 extends Day {
     }
 
     private void runLogic(List<String> input) {
-        memory = Util.parseToIntList(input.get(0), "\t");
+        memory = Util.parseToIntList(input.getFirst(), "\t");
         while (!seenMemoryStates.containsKey(getMemoryRepresentation())) {
             seenMemoryStates.put(getMemoryRepresentation(), steps);
             steps++;

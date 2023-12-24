@@ -48,7 +48,7 @@ public class Day11 extends Day {
             }
 
         };
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         computer.runLogic(new ArrayList<>(list), io);
         return colorMap.size();
 

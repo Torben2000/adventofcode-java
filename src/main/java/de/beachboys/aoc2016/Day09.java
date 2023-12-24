@@ -13,12 +13,12 @@ public class Day09 extends Day {
 
     public Object part1(List<String> input) {
         getRepeatedStringLength = repeatedString -> (long) repeatedString.length();
-        return getLength(input.get(0));
+        return getLength(input.getFirst());
     }
 
     public Object part2(List<String> input) {
         getRepeatedStringLength = this::getLength;
-        return getLength(input.get(0));
+        return getLength(input.getFirst());
     }
 
     private long getLength(String compressed) {

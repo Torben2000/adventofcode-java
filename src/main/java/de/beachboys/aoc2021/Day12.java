@@ -32,8 +32,8 @@ public class Day12 extends Day {
     private Set<List<String>> findWaysToEnd(List<String> pathToCave, String cave, boolean allowSecondVisitOfOneSmallCave, Set<String> visitedSmallCaves) {
         Set<List<String>> waysToEnd = new HashSet<>();
         if ("end".equals(cave)) {
-            waysToEnd.addAll(List.of(pathToCave));
-        } else if (pathToCave.size() == 0 || !"start".equals(cave)) {
+            waysToEnd.add(pathToCave);
+        } else if (pathToCave.isEmpty() || !"start".equals(cave)) {
 
             boolean allowSecondVisitOfOneSmallCaveNew = allowSecondVisitOfOneSmallCave;
             Set<String> visitedSmallCavesInclCurrent = new HashSet<>(visitedSmallCaves);

@@ -41,7 +41,7 @@ public class Day03 extends Day {
     }
 
     private void runLogic(List<String> input, IntSupplier getCurrentSquareId, boolean stopLoopIfCurrentSquareIdEqualsTargetSquareId) {
-        int targetSquareId = Integer.parseInt(input.get(0));
+        int targetSquareId = Integer.parseInt(input.getFirst());
         squares.put(currentPosition, currentSquareId);
         while (currentSquareId < targetSquareId || !stopLoopIfCurrentSquareIdEqualsTargetSquareId && currentSquareId == targetSquareId) {
             Tuple2<Integer, Integer> turnedPosition = currentDirection.turnLeft().move(currentPosition, 1);

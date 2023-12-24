@@ -33,7 +33,7 @@ public class Day15 extends Day {
     }
 
     private void parseInputToRiskMapAndGoal(List<String> input, int mapRepetitions) {
-        int inputWidth = input.get(0).length();
+        int inputWidth = input.getFirst().length();
         int inputHeight = input.size();
         riskMap.clear();
         Map<Tuple2<Integer, Integer>, String> tempMap = Util.buildImageMap(input);

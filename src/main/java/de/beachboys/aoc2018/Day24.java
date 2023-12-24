@@ -119,14 +119,14 @@ public class Day24 extends Day {
     }
 
     private static class Group {
-        GroupType type;
+        final GroupType type;
         long units;
-        long hitPoints;
-        long damage;
-        long initiative;
-        String attack;
-        List<String> immunities;
-        List<String> weaknesses;
+        final long hitPoints;
+        final long damage;
+        final long initiative;
+        final String attack;
+        final List<String> immunities;
+        final List<String> weaknesses;
 
         public Group(GroupType type, long units, long hitPoints, List<String> immunities, List<String> weaknesses, long damage, String attack, long initiative) {
             this.type = type;

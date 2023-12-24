@@ -56,7 +56,7 @@ public class Day20 extends Day {
     private String buildNavRegexWithoutParentheses(List<String> input) {
         replacementCounter = 0;
         replacementMap.clear();
-        return replaceParentheses(input.get(0).substring(1, input.get(0).length() - 1));
+        return replaceParentheses(input.getFirst().substring(1, input.getFirst().length() - 1));
     }
 
     private String replaceParentheses(String input) {
@@ -132,13 +132,6 @@ public class Day20 extends Day {
         return alg.getPaths(startingPosition.toString());
     }
 
-    private static class GraphBuilderQueueElement {
-        private final Tuple2<Integer, Integer> pos;
-        private final String navRegex;
+    private record GraphBuilderQueueElement(Tuple2<Integer, Integer> pos, String navRegex) {}
 
-        public GraphBuilderQueueElement(Tuple2<Integer, Integer> pos, String navRegex) {
-            this.pos = pos;
-            this.navRegex = navRegex;
-        }
-    }
 }

@@ -13,7 +13,7 @@ public class Day14 extends Day {
 
 
     public Object part1(List<String> input) {
-        int numberOfRecipes = Integer.parseInt(input.get(0));
+        int numberOfRecipes = Integer.parseInt(input.getFirst());
 
         runLogic(() -> recipeScores.size() < numberOfRecipes + 10);
 
@@ -25,7 +25,7 @@ public class Day14 extends Day {
     }
 
     public Object part2(List<String> input) {
-        String scoreSequence = input.get(0);
+        String scoreSequence = input.getFirst();
 
         runLogic(() -> !recipeScoreString.substring(Math.max(0, recipeScoreString.length() - scoreSequence.length() - 1)).contains(scoreSequence));
 

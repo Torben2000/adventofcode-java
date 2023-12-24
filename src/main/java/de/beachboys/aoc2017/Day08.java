@@ -46,21 +46,15 @@ public class Day08 extends Day {
 
     private boolean isComparisonTrue(String comparisonRegister, String comparisonOperator, int comparisonValue) {
         int registerValue = registers.getOrDefault(comparisonRegister, 0);
-        switch (comparisonOperator) {
-            case "==":
-                return registerValue == comparisonValue;
-            case "!=":
-                return registerValue != comparisonValue;
-            case ">":
-                return registerValue > comparisonValue;
-            case "<":
-                return registerValue < comparisonValue;
-            case ">=":
-                return registerValue >= comparisonValue;
-            case "<=":
-                return registerValue <= comparisonValue;
-        }
-        throw new IllegalArgumentException();
+        return switch (comparisonOperator) {
+            case "==" -> registerValue == comparisonValue;
+            case "!=" -> registerValue != comparisonValue;
+            case ">" -> registerValue > comparisonValue;
+            case "<" -> registerValue < comparisonValue;
+            case ">=" -> registerValue >= comparisonValue;
+            case "<=" -> registerValue <= comparisonValue;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
 }

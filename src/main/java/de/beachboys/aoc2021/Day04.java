@@ -3,13 +3,15 @@ package de.beachboys.aoc2021;
 import de.beachboys.Day;
 import de.beachboys.Util;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Day04 extends Day {
 
     public Object part1(List<String> input) {
-        List<Integer> drawn = Util.parseIntCsv(input.get(0));
+        List<Integer> drawn = Util.parseIntCsv(input.getFirst());
         List<Board> boards = parseBoards(input);
 
         Board winner = null;
@@ -28,7 +30,7 @@ public class Day04 extends Day {
     }
 
     public Object part2(List<String> input) {
-        List<Integer> drawn = Util.parseIntCsv(input.get(0));
+        List<Integer> drawn = Util.parseIntCsv(input.getFirst());
         List<Board> boards = parseBoards(input);
 
         Board lastWinner = null;
@@ -42,7 +44,7 @@ public class Day04 extends Day {
             boards.removeAll(boardsThatWon);
 
             if (boards.size() == 1) {
-                lastWinner = boards.get(0);
+                lastWinner = boards.getFirst();
             }
             if (boards.isEmpty() && lastWinner != null) {
                 return lastWinner.score() * draw;
@@ -63,7 +65,7 @@ public class Day04 extends Day {
                 board = new Board();
                 currentRow = 0;
             } else {
-                List<String> numbers = Util.parseToList(line, " ").stream().filter(x -> !x.isBlank()).collect(Collectors.toList());
+                List<String> numbers = Util.parseToList(line, " ").stream().filter(x -> !x.isBlank()).toList();
                 for (int j = 0; j < 5; j++) {
                     int val = Integer.parseInt(numbers.get(j));
                     board.cols.get(j).add(val);
@@ -78,8 +80,8 @@ public class Day04 extends Day {
 
     private static class Board {
 
-        List<Set<Integer>> rows = new ArrayList<>();
-        List<Set<Integer>> cols = new ArrayList<>();
+        final List<Set<Integer>> rows = new ArrayList<>();
+        final List<Set<Integer>> cols = new ArrayList<>();
 
         public Board() {
             for (int i = 0; i < 5; i++) {

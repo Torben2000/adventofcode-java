@@ -8,7 +8,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day15 extends Day {
 
@@ -31,7 +30,7 @@ public class Day15 extends Day {
 
         for (int y = 0; y <= max; y++) {
             List<Tuple2<Integer, Integer>> blockedSpacesByRow = blockedSpaces.get(y);
-            blockedSpacesByRow = blockedSpacesByRow.stream().sorted(Comparator.comparingInt(Tuple2::v1)).collect(Collectors.toList());
+            blockedSpacesByRow = blockedSpacesByRow.stream().sorted(Comparator.comparingInt(Tuple2::v1)).toList();
             int x = 0;
             for (Tuple2<Integer, Integer> pair : blockedSpacesByRow) {
                 if (pair.v1 > x) {

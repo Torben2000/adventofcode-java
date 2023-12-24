@@ -27,7 +27,7 @@ public class Day02 extends Day {
 
     public Object part2(List<String> input) {
         Map<Integer, Set<String>> boxIdsWithMissingLetter = new HashMap<>();
-        for (int i = 0; i < input.get(0).length(); i++) {
+        for (int i = 0; i < input.getFirst().length(); i++) {
             boxIdsWithMissingLetter.put(i, new HashSet<>());
         }
         for (String line : input) {

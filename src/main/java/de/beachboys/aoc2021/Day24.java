@@ -134,18 +134,13 @@ public class Day24 extends Day {
     }
 
     int getIndex(char c) {
-        switch (c) {
-            case 'w':
-                return 0;
-            case 'x':
-                return 1;
-            case 'y':
-                return 2;
-            case 'z':
-                return 3;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (c) {
+            case 'w' -> 0;
+            case 'x' -> 1;
+            case 'y' -> 2;
+            case 'z' -> 3;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
 }

@@ -11,7 +11,7 @@ public class Day19 extends Day {
     public Object part1(List<String> input) {
         Device device = new Device(input);
         device.runProgram(programLine -> Optional.empty());
-        return device.registers.get(0);
+        return device.registers.getFirst();
     }
 
     public Object part2(List<String> input) {

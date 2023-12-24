@@ -32,8 +32,8 @@ public class Day20 extends Day {
             }
             list.add(item);
         }
-        list.get(0).prev = prev;
-        prev.next = list.get(0);
+        list.getFirst().prev = prev;
+        prev.next = list.getFirst();
         if (zeroItem == null) {
             throw new IllegalArgumentException();
         }

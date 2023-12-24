@@ -8,11 +8,11 @@ import java.util.function.Consumer;
 public class Day16 extends Day {
 
     public Object part1(List<String> input) {
-        return calculateResult(input.get(0), 0);
+        return calculateResult(input.getFirst(), 0);
     }
 
     public Object part2(List<String> input) {
-        String numbers = input.get(0).repeat(10000);
+        String numbers = input.getFirst().repeat(10000);
         int offset = Integer.parseInt(numbers.substring(0, 7));
         return calculateResult(numbers, offset);
     }
@@ -48,16 +48,12 @@ public class Day16 extends Day {
     }
 
     private int getFactor(int i, int j) {
-        switch (((((j + 1) / (i + 1)) + 1) % 4)) {
-            case 0:
-                return -1;
-            case 1:
-            case 3:
-                return 0;
-            case 2:
-                return 1;
-        }
-        throw new IllegalArgumentException();
+        return switch (((((j + 1) / (i + 1)) + 1) % 4)) {
+            case 0 -> -1;
+            case 1, 3 -> 0;
+            case 2 -> 1;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     private void recalculateDigitsFastButOnlyCorrectForSecondHalf(int[] digits) {

@@ -29,7 +29,7 @@ public class Day17 extends Day {
     }
 
     private String runLogic(List<String> input, Predicate<String> handleMovementValueAndDecideIfResult) {
-        String prefix = input.get(0);
+        String prefix = input.getFirst();
         MessageDigest md5 = getMd5MessageDigest();
         Map<Direction, String> movementMap = Map.of(Direction.NORTH, "U", Direction.SOUTH, "D", Direction.WEST, "L", Direction.EAST, "R");
         Deque<Tuple2<Tuple2<Integer, Integer>, String>> queue = new LinkedList<>();

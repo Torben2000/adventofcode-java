@@ -130,12 +130,12 @@ public class Day22 extends Day {
 
     private static class Cuboid {
 
-        int minX;
-        int maxX;
-        int minY;
-        int maxY;
-        int minZ;
-        int maxZ;
+        final int minX;
+        final int maxX;
+        final int minY;
+        final int maxY;
+        final int minZ;
+        final int maxZ;
 
         public Cuboid(int minX, int maxX, int minY, int maxY, int minZ, int maxZ) {
             this.minX = minX;

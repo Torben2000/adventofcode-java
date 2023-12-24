@@ -36,7 +36,7 @@ public class Day16 extends Day {
 
     private Tuple2<Integer, Long> runLogic(List<String> input) {
         versionSum = 0;
-        String bits = parseBitsFromHex(input.get(0));
+        String bits = parseBitsFromHex(input.getFirst());
         return parsePacket(bits, 0);
     }
 
@@ -101,26 +101,17 @@ public class Day16 extends Day {
     }
 
     private long calculatePacketValue(int packetType, List<Long> values) {
-        switch (packetType) {
-            case 0:
-                return values.stream().reduce(0L, Long::sum);
-            case 1:
-                return values.stream().reduce(1L, (l1, l2) -> l1 * l2);
-            case 2:
-                return values.stream().reduce(Long.MAX_VALUE, Math::min);
-            case 3:
-                return values.stream().reduce(Long.MIN_VALUE, Math::max);
-            case 4:
-                return values.stream().reduce(0L, (l1, l2) -> l1 * 16 + l2);
-            case 5:
-                return values.get(0) > values.get(1) ? 1 : 0;
-            case 6:
-                return values.get(0) < values.get(1) ? 1 : 0;
-            case 7:
-                return values.get(0).equals(values.get(1)) ? 1 : 0;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (packetType) {
+            case 0 -> values.stream().reduce(0L, Long::sum);
+            case 1 -> values.stream().reduce(1L, (l1, l2) -> l1 * l2);
+            case 2 -> values.stream().reduce(Long.MAX_VALUE, Math::min);
+            case 3 -> values.stream().reduce(Long.MIN_VALUE, Math::max);
+            case 4 -> values.stream().reduce(0L, (l1, l2) -> l1 * 16 + l2);
+            case 5 -> values.get(0) > values.get(1) ? 1 : 0;
+            case 6 -> values.get(0) < values.get(1) ? 1 : 0;
+            case 7 -> values.get(0).equals(values.get(1)) ? 1 : 0;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     private String parseBitsFromHex(String input) {

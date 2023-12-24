@@ -8,7 +8,7 @@ public class Day17 extends Day {
 
     private static class Element {
         Element next = this;
-        int value;
+        final int value;
 
         Element(int value) {
             this.value = value;
@@ -17,7 +17,7 @@ public class Day17 extends Day {
 
 
     public Object part1(List<String> input) {
-        int stepSize = Integer.parseInt(input.get(0));
+        int stepSize = Integer.parseInt(input.getFirst());
         Element currentElement = new Element(0);
         for (int i = 1; i <= 2017; i++) {
             int neededSteps = stepSize % i;
@@ -33,7 +33,7 @@ public class Day17 extends Day {
     }
 
     public Object part2(List<String> input) {
-        int stepSize = Integer.parseInt(input.get(0));
+        int stepSize = Integer.parseInt(input.getFirst());
         int currentReturnValue = 0;
         int currentIndex = 0;
         for (int i = 1; i <= 50000000; i++) {

@@ -22,7 +22,7 @@ public class Day16 extends Day {
     }
 
     private String buildFileContent(List<String> input, int fileLength) {
-        StringBuilder fileContent = new StringBuilder(input.get(0));
+        StringBuilder fileContent = new StringBuilder(input.getFirst());
         while(fileContent.length() < fileLength) {
             String b = new StringBuilder(
                     fileContent.toString()

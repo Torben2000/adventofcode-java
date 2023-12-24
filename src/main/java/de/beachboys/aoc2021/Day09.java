@@ -35,7 +35,7 @@ public class Day09 extends Day {
         Map<Tuple2<Integer, Integer>, String> tempMap = Util.buildImageMap(input);
         tempMap.forEach((k, v) -> map.put(k, Integer.valueOf(v)));
 
-        int maxX = input.get(0).length();
+        int maxX = input.getFirst().length();
         int maxY = input.size();
         Set<Tuple2<Integer, Integer>> lowPoints = new HashSet<>();
 

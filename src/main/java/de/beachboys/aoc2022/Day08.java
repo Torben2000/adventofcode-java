@@ -21,7 +21,7 @@ public class Day08 extends Day {
 
     private Tuple2<Integer, Integer> getVisibleTreesAndMaxScenicScore(List<String> input) {
         Map<Tuple2<Integer, Integer>, String> map = Util.buildImageMap(input);
-        int maxX = input.get(0).length() - 1;
+        int maxX = input.getFirst().length() - 1;
         int maxY = input.size() - 1;
         int maxScenicScore = 0;
         int visibleTrees = 2 * maxX + 2 * maxY;

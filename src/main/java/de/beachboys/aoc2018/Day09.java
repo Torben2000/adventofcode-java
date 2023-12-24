@@ -71,7 +71,7 @@ public class Day09 extends Day {
 
     private void parseInput(List<String> input) {
         Pattern p = Pattern.compile("([0-9]+) players; last marble is worth ([0-9]+) points");
-        Matcher m = p.matcher(input.get(0));
+        Matcher m = p.matcher(input.getFirst());
         if (m.matches()) {
             numOfPlayers = Integer.parseInt(m.group(1));
             numOfMarbles = Integer.parseInt(m.group(2));

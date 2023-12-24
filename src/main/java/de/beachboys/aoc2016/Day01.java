@@ -16,7 +16,7 @@ public class Day01 extends Day {
         Tuple2<Integer, Integer> currentPosition = Tuple.tuple(0, 0);
         Direction currentDir = Direction.NORTH;
 
-        for (String command : Util.parseToList(input.get(0), ", ")) {
+        for (String command : Util.parseToList(input.getFirst(), ", ")) {
             String turnCommand = command.substring(0, 1);
             currentDir = currentDir.turn("L".equals(turnCommand));
             int distance = Integer.parseInt(command.substring(1));
@@ -31,7 +31,7 @@ public class Day01 extends Day {
         Tuple2<Integer, Integer> currentPosition = Tuple.tuple(0, 0);
         Direction currentDir = Direction.NORTH;
 
-        for (String command : Util.parseToList(input.get(0), ", ")) {
+        for (String command : Util.parseToList(input.getFirst(), ", ")) {
             String turnCommand = command.substring(0, 1);
             currentDir = currentDir.turn("L".equals(turnCommand));
             int distance = Integer.parseInt(command.substring(1));

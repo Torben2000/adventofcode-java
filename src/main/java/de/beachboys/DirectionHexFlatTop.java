@@ -21,28 +21,15 @@ public enum DirectionHexFlatTop {
     }
 
     public static DirectionHexFlatTop fromString(String directionString) {
-        switch (directionString.toLowerCase()) {
-            case "n":
-            case "north":
-                return DirectionHexFlatTop.NORTH;
-            case "ne":
-            case "northeast":
-                return DirectionHexFlatTop.NORTHEAST;
-            case "se":
-            case "southeast":
-                return DirectionHexFlatTop.SOUTHEAST;
-            case "s":
-            case "south":
-                return DirectionHexFlatTop.SOUTH;
-            case "sw":
-            case "southwest":
-                return DirectionHexFlatTop.SOUTHWEST;
-            case "nw":
-            case "northwest":
-                return DirectionHexFlatTop.NORTHWEST;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (directionString.toLowerCase()) {
+            case "n", "north" -> DirectionHexFlatTop.NORTH;
+            case "ne", "northeast" -> DirectionHexFlatTop.NORTHEAST;
+            case "se", "southeast" -> DirectionHexFlatTop.SOUTHEAST;
+            case "s", "south" -> DirectionHexFlatTop.SOUTH;
+            case "sw", "southwest" -> DirectionHexFlatTop.SOUTHWEST;
+            case "nw", "northwest" -> DirectionHexFlatTop.NORTHWEST;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     public Tuple3<Integer, Integer, Integer> move(Tuple3<Integer, Integer, Integer> currentPosition, int distance) {
@@ -57,57 +44,36 @@ public enum DirectionHexFlatTop {
     }
 
     public DirectionHexFlatTop turnLeft() {
-        switch (this) {
-            case NORTH:
-                return NORTHWEST;
-            case NORTHWEST:
-                return SOUTHWEST;
-            case SOUTHWEST:
-                return SOUTH;
-            case SOUTH:
-                return SOUTHEAST;
-            case SOUTHEAST:
-                return NORTHEAST;
-            case NORTHEAST:
-                return NORTH;
-        }
-        throw new IllegalStateException();
+        return switch (this) {
+            case NORTH -> NORTHWEST;
+            case NORTHWEST -> SOUTHWEST;
+            case SOUTHWEST -> SOUTH;
+            case SOUTH -> SOUTHEAST;
+            case SOUTHEAST -> NORTHEAST;
+            case NORTHEAST -> NORTH;
+        };
     }
 
     public DirectionHexFlatTop turnRight() {
-        switch (this) {
-            case NORTH:
-                return NORTHEAST;
-            case NORTHWEST:
-                return NORTH;
-            case SOUTHWEST:
-                return NORTHWEST;
-            case SOUTH:
-                return SOUTHWEST;
-            case SOUTHEAST:
-                return SOUTH;
-            case NORTHEAST:
-                return SOUTHEAST;
-        }
-        throw new IllegalStateException();
+        return switch (this) {
+            case NORTH -> NORTHEAST;
+            case NORTHWEST -> NORTH;
+            case SOUTHWEST -> NORTHWEST;
+            case SOUTH -> SOUTHWEST;
+            case SOUTHEAST -> SOUTH;
+            case NORTHEAST -> SOUTHEAST;
+        };
     }
 
     public DirectionHexFlatTop getOpposite() {
-        switch (this) {
-            case NORTH:
-                return SOUTH;
-            case NORTHWEST:
-                return SOUTHEAST;
-            case SOUTHWEST:
-                return NORTHEAST;
-            case SOUTH:
-                return NORTH;
-            case SOUTHEAST:
-                return NORTHWEST;
-            case NORTHEAST:
-                return SOUTHWEST;
-        }
-        throw new IllegalStateException();
+        return switch (this) {
+            case NORTH -> SOUTH;
+            case NORTHWEST -> SOUTHEAST;
+            case SOUTHWEST -> NORTHEAST;
+            case SOUTH -> NORTH;
+            case SOUTHEAST -> NORTHWEST;
+            case NORTHEAST -> SOUTHWEST;
+        };
     }
 
     public static Set<Tuple3<Integer, Integer, Integer>> getDirectNeighbors(Tuple3<Integer, Integer, Integer> position) {

@@ -70,13 +70,6 @@ public class Day14 extends Day {
         String[] splitChemical = chemicalString.split(" ");
         return Tuple.tuple(Long.valueOf(splitChemical[0]), splitChemical[1]);
     }
-    private static class Reaction {
-        public final Tuple2<Long, String> output;
-        public final List<Tuple2<Long, String>> input;
 
-        public Reaction(List<Tuple2<Long, String>> input, Tuple2<Long, String> output) {
-            this.input = input;
-            this.output = output;
-        }
-    }
+    private record Reaction(List<Tuple2<Long, String>> input, Tuple2<Long, String> output) {}
 }

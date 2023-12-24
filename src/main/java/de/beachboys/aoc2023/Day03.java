@@ -111,10 +111,10 @@ public class Day03 extends Day {
     }
 
     private static class Number {
-        int minX;
-        int maxX;
-        int y;
-        int value;
+        final int minX;
+        final int maxX;
+        final int y;
+        final int value;
 
         public Number(int minX, int maxX, int y, int value) {
             this.minX = minX;

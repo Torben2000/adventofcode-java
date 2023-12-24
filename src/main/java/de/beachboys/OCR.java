@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OCR {
 
@@ -75,19 +76,21 @@ public class OCR {
             this.spaceWidth = spaceWidth;
             this.height = height;
 
-            List<String> mapping = Files.lines(Path.of(Objects.requireNonNull(getClass().getClassLoader().getResource("ocr/" + mappingFileName)).toURI())).collect(Collectors.toList());
-            int currentLineIndex = 0;
-            while (currentLineIndex < mapping.size()) {
-                StringBuilder characterRepresentation = new StringBuilder();
-                for (int i = 0; i < height; i++) {
-                    if (characterRepresentation.length() > 0) {
-                        characterRepresentation.append("\n");
+            try (Stream<String> f = Files.lines(Path.of(Objects.requireNonNull(getClass().getClassLoader().getResource("ocr/" + mappingFileName)).toURI()))) {
+                List<String> mapping = f.toList();
+                int currentLineIndex = 0;
+                while (currentLineIndex < mapping.size()) {
+                    StringBuilder characterRepresentation = new StringBuilder();
+                    for (int i = 0; i < height; i++) {
+                        if (!characterRepresentation.isEmpty()) {
+                            characterRepresentation.append("\n");
+                        }
+                        characterRepresentation.append(String.format("%-" + characterWidth + "s", mapping.get(currentLineIndex + i)));
                     }
-                    characterRepresentation.append(String.format("%-" + characterWidth + "s", mapping.get(currentLineIndex + i)));
+                    currentLineIndex += height;
+                    characters.put(characterRepresentation.toString(), mapping.get(currentLineIndex));
+                    currentLineIndex += 2;
                 }
-                currentLineIndex += height;
-                characters.put(characterRepresentation.toString(), mapping.get(currentLineIndex));
-                currentLineIndex += 2;
             }
         }
 

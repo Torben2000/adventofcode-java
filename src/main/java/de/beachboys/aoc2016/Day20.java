@@ -61,7 +61,7 @@ public class Day20 extends Day {
     }
 
     private void replaceRangesWithMergedRange(List<Tuple2<Long, Long>> ranges) {
-        Tuple2<Long, Long> mergedRange = ranges.get(0);
+        Tuple2<Long, Long> mergedRange = ranges.getFirst();
         for (int i = 1; i < ranges.size(); i++) {
             mergedRange = replaceRangesWithMergedRange(mergedRange, ranges.get(i));
         }

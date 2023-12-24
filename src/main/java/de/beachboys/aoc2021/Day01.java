@@ -3,12 +3,11 @@ package de.beachboys.aoc2021;
 import de.beachboys.Day;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Day01 extends Day {
 
     public Object part1(List<String> input) {
-        List<Integer> intList = input.stream().map(Integer::valueOf).collect(Collectors.toList());
+        List<Integer> intList = input.stream().map(Integer::valueOf).toList();
 
         int counter = 0;
         int previousValue = Integer.MAX_VALUE;
@@ -22,7 +21,7 @@ public class Day01 extends Day {
     }
 
     public Object part2(List<String> input) {
-         List<Integer> intList = input.stream().map(Integer::valueOf).collect(Collectors.toList());
+         List<Integer> intList = input.stream().map(Integer::valueOf).toList();
 
         int counter = 0;
         int previousValue = Integer.MAX_VALUE;

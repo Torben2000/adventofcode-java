@@ -195,8 +195,8 @@ public class Day23 extends Day {
 
     private static class State {
 
-        Map<Integer, Integer> map;
-        Set<Piece> pieces;
+        final Map<Integer, Integer> map;
+        final Set<Piece> pieces;
         int cost;
 
         public State(Map<Integer, Integer> map, Set<Piece> pieces, int cost) {
@@ -223,8 +223,8 @@ public class Day23 extends Day {
     }
 
     private static final class Piece {
-        int cost;
-        int position;
+        final int cost;
+        final int position;
         boolean targetPositionReached = false;
 
         public Piece(int cost, int position) {

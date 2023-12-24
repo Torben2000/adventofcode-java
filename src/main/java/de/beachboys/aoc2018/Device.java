@@ -19,7 +19,7 @@ public class Device {
 
     public Device(List<String> programCode) {
         buildOperationMap();
-        ip = Integer.parseInt(programCode.get(0).substring(4));
+        ip = Integer.parseInt(programCode.getFirst().substring(4));
         program.clear();
         Pattern operationPattern = Pattern.compile("([a-z]+) ([0-9]+) ([0-9]+) ([0-9]+)");
         for (String line : programCode.subList(1, programCode.size())) {

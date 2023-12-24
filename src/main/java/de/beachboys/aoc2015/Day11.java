@@ -7,11 +7,11 @@ import java.util.List;
 public class Day11 extends Day {
 
     public Object part1(List<String> input) {
-        return getNextValidPassword(input.get(0));
+        return getNextValidPassword(input.getFirst());
     }
 
     public Object part2(List<String> input) {
-        return getNextValidPassword(getNextValidPassword(input.get(0)));
+        return getNextValidPassword(getNextValidPassword(input.getFirst()));
     }
 
     private String getNextValidPassword(String password) {

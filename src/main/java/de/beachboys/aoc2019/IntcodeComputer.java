@@ -27,7 +27,7 @@ public class IntcodeComputer {
                 modes.add(opcode % 10);
                 opcode = opcode / 10;
             }
-            switch (modes.get(0).intValue()) {
+            switch (modes.getFirst().intValue()) {
                 case 99:
                     return -1;
                 case 1:

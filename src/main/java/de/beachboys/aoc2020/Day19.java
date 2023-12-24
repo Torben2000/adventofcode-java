@@ -71,10 +71,10 @@ public class Day19 extends Day {
             if (referencedPatternsAsString.length > possibleMatch.length()) {
                 break;
             }
-            List<Integer> referencedPatterns = Arrays.stream(referencedPatternsAsString).map(Integer::valueOf).collect(Collectors.toList());
+            List<Integer> referencedPatterns = Arrays.stream(referencedPatternsAsString).map(Integer::valueOf).toList();
             switch (referencedPatternsAsString.length) {
                 case 1:
-                    boolean isMatchCase1 = matchesPattern(referencedPatterns.get(0), possibleMatch);
+                    boolean isMatchCase1 = matchesPattern(referencedPatterns.getFirst(), possibleMatch);
                     if (isMatchCase1) {
                         returnValue = true;
                         break patternLoop;

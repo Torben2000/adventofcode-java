@@ -10,17 +10,7 @@ import java.util.regex.Pattern;
 
 public class Day15 extends Day {
 
-    private static class Disc {
-        final int index;
-        final int size;
-        final int position;
-
-        public Disc(int index, int size, int position) {
-            this.index = index;
-            this.size = size;
-            this.position = position;
-        }
-    }
+    private record Disc(int index, int size, int position) {}
 
     public Object part1(List<String> input) {
         List<Disc> discs = parseDiscs(input);

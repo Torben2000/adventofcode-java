@@ -45,7 +45,7 @@ public class Day23 extends Day {
     }
 
     private void initAndStartNics(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         for (int i = 0; i < 50; i++) {
             IntcodeComputer nic = new IntcodeComputer();
             nics.put(i, nic);

@@ -19,7 +19,7 @@ public class Day18 extends Day {
 
     private long runLogic(List<String> input, int defaultNumberOfLines) {
         int numberOfLines = Util.getIntValueFromUser("Number of lines", defaultNumberOfLines, io);
-        String firstLine = input.get(0);
+        String firstLine = input.getFirst();
         int width = firstLine.length();
         Set<Integer> safeTilesNextLine = new HashSet<>();
         for (int i = 0; i < width; i++) {

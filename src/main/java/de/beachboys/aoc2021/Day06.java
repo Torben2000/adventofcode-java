@@ -18,7 +18,7 @@ public class Day06 extends Day {
     }
 
     private long runLogic(List<String> input, int days) {
-        List<Integer> initialState = Util.parseIntCsv(input.get(0));
+        List<Integer> initialState = Util.parseIntCsv(input.getFirst());
         Map<Integer, Long> timerToLanternFishCount = new HashMap<>();
         for (Integer i : initialState) {
             timerToLanternFishCount.put(i, timerToLanternFishCount.getOrDefault(i, 0L) + 1);

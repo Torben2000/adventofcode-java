@@ -49,13 +49,13 @@ public class Day08 extends Day {
     }
 
     public Object part1(List<String> input) {
-        List<Integer> data = Util.parseToIntList(input.get(0), " ");
+        List<Integer> data = Util.parseToIntList(input.getFirst(), " ");
         Node root = new Node(data, 0);
         return root.getMetaDataSumPart1();
     }
 
     public Object part2(List<String> input) {
-        List<Integer> data = Util.parseToIntList(input.get(0), " ");
+        List<Integer> data = Util.parseToIntList(input.getFirst(), " ");
         Node root = new Node(data, 0);
         return root.getMetaDataSumPart2();
     }

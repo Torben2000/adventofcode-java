@@ -17,7 +17,7 @@ public class Day14 extends Day {
     }
 
     private long runLogic(List<String> input, int steps) {
-        String template = input.get(0);
+        String template = input.getFirst();
         Map<String, String> rules = parseRules(input);
 
         Map<String, Long> pairCount = new HashMap<>();

@@ -10,12 +10,12 @@ import java.util.Map;
 public class Day15 extends Day {
 
     public Object part1(List<String> input) {
-        List<Long> initialNumberList = Util.parseLongCsv(input.get(0));
+        List<Long> initialNumberList = Util.parseLongCsv(input.getFirst());
         return getLastNumberSpoken(initialNumberList, 2020);
     }
 
     public Object part2(List<String> input) {
-        List<Long> initialNumberList = Util.parseLongCsv(input.get(0));
+        List<Long> initialNumberList = Util.parseLongCsv(input.getFirst());
         return getLastNumberSpoken(initialNumberList, 30000000);
     }
 
@@ -24,7 +24,7 @@ public class Day15 extends Day {
         for (int i = 1; i < initialNumberList.size(); i++) {
             numberToLastTurn.put(initialNumberList.get(i - 1), i);
         }
-        long lastNumber = initialNumberList.get(initialNumberList.size() - 1);
+        long lastNumber = initialNumberList.getLast();
         for (int i = initialNumberList.size(); i < numberOfTurns; i++) {
             long newNumber = 0;
             if (numberToLastTurn.containsKey(lastNumber)) {

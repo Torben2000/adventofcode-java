@@ -29,7 +29,7 @@ public class Day22 extends Day {
 
     private long runLogic(List<String> input, boolean is3DCube) {
         parseMap(input, is3DCube);
-        String commandLine = input.get(input.size() - 1);
+        String commandLine = input.getLast();
         State finalState = moveOnMap(commandLine);
 
         int result = (finalState.pos.v2 + 1) * 1000;
@@ -50,7 +50,7 @@ public class Day22 extends Day {
 
     private State moveOnMap(String commandLine) {
         Tuple2<Integer, Integer> startPos = Tuple.tuple(map.keySet().stream().filter(p -> p.v2 == 0).mapToInt(Tuple2::v1).min().orElseThrow(), 0);
-        State state = new State(mapPartList.get(0), startPos, Direction.EAST);
+        State state = new State(mapPartList.getFirst(), startPos, Direction.EAST);
         int steps = 0;
         for (int i = 0; i < commandLine.length(); i++) {
             char c = commandLine.charAt(i);
@@ -186,18 +186,7 @@ public class Day22 extends Day {
     }
 
 
-    private static class State {
-        private final MapPart side;
-        private final Tuple2<Integer, Integer> pos;
-        private final Direction dir;
-
-        private State(MapPart side, Tuple2<Integer, Integer> pos, Direction dir) {
-            this.side = side;
-            this.pos = pos;
-            this.dir = dir;
-        }
-
-    }
+    private record State(MapPart side, Tuple2<Integer, Integer> pos, Direction dir) {}
 
     private static class MapPart {
 

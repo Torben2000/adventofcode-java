@@ -40,7 +40,7 @@ public class Day17 extends Day {
     private int dustAmount = 0;
 
     public Object part1(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         runComputer(list);
         imageMap = Util.buildImageMap(imageString);
         io.logDebug(Util.paintMap(imageMap, Map.of("#", "#", "^", "^", "v", "v", "<", "<", ">", ">")));
@@ -48,7 +48,7 @@ public class Day17 extends Day {
     }
 
     public Object part2(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         runComputer(list);
 
         imageMap = Util.buildImageMap(imageString);
@@ -60,7 +60,7 @@ public class Day17 extends Day {
         this.inputCharacters = (optimizedInputString + printOutput + "n\n").chars().boxed().collect(Collectors.toList());
 
         imageString = "";
-        List<Long> list2ndRun = Util.parseLongCsv(input.get(0));
+        List<Long> list2ndRun = Util.parseLongCsv(input.getFirst());
         list2ndRun.set(0, 2L);
         runComputer(list2ndRun);
 
@@ -89,7 +89,7 @@ public class Day17 extends Day {
         commands.removeIf("C"::equals);
         for (int i = 0; i< commands.size(); i = i + 2) {
             String originalMethod = method;
-            if (method.length() > 0) {
+            if (!method.isEmpty()) {
                 method += ",";
             }
             method += commands.get(i);
@@ -176,7 +176,7 @@ public class Day17 extends Day {
             currentPosition = newPosition;
             newDirection = getNewDirection(imageMap, currentDirection, currentPosition);
         }
-        if (inputString.length() > 0) {
+        if (!inputString.isEmpty()) {
             inputString.deleteCharAt(inputString.length() - 1);
         }
         return inputString.toString();
@@ -209,15 +209,10 @@ public class Day17 extends Day {
     }
 
     private Direction getNewDirection(Map<Tuple2<Integer, Integer>, String> imageMap, Direction currentDirection, Tuple2<Integer, Integer> currentPosition) {
-        switch (currentDirection) {
-            case NORTH:
-            case SOUTH:
-                return getNewDirection(imageMap, currentPosition, List.of(Direction.WEST, Direction.EAST));
-            case EAST:
-            case WEST:
-                return getNewDirection(imageMap, currentPosition, List.of(Direction.NORTH, Direction.SOUTH));
-        }
-        throw new IllegalArgumentException("Illegal current direction");
+        return switch (currentDirection) {
+            case NORTH, SOUTH -> getNewDirection(imageMap, currentPosition, List.of(Direction.WEST, Direction.EAST));
+            case EAST, WEST -> getNewDirection(imageMap, currentPosition, List.of(Direction.NORTH, Direction.SOUTH));
+        };
     }
 
     private Direction getNewDirection(Map<Tuple2<Integer, Integer>, String> imageMap, Tuple2<Integer, Integer> currentPosition, List<Direction> possibleNewDirections) {
@@ -235,17 +230,13 @@ public class Day17 extends Day {
     }
 
     private Direction getRobotDirection(String mapString) {
-        switch (mapString) {
-            case "^":
-                return Direction.NORTH;
-            case "v":
-                return Direction.SOUTH;
-            case "<":
-                return Direction.WEST;
-            case ">":
-                return Direction.EAST;
-        }
-        throw new IllegalArgumentException("Unknown robot String");
+        return switch (mapString) {
+            case "^" -> Direction.NORTH;
+            case "v" -> Direction.SOUTH;
+            case "<" -> Direction.WEST;
+            case ">" -> Direction.EAST;
+            default -> throw new IllegalArgumentException("Unknown robot String");
+        };
     }
 
 }

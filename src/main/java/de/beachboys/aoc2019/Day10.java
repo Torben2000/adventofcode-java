@@ -41,7 +41,7 @@ public class Day10 extends Day {
     }
 
     private boolean[][] buildAsteroidMap(List<String> input) {
-        boolean[][] isAsteroid = new boolean[input.get(0).length()][input.size()];
+        boolean[][] isAsteroid = new boolean[input.getFirst().length()][input.size()];
         for (int y = 0; y < input.size(); y++) {
             String currentLine = input.get(y);
             for (int x = 0; x < currentLine.length(); x++) {

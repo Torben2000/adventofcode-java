@@ -12,7 +12,7 @@ public class Day03 extends Day {
     public Object part1(List<String> input) {
         StringBuilder gammaRate = new StringBuilder();
         StringBuilder epsilonRate = new StringBuilder();
-        for (int i = 0; i < input.get(0).length(); i++) {
+        for (int i = 0; i < input.getFirst().length(); i++) {
             if (moreOrEqualOnesAtPosition(input, i)) {
                 gammaRate.append("1");
                 epsilonRate.append("0");

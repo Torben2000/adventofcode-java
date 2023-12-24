@@ -32,7 +32,7 @@ public class Day24 extends Day {
     }
 
     private void parseInput(List<String> input) {
-        maxX = input.get(0).length() - 1;
+        maxX = input.getFirst().length() - 1;
         maxY = input.size() - 1;
         modulo = (int) Util.leastCommonMultiple(maxX-1, maxY-1);
         start = Tuple.tuple(1, 0);
@@ -124,26 +124,6 @@ public class Day24 extends Day {
         return movedBlizzards;
     }
 
-    private static class State {
-        private final Tuple2<Integer, Integer> pos;
-        private final int minutes;
+    private record State(Tuple2<Integer, Integer> pos, int minutes) {}
 
-        public State(Tuple2<Integer, Integer> pos, int minutes) {
-            this.pos = pos;
-            this.minutes = minutes;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            State state = (State) o;
-            return minutes == state.minutes && Objects.equals(pos, state.pos);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(pos, minutes);
-        }
-    }
 }

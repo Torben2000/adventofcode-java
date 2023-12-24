@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class Day22 extends Day {
 
-    LinkedList<Integer> completePlayer1Deck = new LinkedList<>();
-    LinkedList<Integer> completePlayer2Deck = new LinkedList<>();
+    final LinkedList<Integer> completePlayer1Deck = new LinkedList<>();
+    final LinkedList<Integer> completePlayer2Deck = new LinkedList<>();
 
     public Object part1(List<String> input) {
         return playGameAndGetWinnerScore(input, this::isPlayerOneWinnerPart1);

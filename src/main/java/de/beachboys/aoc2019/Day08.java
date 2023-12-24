@@ -24,17 +24,12 @@ public class Day08 extends Day {
             String layerString = layers.get(i);
             Tuple3<Integer, Integer, Integer> counts = new Tuple3<>(0,0,0);
             for (int j=0; j <width*height; j++) {
-                switch (layerString.substring(j, j+1)) {
-                    case "0":
-                        counts = Tuple.tuple(counts.v1+1, counts.v2, counts.v3);
-                        break;
-                    case "1":
-                        counts = Tuple.tuple(counts.v1, counts.v2+1, counts.v3);
-                        break;
-                    case "2":
-                        counts = Tuple.tuple(counts.v1, counts.v2, counts.v3+1);
-                        break;
-                }
+                counts = switch (layerString.substring(j, j + 1)) {
+                    case "0" -> Tuple.tuple(counts.v1 + 1, counts.v2, counts.v3);
+                    case "1" -> Tuple.tuple(counts.v1, counts.v2 + 1, counts.v3);
+                    case "2" -> Tuple.tuple(counts.v1, counts.v2, counts.v3 + 1);
+                    default -> counts;
+                };
             }
             numbers.put(i, counts);
         }
@@ -52,7 +47,7 @@ public class Day08 extends Day {
     }
 
     private List<String> getLayers(List<String> input) {
-        String realInput = input.get(0);
+        String realInput = input.getFirst();
         List<String> layers = new ArrayList<>();
         while (!realInput.isEmpty()) {
             layers.add(realInput.substring(0, width*height));
@@ -65,7 +60,7 @@ public class Day08 extends Day {
         setImageDimensionsFromUserInput();
         List<String> layers = getLayers(input);
 
-        String imageString = layers.get(0);
+        String imageString = layers.getFirst();
         for (String layer : layers) {
             for (int j=0; j <width*height; j++) {
                 if (imageString.charAt(j) == '2') {

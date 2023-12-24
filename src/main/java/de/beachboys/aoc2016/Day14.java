@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Day14 extends Day {
 
@@ -48,12 +47,12 @@ public class Day14 extends Day {
     }
 
     private int runLogic(List<String> input) {
-        salt = input.get(0);
+        salt = input.getFirst();
         int index = 0;
         while (index < maxIndex) {
             handleIndex(++index);
         }
-        return found.stream().sorted().collect(Collectors.toList()).get(63);
+        return found.stream().sorted().toList().get(63);
     }
 
     private void handleIndex(int index) {
@@ -84,7 +83,7 @@ public class Day14 extends Day {
 
     private void handleFiveCharactersInRow(int index, char c) {
         List<Integer> candidateSet = candidates.get(c);
-        List<Integer> valid = candidateSet.stream().filter(l -> l >= index - 1000).collect(Collectors.toList());
+        List<Integer> valid = candidateSet.stream().filter(l -> l >= index - 1000).toList();
         found.addAll(valid);
         if (found.size() >= 64 && maxIndex == Integer.MAX_VALUE) {
             maxIndex = index;

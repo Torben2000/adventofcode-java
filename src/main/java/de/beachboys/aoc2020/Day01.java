@@ -3,12 +3,11 @@ package de.beachboys.aoc2020;
 import de.beachboys.Day;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Day01 extends Day {
 
     public Object part1(List<String> input) {
-        List<Integer> intList = input.stream().map(Integer::valueOf).collect(Collectors.toList());
+        List<Integer> intList = input.stream().map(Integer::valueOf).toList();
         for (int i = 0; i < intList.size(); i++) {
             for (int j = i + 1; j < intList.size(); j++) {
                 if (intList.get(i) + intList.get(j) == 2020) {
@@ -20,7 +19,7 @@ public class Day01 extends Day {
     }
 
     public Object part2(List<String> input) {
-        List<Integer> intList = input.stream().map(Integer::valueOf).collect(Collectors.toList());
+        List<Integer> intList = input.stream().map(Integer::valueOf).toList();
         for (int i = 0; i < intList.size(); i++) {
             for (int j = i + 1; j < intList.size(); j++) {
                 for (int k = j + 1; k < intList.size(); k++) {

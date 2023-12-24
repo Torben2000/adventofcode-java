@@ -26,19 +26,19 @@ public class Day09 extends Day {
             knots.add(Tuple.tuple(0, 0));
         }
         Set<Tuple2<Integer, Integer>> visitedPositionsOfTail = new HashSet<>();
-        visitedPositionsOfTail.add(knots.get(knots.size() - 1));
+        visitedPositionsOfTail.add(knots.getLast());
 
         for (String line : input) {
             Direction direction = Direction.fromString(line.substring(0, 1));
             int steps = Integer.parseInt(line.substring(2));
             for (int i = 0; i < steps; i++) {
-                knots.set(0, direction.move(knots.get(0), 1));
+                knots.set(0, direction.move(knots.getFirst(), 1));
 
                 for (int j = 1; j < knots.size(); j++) {
                     knots.set(j, getNewFollowingKnot(knots.get(j), knots.get(j - 1)));
                 }
 
-                visitedPositionsOfTail.add(knots.get(knots.size() - 1));
+                visitedPositionsOfTail.add(knots.getLast());
             }
         }
         return visitedPositionsOfTail.size();

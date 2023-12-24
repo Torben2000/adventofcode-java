@@ -7,7 +7,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day16 extends Day {
 
@@ -86,7 +85,7 @@ public class Day16 extends Day {
             if (m.matches()) {
                 String valve = m.group(1);
                 int flow = Integer.parseInt(m.group(2));
-                List<String> neighborValves = Arrays.stream(m.group(6).split(", ")).collect(Collectors.toList());
+                List<String> neighborValves = Arrays.stream(m.group(6).split(", ")).toList();
                 if (flow > 0) {
                     flowValues.put(valve, flow);
                 }

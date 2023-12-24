@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Day11 extends Day {
 
@@ -46,7 +45,7 @@ public class Day11 extends Day {
             }
         }
 
-        List<Monkey> sortedMonkeys = monkeys.stream().sorted(Comparator.comparingLong(Monkey::getItemCounter).reversed()).collect(Collectors.toList());
+        List<Monkey> sortedMonkeys = monkeys.stream().sorted(Comparator.comparingLong(Monkey::getItemCounter).reversed()).toList();
         return sortedMonkeys.get(0).getItemCounter() * sortedMonkeys.get(1).getItemCounter();
     }
 
@@ -86,7 +85,7 @@ public class Day11 extends Day {
     }
 
     private static class Monkey {
-        List<Long> items = new ArrayList<>();
+        final List<Long> items = new ArrayList<>();
         Function<Long, Long> operation;
         int divisorForTest;
         int targetIfTestSucceeds;

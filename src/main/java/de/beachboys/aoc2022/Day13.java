@@ -7,7 +7,6 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Day13 extends Day {
 
@@ -42,37 +41,39 @@ public class Day13 extends Day {
         allPackets.add(divider1);
         allPackets.add(divider2);
 
-        List<JSONArray> sortedPackets = allPackets.stream().sorted(this::compare).collect(Collectors.toList());
+        List<JSONArray> sortedPackets = allPackets.stream().sorted(this::compare).toList();
         return (sortedPackets.indexOf(divider1) + 1) * (sortedPackets.indexOf(divider2) + 1);
     }
 
     public int compare(Object o1, Object o2) {
-        if (o1 instanceof Integer && o2 instanceof Integer) {
-            return Integer.compare((Integer) o1, (Integer) o2);
-        } else if (o1 instanceof Integer && o2 instanceof JSONArray) {
-            JSONArray tempElement = new JSONArray(List.of(o1));
-            return compare(tempElement, o2);
-        } else if (o1 instanceof JSONArray && o2 instanceof Integer) {
-            JSONArray tempElement = new JSONArray(List.of(o2));
-            return compare(o1, tempElement);
-        } else if (o1 instanceof JSONArray && o2 instanceof JSONArray){
-            JSONArray array1 = (JSONArray) o1;
-            JSONArray array2 = (JSONArray) o2;
-            for (int i = 0; i < array1.length(); i++) {
-                if (array2.length() >= i + 1) {
-                    int c = compare(array1.get(i), array2.get(i));
-                    if (c != 0) {
-                        return c;
+        switch (o1) {
+            case Integer integer when o2 instanceof Integer -> {
+                return Integer.compare(integer, (Integer) o2);
+            }
+            case Integer ignored when o2 instanceof JSONArray -> {
+                JSONArray tempElement = new JSONArray(List.of(o1));
+                return compare(tempElement, o2);
+            }
+            case JSONArray ignored when o2 instanceof Integer -> {
+                JSONArray tempElement = new JSONArray(List.of(o2));
+                return compare(o1, tempElement);
+            }
+            case JSONArray array1 when o2 instanceof JSONArray array2 -> {
+                for (int i = 0; i < array1.length(); i++) {
+                    if (array2.length() >= i + 1) {
+                        int c = compare(array1.get(i), array2.get(i));
+                        if (c != 0) {
+                            return c;
+                        }
+                    } else {
+                        return 1;
                     }
-                } else {
-                    return 1;
+                }
+                if (array2.length() > array1.length()) {
+                    return -1;
                 }
             }
-            if (array2.length() > array1.length()) {
-                return -1;
-            }
-        } else {
-            throw new IllegalArgumentException();
+            case null, default -> throw new IllegalArgumentException();
         }
         return 0;
     }

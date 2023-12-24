@@ -30,7 +30,7 @@ public class Day13 extends Day {
     }
 
     private int runLogicAndReturnNumberOfStepsToReachTarget(List<String> input) {
-        favoriteNumber = Integer.parseInt(input.get(0));
+        favoriteNumber = Integer.parseInt(input.getFirst());
         Tuple2<Integer, Integer> start = Tuple.tuple(1, 1);
         queueNextPosition(start, 0);
         while (!positionsToCheck.isEmpty()) {

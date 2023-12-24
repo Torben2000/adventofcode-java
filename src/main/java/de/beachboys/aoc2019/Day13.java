@@ -34,7 +34,7 @@ public class Day13 extends Day {
     private Tuple2<Integer, Integer> paddlePosition;
 
     public Object part1(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
 
         runComputer(list);
 
@@ -148,7 +148,7 @@ public class Day13 extends Day {
     }
 
     public Object part2(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         list.set(0, 2L);
 
         runComputer(list);

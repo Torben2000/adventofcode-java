@@ -77,7 +77,7 @@ public class Day15 extends Day {
     private Position oxygenSystemPosition;
 
     public Object part1(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         init(0, 0);
         runComputer(list, this::handleFoundOxygenSystemPart1);
         paintMap();
@@ -85,7 +85,7 @@ public class Day15 extends Day {
     }
 
     public Object part2(List<String> input) {
-        List<Long> list = Util.parseLongCsv(input.get(0));
+        List<Long> list = Util.parseLongCsv(input.getFirst());
         init(0, 0);
         runComputer(list, this::handleFoundOxygenSystemPart2);
         paintMap();
@@ -110,18 +110,13 @@ public class Day15 extends Day {
 
             @Override
             public String getInput(String textToDisplay) {
-                switch (lastOutput) {
-                    case -1:
-                        return investigateCurrentPosition();
-                    case 0:
-                        return handleWallFound();
-                    case 1:
-                        return handleSuccessfulMove();
-                    case 2:
-                        return oxygenSystemFoundHandler.get();
-                    default:
-                        throw new IllegalStateException("Illegal system output");
-                }
+                return switch (lastOutput) {
+                    case -1 -> investigateCurrentPosition();
+                    case 0 -> handleWallFound();
+                    case 1 -> handleSuccessfulMove();
+                    case 2 -> oxygenSystemFoundHandler.get();
+                    default -> throw new IllegalStateException("Illegal system output");
+                };
 
             }
 
@@ -173,7 +168,7 @@ public class Day15 extends Day {
     private String investigateCurrentPosition() {
         List<Direction> dirs = getPossibleTargetFromCurrentPosition();
         if (!dirs.isEmpty()) {
-            Direction dir = dirs.get(0);
+            Direction dir = dirs.getFirst();
             prepareMoveToDirectionWithUnknownTarget(dir);
             return dir.command;
         } else {
@@ -205,7 +200,7 @@ public class Day15 extends Day {
     }
 
     private String moveAlongPathToPositionToInvestigate() {
-        nextPosition = navigationPathToCurrentPositionToInvestigate.remove(0);
+        nextPosition = navigationPathToCurrentPositionToInvestigate.removeFirst();
         return getNavigationCommand();
     }
 

@@ -18,7 +18,7 @@ public class Day06 extends Day {
 
     private String runLogic(List<String> input, Function<Map<Character, Integer>, Character> getCharacterToUse) {
         Map<Integer, Map<Character, Integer>> counter = new TreeMap<>();
-        for (int i = 0; i < input.get(0).length(); i++) {
+        for (int i = 0; i < input.getFirst().length(); i++) {
             counter.put(i, new HashMap<>());
         }
         for (String line : input) {

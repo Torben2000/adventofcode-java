@@ -46,7 +46,7 @@ public class Day09 extends Day {
     }
 
     private String getStreamWithoutCanceledCharacters(List<String> input) {
-        return input.get(0).replaceAll("!.", "");
+        return input.getFirst().replaceAll("!.", "");
     }
 
 }

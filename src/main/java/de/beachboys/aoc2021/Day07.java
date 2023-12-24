@@ -17,7 +17,7 @@ public class Day07 extends Day {
     }
 
     private long runLogic(List<String> input, LongUnaryOperator incrementCalculator) {
-        List<Integer> crabs = Util.parseIntCsv(input.get(0));
+        List<Integer> crabs = Util.parseIntCsv(input.getFirst());
 
         int minPos = crabs.stream().mapToInt(Integer::intValue).min().orElseThrow();
         int maxPos = crabs.stream().mapToInt(Integer::intValue).max().orElseThrow();

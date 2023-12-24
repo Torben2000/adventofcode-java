@@ -73,14 +73,11 @@ public class Day04 extends Day {
             String heightWithoutUnit = heightAsString.substring(0, heightAsString.length() - 2);
             int heightAsInt = Integer.parseInt(heightWithoutUnit);
             String unit = heightAsString.substring(heightAsString.length() - 2);
-            switch (unit) {
-                case "in":
-                    return heightAsInt >= 59 && heightAsInt <= 76;
-                case "cm":
-                    return heightAsInt >= 150 && heightAsInt <= 193;
-                default:
-                    return false;
-            }
+            return switch (unit) {
+                case "in" -> heightAsInt >= 59 && heightAsInt <= 76;
+                case "cm" -> heightAsInt >= 150 && heightAsInt <= 193;
+                default -> false;
+            };
         } catch (NumberFormatException e) {
             return false;
         }

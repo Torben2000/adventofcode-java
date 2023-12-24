@@ -93,19 +93,6 @@ public class Day15 extends Day {
         return ingredients;
     }
 
-    private static class Ingredient {
-        private final int capacity;
-        private final int durability;
-        private final int flavor;
-        private final int texture;
-        private final int calories;
+    private record Ingredient(int capacity, int durability, int flavor, int texture, int calories) {}
 
-        public Ingredient(int capacity, int durability, int flavor, int texture, int calories) {
-            this.capacity = capacity;
-            this.durability = durability;
-            this.flavor = flavor;
-            this.texture = texture;
-            this.calories = calories;
-        }
-    }
 }

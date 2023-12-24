@@ -8,7 +8,6 @@ import org.jooq.lambda.tuple.Tuple2;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day22 extends Day {
 
@@ -27,7 +26,7 @@ public class Day22 extends Day {
 
         public String getStringRepresentation() {
             if (stringRepresentation == null) {
-                stringRepresentation = nodeWithGoalData.toString() + "|" + emptyNodes.stream().sorted().collect(Collectors.toList()).toString();
+                stringRepresentation = nodeWithGoalData.toString() + "|" + emptyNodes.stream().sorted().toList().toString();
             }
             return stringRepresentation;
         }

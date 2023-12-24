@@ -38,7 +38,7 @@ public class Day14 extends Day {
 
     private Set<Tuple2<Integer, Integer>> buildUsedSquareSet(List<String> input) {
         KnotHash knotHash = new KnotHash();
-        String prefix = input.get(0);
+        String prefix = input.getFirst();
         StringBuilder diskImage = new StringBuilder();
         for (int i = 0; i < 128; i++) {
             knotHash.reset();

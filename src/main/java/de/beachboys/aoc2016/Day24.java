@@ -47,7 +47,7 @@ public class Day24 extends Day {
 
     private void addDirectEdgesBetweenNodes() {
         ShortestPathAlgorithm<String, DefaultWeightedEdge> dijkstraAlg = new DijkstraShortestPath<>(graph);
-        List<String> allNodes = graph.vertexSet().stream().filter(Predicate.not(this::isCrossing)).sorted().collect(Collectors.toList());
+        List<String> allNodes = graph.vertexSet().stream().filter(Predicate.not(this::isCrossing)).sorted().toList();
         for (int i = 0; i < allNodes.size(); i++) {
             for (int j = i+1; j < allNodes.size(); j++) {
                 String source = allNodes.get(i);

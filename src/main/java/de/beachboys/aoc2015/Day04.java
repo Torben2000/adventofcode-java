@@ -20,7 +20,7 @@ public class Day04 extends Day {
     private int runLogic(List<String> input, String requiredHashPrefix) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            String prefix = input.get(0);
+            String prefix = input.getFirst();
             int suffix = 0;
             String hash = "";
             while (!hash.startsWith(requiredHashPrefix)) {

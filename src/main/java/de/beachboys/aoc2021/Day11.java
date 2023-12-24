@@ -26,7 +26,7 @@ public class Day11 extends Day {
         map.clear();
         Map<Tuple2<Integer, Integer>, String> tempMap = Util.buildImageMap(input);
         tempMap.forEach((k, v) -> map.put(k, Integer.valueOf(v)));
-        maxX = input.get(0).length();
+        maxX = input.getFirst().length();
         maxY = input.size();
         long sum = 0L;
 

@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  */
 public class Day19 extends Day {
 
-    // the lower the faster, but might fail or deliver inaccurate results...16 is the lowest number that works for my input
+    // the lower, the faster, but might fail or deliver inaccurate results...16 is the lowest number that works for my input
     private static final int MAX_LENGTH_CHANGEABLE_END = 16;
 
     private String moleculeFromInput;
@@ -72,7 +72,7 @@ public class Day19 extends Day {
             String[] leftAndRight = rule.split(" => ");
             rules.add(Tuple.tuple(leftAndRight[0], leftAndRight[1]));
         }
-        moleculeFromInput = input.get(input.size() - 1);
+        moleculeFromInput = input.getLast();
     }
 
 }

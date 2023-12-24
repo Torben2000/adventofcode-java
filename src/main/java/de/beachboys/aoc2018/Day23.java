@@ -7,7 +7,6 @@ import org.jooq.lambda.tuple.Tuple3;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day23 extends Day {
 
@@ -92,7 +91,7 @@ public class Day23 extends Day {
 
     private List<Bot> getBotsWithIntersectingRanges(List<Bot> bots) {
         Map<Bot, List<Bot>> botListWithConnectedBots = getBotListWithConnectedBots(bots);
-        List<Map.Entry<Bot, List<Bot>>> sortedBotsWithConnectedBots = botListWithConnectedBots.entrySet().stream().sorted(Comparator.comparingInt(entry -> entry.getValue().size())).collect(Collectors.toList());
+        List<Map.Entry<Bot, List<Bot>>> sortedBotsWithConnectedBots = botListWithConnectedBots.entrySet().stream().sorted(Comparator.comparingInt(entry -> entry.getValue().size())).toList();
 
         List<Bot> botsToRemove = new ArrayList<>();
         List<Bot> botsWithIntersectingRanges = new ArrayList<>();
@@ -175,8 +174,8 @@ public class Day23 extends Day {
 
     private static class Bot {
 
-        Tuple3<Long, Long, Long> position;
-        long range;
+        final Tuple3<Long, Long, Long> position;
+        final long range;
 
         public Bot(Tuple3<Long, Long, Long> position, Long range) {
             this.position = position;

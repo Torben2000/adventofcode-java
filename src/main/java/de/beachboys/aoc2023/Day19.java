@@ -122,11 +122,11 @@ public class Day19 extends Day {
 
 
     private static class Rule {
-        boolean hasCondition;
+        final boolean hasCondition;
         char varName;
         char comparator;
         int compareValue;
-        String resultingWorkflowName;
+        final String resultingWorkflowName;
 
         public Rule(String ruleString) {
             if (!ruleString.contains(":")) {
@@ -153,10 +153,10 @@ public class Day19 extends Day {
     }
 
     private static class Part {
-        int x;
-        int m;
-        int a;
-        int s;
+        final int x;
+        final int m;
+        final int a;
+        final int s;
         public int getRating(char varName) {
             switch (varName) {
                 case 'x' -> {return x;}

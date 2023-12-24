@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day04 extends Day {
 
@@ -78,7 +77,7 @@ public class Day04 extends Day {
                         .compare(e2.getValue(), e1.getValue())
                         .compare(e1.getKey(), e2.getKey())
                         .result())
-                .map(Map.Entry::getKey).collect(Collectors.toList());
+                .map(Map.Entry::getKey).toList();
         for (int i = 0; i < checksum.length(); i++) {
             if (checksum.charAt(i) != sortedCharacters.get(i)) {
                 return false;

@@ -11,7 +11,7 @@ public class Day05 extends Day {
 
     public Object part1(List<String> input) {
         StringBuilder password = new StringBuilder();
-        String prefix = input.get(0);
+        String prefix = input.getFirst();
         long suffix = 0L;
         MessageDigest md5;
         try {
@@ -33,7 +33,7 @@ public class Day05 extends Day {
 
     public Object part2(List<String> input) {
         StringBuilder password = new StringBuilder("________");
-        String prefix = input.get(0);
+        String prefix = input.getFirst();
         long suffix = 0L;
         MessageDigest md5;
         try {

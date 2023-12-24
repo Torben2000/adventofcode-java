@@ -35,21 +35,13 @@ public class Day25 extends Day {
     private static long parseSNAFUNumber(String snafuString) {
         long number = 0;
         for (char c : snafuString.toCharArray()) {
-            int digit = 0;
-            switch (c) {
-                case '2':
-                    digit = 2;
-                    break;
-                case '1':
-                    digit = 1;
-                    break;
-                case '=':
-                    digit = -2;
-                    break;
-                case '-':
-                    digit = -1;
-                    break;
-            }
+            int digit = switch (c) {
+                case '2' -> 2;
+                case '1' -> 1;
+                case '=' -> -2;
+                case '-' -> -1;
+                default -> 0;
+            };
             number = number * 5 + digit;
         }
         return number;
