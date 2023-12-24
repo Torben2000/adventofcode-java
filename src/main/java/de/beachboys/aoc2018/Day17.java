@@ -3,9 +3,12 @@ package de.beachboys.aoc2018;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,14 +18,14 @@ public class Day17 extends Day {
     public static final String STILL_WATER = "~";
     public static final String CLAY = "#";
 
-    private final Map<Pair<Integer, Integer>, String> map = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, String> map = new HashMap<>();
     private int minHeight;
     private int maxHeight;
 
     public Object part1(List<String> input) {
         runLogic(input);
         return map.entrySet().stream()
-                .filter(entry -> entry.getKey().getValue1() >= minHeight
+                .filter(entry -> entry.getKey().v2 >= minHeight
                         && (STILL_WATER.equals(entry.getValue()) || FLOWING_WATER.equals(entry.getValue())))
                 .count();
     }
@@ -30,14 +33,14 @@ public class Day17 extends Day {
     public Object part2(List<String> input) {
         runLogic(input);
         return map.entrySet().stream()
-                .filter(entry -> entry.getKey().getValue1() >= minHeight
+                .filter(entry -> entry.getKey().v2 >= minHeight
                         && STILL_WATER.equals(entry.getValue()))
                 .count();
     }
 
     private void runLogic(List<String> input) {
         parseInput(input);
-        Pair<Integer, Integer> spring = Pair.with(500, 0);
+        Tuple2<Integer, Integer> spring = Tuple.tuple(500, 0);
         map.put(spring, "+");
         flowWater(spring);
         io.logDebug(Util.paintMap(map));
@@ -58,27 +61,27 @@ public class Day17 extends Day {
                 }
                 for (int i = rangeStart; i <= rangeEnd; i++) {
                     if ("x".equals(xy)) {
-                        map.put(Pair.with(firstValue, i), CLAY);
+                        map.put(Tuple.tuple(firstValue, i), CLAY);
                     } else {
-                        map.put(Pair.with(i, firstValue), CLAY);
+                        map.put(Tuple.tuple(i, firstValue), CLAY);
                     }
                 }
             } else {
                 throw new IllegalArgumentException();
             }
         }
-        minHeight = map.keySet().stream().map(Pair::getValue1).mapToInt(Integer::intValue).min().orElseThrow();
-        maxHeight = map.keySet().stream().map(Pair::getValue1).mapToInt(Integer::intValue).max().orElseThrow();
+        minHeight = map.keySet().stream().map(Tuple2::v2).mapToInt(Integer::intValue).min().orElseThrow();
+        maxHeight = map.keySet().stream().map(Tuple2::v2).mapToInt(Integer::intValue).max().orElseThrow();
     }
 
-    private void flowWater(Pair<Integer, Integer> currentPos) {
-        if (currentPos.getValue1() > maxHeight) {
+    private void flowWater(Tuple2<Integer, Integer> currentPos) {
+        if (currentPos.v2 > maxHeight) {
             return;
         }
         if (!map.containsKey(currentPos)) {
             map.put(currentPos, FLOWING_WATER);
         }
-        Pair<Integer, Integer> below = Direction.SOUTH.move(currentPos, 1);
+        Tuple2<Integer, Integer> below = Direction.SOUTH.move(currentPos, 1);
         if (!map.containsKey(below)) {
             flowWater(below);
         }
@@ -87,32 +90,32 @@ public class Day17 extends Day {
         }
    }
 
-    private boolean isNotFlowingWater(Pair<Integer, Integer> below) {
-        return below.getValue1() <= maxHeight && !FLOWING_WATER.equals(map.get(below));
+    private boolean isNotFlowingWater(Tuple2<Integer, Integer> below) {
+        return below.v2 <= maxHeight && !FLOWING_WATER.equals(map.get(below));
     }
 
-    private void flowSideways(Pair<Integer, Integer> currentPos) {
-        Pair<Integer, Integer> leftBorder = flowSidewaysAndReturnBorder(currentPos, Direction.WEST);
-        Pair<Integer, Integer> rightBorder = flowSidewaysAndReturnBorder(currentPos, Direction.EAST);
+    private void flowSideways(Tuple2<Integer, Integer> currentPos) {
+        Tuple2<Integer, Integer> leftBorder = flowSidewaysAndReturnBorder(currentPos, Direction.WEST);
+        Tuple2<Integer, Integer> rightBorder = flowSidewaysAndReturnBorder(currentPos, Direction.EAST);
         if (CLAY.equals(map.get(leftBorder)) && CLAY.equals(map.get(rightBorder))) {
             fillWithStillWater(leftBorder, rightBorder);
         }
     }
 
-    private void fillWithStillWater(Pair<Integer, Integer> leftBorder, Pair<Integer, Integer> rightBorder) {
-        Pair<Integer, Integer> curPos = Direction.EAST.move(leftBorder, 1);
+    private void fillWithStillWater(Tuple2<Integer, Integer> leftBorder, Tuple2<Integer, Integer> rightBorder) {
+        Tuple2<Integer, Integer> curPos = Direction.EAST.move(leftBorder, 1);
         while (!curPos.equals(rightBorder)) {
             map.put(curPos, STILL_WATER);
             curPos = Direction.EAST.move(curPos, 1);
         }
     }
 
-    private Pair<Integer, Integer> flowSidewaysAndReturnBorder(Pair<Integer, Integer> curPos, Direction direction) {
-        Pair<Integer, Integer> nextPos = direction.move(curPos, 1);
+    private Tuple2<Integer, Integer> flowSidewaysAndReturnBorder(Tuple2<Integer, Integer> curPos, Direction direction) {
+        Tuple2<Integer, Integer> nextPos = direction.move(curPos, 1);
         boolean continueSideways = true;
         while (continueSideways && !map.containsKey(nextPos)) {
             map.put(nextPos, FLOWING_WATER);
-            Pair<Integer, Integer> below = Direction.SOUTH.move(nextPos, 1);
+            Tuple2<Integer, Integer> below = Direction.SOUTH.move(nextPos, 1);
             if (!map.containsKey(below)) {
                 flowWater(below);
                 continueSideways = STILL_WATER.equals(map.get(below));

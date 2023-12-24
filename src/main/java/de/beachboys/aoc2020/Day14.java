@@ -1,7 +1,8 @@
 package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
-import org.javatuples.KeyValue;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +18,8 @@ public class Day14 extends Day {
             if (line.startsWith("mask = ")) {
                 mask = parseMask(line);
             } else {
-                KeyValue<Long, Long> memLine = parseMemLine(line);
-                valueMap.put(memLine.getKey(), adjustValueWithMask(mask, memLine.getValue()));
+                Tuple2<Long, Long> memLine = parseMemLine(line);
+                valueMap.put(memLine.v1, adjustValueWithMask(mask, memLine.v2));
             }
         }
         return getSumOfValues(valueMap);
@@ -31,8 +32,8 @@ public class Day14 extends Day {
             if (line.startsWith("mask = ")) {
                 mask = parseMask(line);
             } else {
-                KeyValue<Long, Long> memLine = parseMemLine(line);
-                long index = memLine.getKey();
+                Tuple2<Long, Long> memLine = parseMemLine(line);
+                long index = memLine.v1;
 
                 List<Integer> floatingBits = new ArrayList<>();
                 for (int i = 0; i < mask.length; i++) {
@@ -57,7 +58,7 @@ public class Day14 extends Day {
                             indexToSet = setTo0(indexToSet, bitIndex);
                         }
                     }
-                    valueMap.put(indexToSet, memLine.getValue());
+                    valueMap.put(indexToSet, memLine.v2);
                 }
             }
         }
@@ -111,11 +112,11 @@ public class Day14 extends Day {
         return mask;
     }
 
-    private KeyValue<Long, Long> parseMemLine(String line) {
+    private Tuple2<Long, Long> parseMemLine(String line) {
         String[] a = line.split(" = ");
         long index = Integer.parseInt(a[0].substring(4, a[0].length() - 1));
         long value = Long.parseLong(a[1]);
-        return KeyValue.with(index, value);
+        return Tuple.tuple(index, value);
     }
 
     private long getSumOfValues(Map<Long, Long> valueMap) {

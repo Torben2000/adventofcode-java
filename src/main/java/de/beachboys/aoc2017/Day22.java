@@ -3,7 +3,8 @@ package de.beachboys.aoc2017;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.List;
 import java.util.Map;
@@ -22,8 +23,8 @@ public class Day22 extends Day {
     }
 
     private int runLogic(List<String> input, int bursts, Function<String, String> updateDirectionAndReturnNewMapValue) {
-        Map<Pair<Integer, Integer>, String> map = Util.buildImageMap(input);
-        Pair<Integer, Integer> currentPosition = Pair.with(input.get(0).length() / 2, input.size() / 2);
+        Map<Tuple2<Integer, Integer>, String> map = Util.buildImageMap(input);
+        Tuple2<Integer, Integer> currentPosition = Tuple.tuple(input.get(0).length() / 2, input.size() / 2);
         int counter = 0;
         for (int i = 0; i < bursts; i++) {
             String currentMapValue = map.getOrDefault(currentPosition, ".");

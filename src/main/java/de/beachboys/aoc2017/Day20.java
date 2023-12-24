@@ -1,7 +1,8 @@
 package de.beachboys.aoc2017;
 
 import de.beachboys.Day;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -12,11 +13,11 @@ public class Day20 extends Day {
 
     private static class Particle {
 
-        private Triplet<Integer, Integer, Integer> position;
-        private Triplet<Integer, Integer, Integer> velocity;
-        private final Triplet<Integer, Integer, Integer> acceleration;
+        private Tuple3<Integer, Integer, Integer> position;
+        private Tuple3<Integer, Integer, Integer> velocity;
+        private final Tuple3<Integer, Integer, Integer> acceleration;
 
-        public Particle(Triplet<Integer, Integer, Integer> position, Triplet<Integer, Integer, Integer> velocity, Triplet<Integer, Integer, Integer> acceleration) {
+        public Particle(Tuple3<Integer, Integer, Integer> position, Tuple3<Integer, Integer, Integer> velocity, Tuple3<Integer, Integer, Integer> acceleration) {
             this.position = position;
             this.velocity = velocity;
             this.acceleration = acceleration;
@@ -52,13 +53,13 @@ public class Day20 extends Day {
     }
 
     private int getTotalAcceleration(Particle particle) {
-        return Math.abs(particle.acceleration.getValue0()) + Math.abs(particle.acceleration.getValue1()) + Math.abs(particle.acceleration.getValue2());
+        return Math.abs(particle.acceleration.v1) + Math.abs(particle.acceleration.v2) + Math.abs(particle.acceleration.v3);
     }
 
     private int getTotalVelocityOffset(Particle particle) {
-        int velocityX = getVelocityOffsetForDimension(particle.acceleration.getValue0(), particle.velocity.getValue0());
-        int velocityY = getVelocityOffsetForDimension(particle.acceleration.getValue1(), particle.velocity.getValue1());
-        int velocityZ = getVelocityOffsetForDimension(particle.acceleration.getValue2(), particle.velocity.getValue2());
+        int velocityX = getVelocityOffsetForDimension(particle.acceleration.v1, particle.velocity.v1);
+        int velocityY = getVelocityOffsetForDimension(particle.acceleration.v2, particle.velocity.v2);
+        int velocityZ = getVelocityOffsetForDimension(particle.acceleration.v3, particle.velocity.v3);
         return velocityX + velocityY + velocityZ;
     }
 
@@ -103,23 +104,23 @@ public class Day20 extends Day {
                 int positionX = Integer.parseInt(m.group(1));
                 int positionY = Integer.parseInt(m.group(2));
                 int positionZ = Integer.parseInt(m.group(3));
-                Triplet<Integer, Integer, Integer> position = Triplet.with(positionX, positionY, positionZ);
+                Tuple3<Integer, Integer, Integer> position = Tuple.tuple(positionX, positionY, positionZ);
                 int velocityX = Integer.parseInt(m.group(4));
                 int velocityY = Integer.parseInt(m.group(5));
                 int velocityZ = Integer.parseInt(m.group(6));
-                Triplet<Integer, Integer, Integer> velocity = Triplet.with(velocityX, velocityY, velocityZ);
+                Tuple3<Integer, Integer, Integer> velocity = Tuple.tuple(velocityX, velocityY, velocityZ);
                 int accelerationX = Integer.parseInt(m.group(7));
                 int accelerationY = Integer.parseInt(m.group(8));
                 int accelerationZ = Integer.parseInt(m.group(9));
-                Triplet<Integer, Integer, Integer> acceleration = Triplet.with(accelerationX, accelerationY, accelerationZ);
+                Tuple3<Integer, Integer, Integer> acceleration = Tuple.tuple(accelerationX, accelerationY, accelerationZ);
                 particles.add(new Particle(position, velocity, acceleration));
             }
         }
         return particles;
     }
 
-    private Triplet<Integer, Integer, Integer> addTriplets(Triplet<Integer, Integer, Integer> triplet1, Triplet<Integer, Integer, Integer> triplet2) {
-        return Triplet.with(triplet1.getValue0() + triplet2.getValue0(), triplet1.getValue1() + triplet2.getValue1(), triplet1.getValue2() + triplet2.getValue2());
+    private Tuple3<Integer, Integer, Integer> addTriplets(Tuple3<Integer, Integer, Integer> triplet1, Tuple3<Integer, Integer, Integer> triplet2) {
+        return Tuple.tuple(triplet1.v1 + triplet2.v1, triplet1.v2 + triplet2.v2, triplet1.v3 + triplet2.v3);
     }
 
 }

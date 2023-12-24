@@ -3,25 +3,26 @@ package de.beachboys.aoc2021;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 
 public class Day09 extends Day {
 
-    private final Map<Pair<Integer, Integer>, Integer> map = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, Integer> map = new HashMap<>();
 
     public Object part1(List<String> input) {
-        Set<Pair<Integer, Integer>> lowPoints = buildMapAndReturnLowPoints(input);
+        Set<Tuple2<Integer, Integer>> lowPoints = buildMapAndReturnLowPoints(input);
         return lowPoints.stream().mapToInt(p -> map.getOrDefault(p, Integer.MAX_VALUE) + 1).sum();
     }
 
     public Object part2(List<String> input) {
-        Set<Pair<Integer, Integer>> lowPoints = buildMapAndReturnLowPoints(input);
+        Set<Tuple2<Integer, Integer>> lowPoints = buildMapAndReturnLowPoints(input);
 
         List<Integer> basins = new ArrayList<>();
-        for (Pair<Integer, Integer> lowPoint : lowPoints) {
-            Set<Pair<Integer, Integer>> basin = getBasinFromLowPoint(lowPoint);
+        for (Tuple2<Integer, Integer> lowPoint : lowPoints) {
+            Set<Tuple2<Integer, Integer>> basin = getBasinFromLowPoint(lowPoint);
             basins.add(basin.size());
         }
 
@@ -29,21 +30,21 @@ public class Day09 extends Day {
         return basins.get(0) * basins.get(1) * basins.get(2);
     }
 
-    private Set<Pair<Integer, Integer>> buildMapAndReturnLowPoints(List<String> input) {
+    private Set<Tuple2<Integer, Integer>> buildMapAndReturnLowPoints(List<String> input) {
         map.clear();
-        Map<Pair<Integer, Integer>, String> tempMap = Util.buildImageMap(input);
+        Map<Tuple2<Integer, Integer>, String> tempMap = Util.buildImageMap(input);
         tempMap.forEach((k, v) -> map.put(k, Integer.valueOf(v)));
 
         int maxX = input.get(0).length();
         int maxY = input.size();
-        Set<Pair<Integer, Integer>> lowPoints = new HashSet<>();
+        Set<Tuple2<Integer, Integer>> lowPoints = new HashSet<>();
 
         for (int i = 0; i < maxX; i++) {
             for (int j = 0; j < maxY; j++) {
-                Pair<Integer, Integer> position = Pair.with(i, j);
+                Tuple2<Integer, Integer> position = Tuple.tuple(i, j);
                 int value = map.get(position);
                 boolean isLowPoint = true;
-                for (Pair<Integer, Integer> neighbor : Direction.getDirectNeighbors(position)) {
+                for (Tuple2<Integer, Integer> neighbor : Direction.getDirectNeighbors(position)) {
                     int neighborValue = map.getOrDefault(neighbor, Integer.MAX_VALUE);
                     if (neighborValue <= value) {
                         isLowPoint = false;
@@ -57,15 +58,15 @@ public class Day09 extends Day {
         return lowPoints;
     }
 
-    private Set<Pair<Integer, Integer>> getBasinFromLowPoint(Pair<Integer, Integer> lowPoint) {
-        Set<Pair<Integer, Integer>> basin = new HashSet<>();
+    private Set<Tuple2<Integer, Integer>> getBasinFromLowPoint(Tuple2<Integer, Integer> lowPoint) {
+        Set<Tuple2<Integer, Integer>> basin = new HashSet<>();
         basin.add(lowPoint);
-        Set<Pair<Integer, Integer>> positionsToCheck = new HashSet<>(Direction.getDirectNeighbors(lowPoint));
-        Set<Pair<Integer, Integer>> checkedPositions = new HashSet<>(basin);
+        Set<Tuple2<Integer, Integer>> positionsToCheck = new HashSet<>(Direction.getDirectNeighbors(lowPoint));
+        Set<Tuple2<Integer, Integer>> checkedPositions = new HashSet<>(basin);
 
         while (!positionsToCheck.isEmpty()) {
-            Set<Pair<Integer, Integer>> newPositionsToCheck = new HashSet<>();
-            for (Pair<Integer, Integer> position : positionsToCheck) {
+            Set<Tuple2<Integer, Integer>> newPositionsToCheck = new HashSet<>();
+            for (Tuple2<Integer, Integer> position : positionsToCheck) {
                 int value = map.getOrDefault(position, 9);
                 if (value != 9 && !basin.contains(position)) {
                     basin.add(position);

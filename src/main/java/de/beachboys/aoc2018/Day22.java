@@ -2,11 +2,12 @@ package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,16 +15,16 @@ import java.util.Map;
 
 public class Day22 extends Day {
 
-    private final Map<Pair<Integer, Integer>, Long> erosionLevels = new HashMap<>();
-    private final Map<Pair<Integer, Integer>, Long> terrains = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, Long> erosionLevels = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, Long> terrains = new HashMap<>();
 
     public Object part1(List<String> input) {
-        Pair<Integer, Integer> target = fillErosionLevelsAndTerrains(input, 0);
+        Tuple2<Integer, Integer> target = fillErosionLevelsAndTerrains(input, 0);
 
         long sum = 0L;
-        for (int i = 0; i <= target.getValue0(); i++) {
-            for (int j = 0; j <= target.getValue1(); j++) {
-                sum += terrains.get(Pair.with(i, j));
+        for (int i = 0; i <= target.v1; i++) {
+            for (int j = 0; j <= target.v2; j++) {
+                sum += terrains.get(Tuple.tuple(i, j));
             }
         }
         return sum;
@@ -31,14 +32,14 @@ public class Day22 extends Day {
 
     public Object part2(List<String> input) {
         int additionalColsAndRows = 100;
-        Pair<Integer, Integer> target = fillErosionLevelsAndTerrains(input, additionalColsAndRows);
+        Tuple2<Integer, Integer> target = fillErosionLevelsAndTerrains(input, additionalColsAndRows);
 
         Graph<String, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
-        for (int i = 0; i < target.getValue0() + additionalColsAndRows; i++) {
-            for (int j = 0; j < target.getValue1() + additionalColsAndRows; j++) {
-                Pair<Integer, Integer> pos = Pair.with(i, j);
-                Pair<Integer, Integer> right = Pair.with(i + 1, j);
-                Pair<Integer, Integer> down = Pair.with(i, j + 1);
+        for (int i = 0; i < target.v1 + additionalColsAndRows; i++) {
+            for (int j = 0; j < target.v2 + additionalColsAndRows; j++) {
+                Tuple2<Integer, Integer> pos = Tuple.tuple(i, j);
+                Tuple2<Integer, Integer> right = Tuple.tuple(i + 1, j);
+                Tuple2<Integer, Integer> down = Tuple.tuple(i, j + 1);
                 long terrain = terrains.get(pos);
                 long terrainRight = terrains.get(right);
                 long terrainDown = terrains.get(down);
@@ -58,38 +59,38 @@ public class Day22 extends Day {
         }
 
         DijkstraShortestPath<String, DefaultWeightedEdge> alg = new DijkstraShortestPath<>(graph);
-        return (long) alg.getPath(Pair.with(0, 0) + "T", target + "T").getWeight();
+        return (long) alg.getPath(Tuple.tuple(0, 0) + "T", target + "T").getWeight();
     }
 
-    private Pair<Integer, Integer> fillErosionLevelsAndTerrains(List<String> input, int additionalColsAndRows) {
+    private Tuple2<Integer, Integer> fillErosionLevelsAndTerrains(List<String> input, int additionalColsAndRows) {
         int depth = Integer.parseInt(input.get(0).substring("depth: ".length()));
         String targetString = input.get(1).substring("target: ".length());
         String[] splitTarget = targetString.split(",");
-        Pair<Integer, Integer> target = Pair.with(Integer.parseInt(splitTarget[0]), Integer.parseInt(splitTarget[1]));
-        Pair<Integer, Integer> bottomRight = Pair.with(target.getValue0() + additionalColsAndRows, target.getValue1() + additionalColsAndRows);
+        Tuple2<Integer, Integer> target = Tuple.tuple(Integer.parseInt(splitTarget[0]), Integer.parseInt(splitTarget[1]));
+        Tuple2<Integer, Integer> bottomRight = Tuple.tuple(target.v1 + additionalColsAndRows, target.v2 + additionalColsAndRows);
         erosionLevels.clear();
         terrains.clear();
-        for (int i = 0; i <= bottomRight.getValue0(); i++) {
-            for (int j = 0; j <= bottomRight.getValue1(); j++) {
+        for (int i = 0; i <= bottomRight.v1; i++) {
+            for (int j = 0; j <= bottomRight.v2; j++) {
                 long geologicIndex;
-                if (i == 0 && j == 0 || i == target.getValue0() && j == target.getValue1()) {
+                if (i == 0 && j == 0 || i == target.v1 && j == target.v2) {
                     geologicIndex = 0;
                 } else if (i == 0) {
                     geologicIndex = j * 48271L;
                 } else if (j == 0) {
                     geologicIndex = i * 16807L;
                 } else {
-                    geologicIndex = erosionLevels.get(Pair.with(i, j - 1)) * erosionLevels.get(Pair.with(i - 1, j));
+                    geologicIndex = erosionLevels.get(Tuple.tuple(i, j - 1)) * erosionLevels.get(Tuple.tuple(i - 1, j));
                 }
                 long erosionLevel = (geologicIndex + depth) % 20183;
-                erosionLevels.put(Pair.with(i, j), erosionLevel);
-                terrains.put(Pair.with(i, j), erosionLevel % 3);
+                erosionLevels.put(Tuple.tuple(i, j), erosionLevel);
+                terrains.put(Tuple.tuple(i, j), erosionLevel % 3);
             }
         }
         return target;
     }
 
-    private void linkToNeighborFieldsIfTerrainMatchesForTool(Graph<String, DefaultWeightedEdge> graph, Pair<Integer, Integer> pos, long terrain, Pair<Integer, Integer> right, long terrainRight, Pair<Integer, Integer> down, long terrainDown, long terrain1, long terrain2, String tool) {
+    private void linkToNeighborFieldsIfTerrainMatchesForTool(Graph<String, DefaultWeightedEdge> graph, Tuple2<Integer, Integer> pos, long terrain, Tuple2<Integer, Integer> right, long terrainRight, Tuple2<Integer, Integer> down, long terrainDown, long terrain1, long terrain2, String tool) {
         if (terrain == terrain1 || terrain == terrain2) {
             graph.addVertex(pos + tool);
             if (terrainRight == terrain1 || terrainRight == terrain2) {

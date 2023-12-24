@@ -3,17 +3,18 @@ package de.beachboys.aoc2023;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day21 extends Day {
 
-    private Map<Pair<Integer, Integer>, String> map;
-    private Pair<Integer, Integer> startPos;
+    private Map<Tuple2<Integer, Integer>, String> map;
+    private Tuple2<Integer, Integer> startPos;
     private int widthHeight;
-    private Set<Pair<Integer, Integer>> gardenPlots;
+    private Set<Tuple2<Integer, Integer>> gardenPlots;
     private int numOfReachablePositionsWithEvenCoordinateSum;
     private int numOfReachablePositionsWithOddCoordinateSum;
 
@@ -30,27 +31,27 @@ public class Day21 extends Day {
         parseInput(input);
 
         if (totalSteps <= 100) {
-            return getReachablePlotsAndRequiredMinSteps(startPos, totalSteps, false).getValue0().size();
+            return getReachablePlotsAndRequiredMinSteps(startPos, totalSteps, false).v1.size();
         }
 
         int distanceInAreas = totalSteps / widthHeight;
         int remainingSteps = totalSteps - distanceInAreas * widthHeight;
 
-        Map<String, Set<Pair<Pair<Integer, Integer>, Integer>>> startingPoints = initStartingPointsWithDistanceFromStartByDirection();
-        Map<Pair<String, Integer>, Integer> reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance = new HashMap<>();
+        Map<String, Set<Tuple2<Tuple2<Integer, Integer>, Integer>>> startingPoints = initStartingPointsWithDistanceFromStartByDirection();
+        Map<Tuple2<String, Integer>, Integer> reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance = new HashMap<>();
         for (String direction : startingPoints.keySet()) {
-            Set<Pair<Pair<Integer, Integer>, Integer>> startPlotsWithDistanceFromStart = startingPoints.get(direction);
+            Set<Tuple2<Tuple2<Integer, Integer>, Integer>> startPlotsWithDistanceFromStart = startingPoints.get(direction);
             for (int i = 0; i < 3; i++) {
-                Set<Pair<Integer, Integer>> reachablePlots = new HashSet<>();
-                for (Pair<Pair<Integer, Integer>, Integer> startPlotWithDistanceFromStart : startPlotsWithDistanceFromStart) {
-                    int stepsInArea = remainingSteps - startPlotWithDistanceFromStart.getValue1() + i * widthHeight;
+                Set<Tuple2<Integer, Integer>> reachablePlots = new HashSet<>();
+                for (Tuple2<Tuple2<Integer, Integer>, Integer> startPlotWithDistanceFromStart : startPlotsWithDistanceFromStart) {
+                    int stepsInArea = remainingSteps - startPlotWithDistanceFromStart.v2 + i * widthHeight;
                     if (stepsInArea < 0) {
                         continue;
                     }
-                    reachablePlots.addAll(getReachablePlotsAndRequiredMinSteps(startPlotWithDistanceFromStart.getValue0(), stepsInArea, true).getValue0());
+                    reachablePlots.addAll(getReachablePlotsAndRequiredMinSteps(startPlotWithDistanceFromStart.v1, stepsInArea, true).v1);
                 }
                 if (!reachablePlots.isEmpty()) {
-                    reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance.put(Pair.with(direction, i), reachablePlots.size());
+                    reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance.put(Tuple.tuple(direction, i), reachablePlots.size());
                 }
             }
         }
@@ -58,22 +59,22 @@ public class Day21 extends Day {
         return getResult(reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance, distanceInAreas, totalSteps);
     }
 
-    private long getResult(Map<Pair<String, Integer>, Integer> reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance, int distanceInAreas, int totalSteps) {
+    private long getResult(Map<Tuple2<String, Integer>, Integer> reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance, int distanceInAreas, int totalSteps) {
         long result = getReachablePlotsFromEdgeAreas(reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance, distanceInAreas);
         result += getReachablePlotsFromFullyVisitedAreas(distanceInAreas, totalSteps);
         return result;
     }
 
-    private static long getReachablePlotsFromEdgeAreas(Map<Pair<String, Integer>, Integer> reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance, int distanceInAreas) {
+    private static long getReachablePlotsFromEdgeAreas(Map<Tuple2<String, Integer>, Integer> reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance, int distanceInAreas) {
         long result = 0;
-        for (Pair<String, Integer> directionAndDifferenceToDistance : reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance.keySet()) {
+        for (Tuple2<String, Integer> directionAndDifferenceToDistance : reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance.keySet()) {
             int value = reachablePlotsInEdgeAreasByDirectionAndDifferenceToDistance.get(directionAndDifferenceToDistance);
-            if (directionAndDifferenceToDistance.getValue0().length() == 1) {
+            if (directionAndDifferenceToDistance.v1.length() == 1) {
                 // n, e, s, w
                 result += value;
             } else {
                 // ne, nw, se, sw
-                result += (long) (distanceInAreas + 1 - directionAndDifferenceToDistance.getValue1()) * value;
+                result += (long) (distanceInAreas + 1 - directionAndDifferenceToDistance.v2) * value;
             }
         }
         return result;
@@ -106,20 +107,20 @@ public class Day21 extends Day {
         return result;
     }
 
-    private Pair<Set<Pair<Integer, Integer>>, Integer> getReachablePlotsAndRequiredMinSteps(Pair<Integer, Integer> start, int maxTotalSteps, boolean stayInCurrentArea) {
-        Set<Pair<Integer, Integer>> currentPlots = new HashSet<>();
+    private Tuple2<Set<Tuple2<Integer, Integer>>, Integer> getReachablePlotsAndRequiredMinSteps(Tuple2<Integer, Integer> start, int maxTotalSteps, boolean stayInCurrentArea) {
+        Set<Tuple2<Integer, Integer>> currentPlots = new HashSet<>();
         currentPlots.add(start);
         int totalStepModulo = maxTotalSteps % 2;
         int reachableSize = numOfReachablePositionsWithOddCoordinateSum;
-        if (((start.getValue0() + start.getValue1()) % 2) == totalStepModulo) {
+        if (((start.v1 + start.v2) % 2) == totalStepModulo) {
             reachableSize = numOfReachablePositionsWithEvenCoordinateSum;
         }
         for (int currentStep = 1; currentStep <= maxTotalSteps; currentStep++) {
-            Set<Pair<Integer, Integer>> newCurrentPlots = new HashSet<>();
-            for (Pair<Integer, Integer> plot : currentPlots) {
+            Set<Tuple2<Integer, Integer>> newCurrentPlots = new HashSet<>();
+            for (Tuple2<Integer, Integer> plot : currentPlots) {
                 for (Direction dir : Direction.values()) {
-                    Pair<Integer, Integer> newPlot = dir.move(plot, 1);
-                    Pair<Integer, Integer> newPlotToCheck = newPlot;
+                    Tuple2<Integer, Integer> newPlot = dir.move(plot, 1);
+                    Tuple2<Integer, Integer> newPlotToCheck = newPlot;
                     if (!stayInCurrentArea) {
                         newPlotToCheck = Util.getNormalizedPositionOnRepeatingPattern(newPlot, widthHeight, widthHeight);
                     }
@@ -130,34 +131,34 @@ public class Day21 extends Day {
             }
             currentPlots = newCurrentPlots;
             if (stayInCurrentArea && currentStep % 2 == totalStepModulo && currentPlots.size() == reachableSize) {
-                return Pair.with(currentPlots, currentStep);
+                return Tuple.tuple(currentPlots, currentStep);
             }
         }
-        return Pair.with(currentPlots, maxTotalSteps);
+        return Tuple.tuple(currentPlots, maxTotalSteps);
     }
 
-    private Map<String, Set<Pair<Pair<Integer, Integer>, Integer>>> initStartingPointsWithDistanceFromStartByDirection() {
-        Map<String, Set<Pair<Pair<Integer, Integer>, Integer>>> startingPoints = new HashMap<>();
-        if (gardenPlots.stream().filter(p -> p.getValue0().equals(startPos.getValue0())).count() < widthHeight) {
+    private Map<String, Set<Tuple2<Tuple2<Integer, Integer>, Integer>>> initStartingPointsWithDistanceFromStartByDirection() {
+        Map<String, Set<Tuple2<Tuple2<Integer, Integer>, Integer>>> startingPoints = new HashMap<>();
+        if (gardenPlots.stream().filter(p -> p.v1.equals(startPos.v1)).count() < widthHeight) {
             // examples
-            startingPoints.put("w", Set.of(Pair.with(Pair.with(widthHeight - 1, 0), widthHeight), Pair.with(Pair.with(widthHeight - 1, widthHeight - 1), widthHeight)));
-            startingPoints.put("e", Set.of(Pair.with(Pair.with(0, 0), widthHeight), Pair.with(Pair.with(0, widthHeight - 1), 15)));
-            startingPoints.put("n", Set.of(Pair.with(Pair.with(0, widthHeight - 1), widthHeight), Pair.with(Pair.with(widthHeight - 1, widthHeight - 1), widthHeight)));
-            startingPoints.put("s", Set.of(Pair.with(Pair.with(0, 0), widthHeight), Pair.with(Pair.with(widthHeight - 1, 0), 15)));
-            startingPoints.put("nw", Set.of(Pair.with(Pair.with(widthHeight - 1, widthHeight - 1), widthHeight +1)));
-            startingPoints.put("ne", Set.of(Pair.with(Pair.with(0, widthHeight - 1), widthHeight +1)));
-            startingPoints.put("sw", Set.of(Pair.with(Pair.with(widthHeight - 1, 0), widthHeight +1)));
-            startingPoints.put("se", Set.of(Pair.with(Pair.with(0, 0), 16)));
+            startingPoints.put("w", Set.of(Tuple.tuple(Tuple.tuple(widthHeight - 1, 0), widthHeight), Tuple.tuple(Tuple.tuple(widthHeight - 1, widthHeight - 1), widthHeight)));
+            startingPoints.put("e", Set.of(Tuple.tuple(Tuple.tuple(0, 0), widthHeight), Tuple.tuple(Tuple.tuple(0, widthHeight - 1), 15)));
+            startingPoints.put("n", Set.of(Tuple.tuple(Tuple.tuple(0, widthHeight - 1), widthHeight), Tuple.tuple(Tuple.tuple(widthHeight - 1, widthHeight - 1), widthHeight)));
+            startingPoints.put("s", Set.of(Tuple.tuple(Tuple.tuple(0, 0), widthHeight), Tuple.tuple(Tuple.tuple(widthHeight - 1, 0), 15)));
+            startingPoints.put("nw", Set.of(Tuple.tuple(Tuple.tuple(widthHeight - 1, widthHeight - 1), widthHeight +1)));
+            startingPoints.put("ne", Set.of(Tuple.tuple(Tuple.tuple(0, widthHeight - 1), widthHeight +1)));
+            startingPoints.put("sw", Set.of(Tuple.tuple(Tuple.tuple(widthHeight - 1, 0), widthHeight +1)));
+            startingPoints.put("se", Set.of(Tuple.tuple(Tuple.tuple(0, 0), 16)));
         } else {
             // real input
-            startingPoints.put("w", Set.of(Pair.with(Pair.with(widthHeight - 1, (widthHeight - 1) / 2), (widthHeight + 1) / 2)));
-            startingPoints.put("e", Set.of(Pair.with(Pair.with(0, (widthHeight - 1) / 2), (widthHeight + 1) / 2)));
-            startingPoints.put("n", Set.of(Pair.with(Pair.with((widthHeight - 1) / 2, widthHeight - 1), (widthHeight + 1) / 2)));
-            startingPoints.put("s", Set.of(Pair.with(Pair.with((widthHeight - 1) / 2, 0), (widthHeight + 1) / 2)));
-            startingPoints.put("nw", Set.of(Pair.with(Pair.with(widthHeight - 1, widthHeight - 1), widthHeight +1)));
-            startingPoints.put("ne", Set.of(Pair.with(Pair.with(0, widthHeight - 1), widthHeight +1)));
-            startingPoints.put("sw", Set.of(Pair.with(Pair.with(widthHeight - 1, 0), widthHeight +1)));
-            startingPoints.put("se", Set.of(Pair.with(Pair.with(0, 0), widthHeight +1)));
+            startingPoints.put("w", Set.of(Tuple.tuple(Tuple.tuple(widthHeight - 1, (widthHeight - 1) / 2), (widthHeight + 1) / 2)));
+            startingPoints.put("e", Set.of(Tuple.tuple(Tuple.tuple(0, (widthHeight - 1) / 2), (widthHeight + 1) / 2)));
+            startingPoints.put("n", Set.of(Tuple.tuple(Tuple.tuple((widthHeight - 1) / 2, widthHeight - 1), (widthHeight + 1) / 2)));
+            startingPoints.put("s", Set.of(Tuple.tuple(Tuple.tuple((widthHeight - 1) / 2, 0), (widthHeight + 1) / 2)));
+            startingPoints.put("nw", Set.of(Tuple.tuple(Tuple.tuple(widthHeight - 1, widthHeight - 1), widthHeight +1)));
+            startingPoints.put("ne", Set.of(Tuple.tuple(Tuple.tuple(0, widthHeight - 1), widthHeight +1)));
+            startingPoints.put("sw", Set.of(Tuple.tuple(Tuple.tuple(widthHeight - 1, 0), widthHeight +1)));
+            startingPoints.put("se", Set.of(Tuple.tuple(Tuple.tuple(0, 0), widthHeight +1)));
         }
         return startingPoints;
     }
@@ -168,8 +169,8 @@ public class Day21 extends Day {
         map.put(startPos, ".");
 
         gardenPlots = map.entrySet().stream().filter(e->e.getValue().equals(".")).map(Map.Entry::getKey).collect(Collectors.toSet());
-        Set<Pair<Integer, Integer>> unreachableGardenPlots = new HashSet<>();
-        for (Pair<Integer, Integer> pos : gardenPlots) {
+        Set<Tuple2<Integer, Integer>> unreachableGardenPlots = new HashSet<>();
+        for (Tuple2<Integer, Integer> pos : gardenPlots) {
             boolean isolated = true;
             for (Direction dir : Direction.values()) {
                 if (map.getOrDefault(dir.move(pos, 1), ".").equals(".")) {
@@ -191,8 +192,8 @@ public class Day21 extends Day {
             throw new IllegalArgumentException();
         }
 
-        Set<Pair<Integer, Integer>> reachableEven = gardenPlots.stream().filter(p -> (p.getValue0() + p.getValue1()) % 2 == 0).collect(Collectors.toSet());
-        Set<Pair<Integer, Integer>> reachableOdd = gardenPlots.stream().filter(p -> (p.getValue0() + p.getValue1()) % 2 == 1).collect(Collectors.toSet());
+        Set<Tuple2<Integer, Integer>> reachableEven = gardenPlots.stream().filter(p -> (p.v1 + p.v2) % 2 == 0).collect(Collectors.toSet());
+        Set<Tuple2<Integer, Integer>> reachableOdd = gardenPlots.stream().filter(p -> (p.v1 + p.v2) % 2 == 1).collect(Collectors.toSet());
         numOfReachablePositionsWithEvenCoordinateSum = reachableEven.size();
         numOfReachablePositionsWithOddCoordinateSum = reachableOdd.size();
     }

@@ -2,7 +2,8 @@ package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -10,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class Day07 extends Day {
 
-    private final Set<Pair<String, String>> rules = new HashSet<>();
+    private final Set<Tuple2<String, String>> rules = new HashSet<>();
 
     public Object part1(List<String> input) {
         parseRules(input);
@@ -53,9 +54,9 @@ public class Day07 extends Day {
 
     private TreeSet<String> getPossibilitiesPart1(Set<String> remainingSteps) {
         TreeSet<String> possibilities = new TreeSet<>(remainingSteps);
-        for (Pair<String, String> rule : rules) {
-            if (remainingSteps.contains(rule.getValue0())) {
-                possibilities.remove(rule.getValue1());
+        for (Tuple2<String, String> rule : rules) {
+            if (remainingSteps.contains(rule.v1)) {
+                possibilities.remove(rule.v2);
             }
         }
         return possibilities;
@@ -63,10 +64,10 @@ public class Day07 extends Day {
 
     private TreeSet<String> getPossibilitiesPart2(Set<String> remainingSteps, TreeMap<Integer, String> runningSteps) {
         TreeSet<String> possibilities = new TreeSet<>(remainingSteps);
-        for (Pair<String, String> rule : rules) {
+        for (Tuple2<String, String> rule : rules) {
             possibilities.removeAll(runningSteps.values());
-            if (remainingSteps.contains(rule.getValue0()) || runningSteps.containsValue(rule.getValue0())) {
-                possibilities.remove(rule.getValue1());
+            if (remainingSteps.contains(rule.v1) || runningSteps.containsValue(rule.v1)) {
+                possibilities.remove(rule.v2);
             }
         }
         return possibilities;
@@ -80,8 +81,8 @@ public class Day07 extends Day {
     private Set<String> buildInitialRemainingSteps() {
         Set<String> remainingSteps = new HashSet<>();
         rules.forEach(pair -> {
-            remainingSteps.add(pair.getValue0());
-            remainingSteps.add(pair.getValue1());
+            remainingSteps.add(pair.v1);
+            remainingSteps.add(pair.v2);
         });
         return remainingSteps;
     }
@@ -92,7 +93,7 @@ public class Day07 extends Day {
         for (String line : input) {
             Matcher m = p.matcher(line);
             if (m.matches()) {
-                rules.add(Pair.with(m.group(1), m.group(2)));
+                rules.add(Tuple.tuple(m.group(1), m.group(2)));
             }
         }
     }

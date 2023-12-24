@@ -1,7 +1,8 @@
 package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,23 +12,23 @@ import java.util.Set;
 public class Day08 extends Day {
 
     public Object part1(List<String> input) {
-        return runProgram(input).getValue1();
+        return runProgram(input).v2;
     }
 
     public Object part2(List<String> input) {
         List<String> opStringList = new ArrayList<>(input);
         for (int i = 0; i < opStringList.size(); i++) {
             String original = opStringList.get(i);
-            Pair<String, Integer> op = getOp(original);
-            if ("jmp".equals(op.getValue0()) || "nop".equals(op.getValue0())) {
-                if ("jmp".equals(op.getValue0())) {
+            Tuple2<String, Integer> op = getOp(original);
+            if ("jmp".equals(op.v1) || "nop".equals(op.v1)) {
+                if ("jmp".equals(op.v1)) {
                     opStringList.set(i, original.replace("jmp", "nop"));
                 } else {
                     opStringList.set(i, original.replace("nop", "jmp"));
                 }
-                Pair<Boolean, Integer> programResult = runProgram(opStringList);
-                if (programResult.getValue0()) {
-                    return programResult.getValue1();
+                Tuple2<Boolean, Integer> programResult = runProgram(opStringList);
+                if (programResult.v1) {
+                    return programResult.v2;
                 }
                 opStringList.set(i, original);
             }
@@ -35,27 +36,27 @@ public class Day08 extends Day {
         return -1;
     }
 
-    private Pair<Boolean, Integer> runProgram(List<String> input) {
+    private Tuple2<Boolean, Integer> runProgram(List<String> input) {
         int acc = 0;
         Set<Integer> doneOpIndexes = new HashSet<>();
         int i = 0;
         while (true) {
             if (i >= input.size()) {
-                return Pair.with(true, acc);
+                return Tuple.tuple(true, acc);
             }
             if (doneOpIndexes.contains(i)) {
-                return Pair.with(false, acc);
+                return Tuple.tuple(false, acc);
             }
             doneOpIndexes.add(i);
 
-            Pair<String, Integer> op = getOp(input.get(i));
-            switch (op.getValue0()) {
+            Tuple2<String, Integer> op = getOp(input.get(i));
+            switch (op.v1) {
                 case "acc":
-                    acc += op.getValue1();
+                    acc += op.v2;
                     i += 1;
                     break;
                 case "jmp":
-                    i += op.getValue1();
+                    i += op.v2;
                     break;
                 case "nop":
                     i += 1;
@@ -64,9 +65,9 @@ public class Day08 extends Day {
         }
     }
 
-    private Pair<String, Integer> getOp(String opAsString) {
+    private Tuple2<String, Integer> getOp(String opAsString) {
         String[] splitOp = opAsString.split(" ");
-        return Pair.with(splitOp[0], Integer.valueOf(splitOp[1]));
+        return Tuple.tuple(splitOp[0], Integer.valueOf(splitOp[1]));
     }
 
 }

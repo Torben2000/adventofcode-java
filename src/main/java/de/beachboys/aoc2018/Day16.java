@@ -1,7 +1,8 @@
 package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -19,7 +20,7 @@ public class Day16 extends Day {
     private final Pattern afterPattern = Pattern.compile("After: {2}\\[([0-9]+), ([0-9]+), ([0-9]+), ([0-9]+)]");
 
     private List<Integer> registers = new ArrayList<>(List.of(0, 0, 0, 0));
-    private final Map<String, Consumer<Triplet<Integer, Integer, Integer>>> operations = new HashMap<>();
+    private final Map<String, Consumer<Tuple3<Integer, Integer, Integer>>> operations = new HashMap<>();
     List<TestData> testDataList = new ArrayList<>();
     private final List<List<Integer>> program = new ArrayList<>();
     private final Map<Integer, String> opCodeMappings = new HashMap<>();
@@ -31,9 +32,9 @@ public class Day16 extends Day {
         int counter = 0;
         for (TestData testData : testDataList) {
             int matchCounter = 0;
-            for (Consumer<Triplet<Integer, Integer, Integer>> operation : operations.values()) {
+            for (Consumer<Tuple3<Integer, Integer, Integer>> operation : operations.values()) {
                 registers = new ArrayList<>(testData.before);
-                operation.accept(Triplet.with(testData.operation.get(1), testData.operation.get(2), testData.operation.get(3)));
+                operation.accept(Tuple.tuple(testData.operation.get(1), testData.operation.get(2), testData.operation.get(3)));
                 if (registers.equals(testData.after)) {
                     matchCounter++;
                 }
@@ -56,7 +57,7 @@ public class Day16 extends Day {
     private void runProgram() {
         registers = new ArrayList<>(List.of(0, 0, 0, 0));
         for (List<Integer> programLine: program) {
-            operations.get(opCodeMappings.get(programLine.get(0))).accept(Triplet.with(programLine.get(1), programLine.get(2), programLine.get(3)));
+            operations.get(opCodeMappings.get(programLine.get(0))).accept(Tuple.tuple(programLine.get(1), programLine.get(2), programLine.get(3)));
         }
     }
 
@@ -65,9 +66,9 @@ public class Day16 extends Day {
         Map<Integer, Set<String>> possibleOpCodeMappings = new HashMap<>();
         for (TestData testData : testDataList) {
             Set<String> possibleOperations = new HashSet<>();
-            for (Map.Entry<String, Consumer<Triplet<Integer, Integer, Integer>>> operation : operations.entrySet()) {
+            for (Map.Entry<String, Consumer<Tuple3<Integer, Integer, Integer>>> operation : operations.entrySet()) {
                 registers = new ArrayList<>(testData.before);
-                operation.getValue().accept(Triplet.with(testData.operation.get(1), testData.operation.get(2), testData.operation.get(3)));
+                operation.getValue().accept(Tuple.tuple(testData.operation.get(1), testData.operation.get(2), testData.operation.get(3)));
                 if (registers.equals(testData.after)) {
                     possibleOperations.add(operation.getKey());
                 }
@@ -84,22 +85,22 @@ public class Day16 extends Day {
     }
 
     private void buildOperationMap() {
-        operations.put("addr", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) + registers.get(t.getValue1())));
-        operations.put("addi", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) + t.getValue1()));
-        operations.put("mulr", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) * registers.get(t.getValue1())));
-        operations.put("muli", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) * t.getValue1()));
-        operations.put("banr", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) & registers.get(t.getValue1())));
-        operations.put("bani", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) & t.getValue1()));
-        operations.put("borr", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) | registers.get(t.getValue1())));
-        operations.put("bori", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) | t.getValue1()));
-        operations.put("setr", t -> registers.set(t.getValue2(), registers.get(t.getValue0())));
-        operations.put("seti", t -> registers.set(t.getValue2(), t.getValue0()));
-        operations.put("gtir", t -> registers.set(t.getValue2(), t.getValue0() > registers.get(t.getValue1()) ? 1 : 0));
-        operations.put("gtri", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) > t.getValue1() ? 1 : 0));
-        operations.put("gtrr", t -> registers.set(t.getValue2(), registers.get(t.getValue0()) > registers.get(t.getValue1()) ? 1 : 0));
-        operations.put("eqir", t -> registers.set(t.getValue2(), t.getValue0().equals(registers.get(t.getValue1())) ? 1 : 0));
-        operations.put("eqri", t -> registers.set(t.getValue2(), registers.get(t.getValue0()).equals(t.getValue1()) ? 1 : 0));
-        operations.put("eqrr", t -> registers.set(t.getValue2(), registers.get(t.getValue0()).equals(registers.get(t.getValue1())) ? 1 : 0));
+        operations.put("addr", t -> registers.set(t.v3, registers.get(t.v1) + registers.get(t.v2)));
+        operations.put("addi", t -> registers.set(t.v3, registers.get(t.v1) + t.v2));
+        operations.put("mulr", t -> registers.set(t.v3, registers.get(t.v1) * registers.get(t.v2)));
+        operations.put("muli", t -> registers.set(t.v3, registers.get(t.v1) * t.v2));
+        operations.put("banr", t -> registers.set(t.v3, registers.get(t.v1) & registers.get(t.v2)));
+        operations.put("bani", t -> registers.set(t.v3, registers.get(t.v1) & t.v2));
+        operations.put("borr", t -> registers.set(t.v3, registers.get(t.v1) | registers.get(t.v2)));
+        operations.put("bori", t -> registers.set(t.v3, registers.get(t.v1) | t.v2));
+        operations.put("setr", t -> registers.set(t.v3, registers.get(t.v1)));
+        operations.put("seti", t -> registers.set(t.v3, t.v1));
+        operations.put("gtir", t -> registers.set(t.v3, t.v1 > registers.get(t.v2) ? 1 : 0));
+        operations.put("gtri", t -> registers.set(t.v3, registers.get(t.v1) > t.v2 ? 1 : 0));
+        operations.put("gtrr", t -> registers.set(t.v3, registers.get(t.v1) > registers.get(t.v2) ? 1 : 0));
+        operations.put("eqir", t -> registers.set(t.v3, t.v1.equals(registers.get(t.v2)) ? 1 : 0));
+        operations.put("eqri", t -> registers.set(t.v3, registers.get(t.v1).equals(t.v2) ? 1 : 0));
+        operations.put("eqrr", t -> registers.set(t.v3, registers.get(t.v1).equals(registers.get(t.v2)) ? 1 : 0));
     }
 
     private void parseInput(List<String> input) {

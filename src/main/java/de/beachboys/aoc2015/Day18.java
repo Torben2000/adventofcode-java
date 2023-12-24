@@ -2,7 +2,8 @@ package de.beachboys.aoc2015;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +14,7 @@ public class Day18 extends Day {
     private int width;
     private int height;
 
-    private Set<Pair<Integer, Integer>> conwaySet;
+    private Set<Tuple2<Integer, Integer>> conwaySet;
 
     public Object part1(List<String> input) {
         return runLogic(input, () -> {});
@@ -31,12 +32,12 @@ public class Day18 extends Day {
         conwaySetManipulator.run();
 
         for (int i = 0; i < numberOfSteps; i++) {
-            Set<Pair<Integer, Integer>> newSet = new HashSet<>();
+            Set<Tuple2<Integer, Integer>> newSet = new HashSet<>();
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     int numNeighbors = getActiveNeighborCount(x, y);
-                    if (numNeighbors == 3 || numNeighbors == 2 && conwaySet.contains(Pair.with(x, y))) {
-                        newSet.add(Pair.with(x, y));
+                    if (numNeighbors == 3 || numNeighbors == 2 && conwaySet.contains(Tuple.tuple(x, y))) {
+                        newSet.add(Tuple.tuple(x, y));
                     }
                 }
             }
@@ -52,7 +53,7 @@ public class Day18 extends Day {
         for (int neighborX = x - 1; neighborX <= x + 1; neighborX++) {
             for (int neighborY = y - 1; neighborY <= y + 1; neighborY++) {
                 if (neighborX != x || neighborY != y) {
-                    if (conwaySet.contains(Pair.with(neighborX, neighborY))) {
+                    if (conwaySet.contains(Tuple.tuple(neighborX, neighborY))) {
                         count++;
                     }
                 }
@@ -62,10 +63,10 @@ public class Day18 extends Day {
     }
 
     private void turnOnCorners() {
-        conwaySet.add(Pair.with(0, 0));
-        conwaySet.add(Pair.with(0, height - 1));
-        conwaySet.add(Pair.with(width - 1, 0));
-        conwaySet.add(Pair.with(width - 1, height - 1));
+        conwaySet.add(Tuple.tuple(0, 0));
+        conwaySet.add(Tuple.tuple(0, height - 1));
+        conwaySet.add(Tuple.tuple(width - 1, 0));
+        conwaySet.add(Tuple.tuple(width - 1, height - 1));
     }
 
 }

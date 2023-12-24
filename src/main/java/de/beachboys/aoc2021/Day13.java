@@ -3,7 +3,8 @@ package de.beachboys.aoc2021;
 import de.beachboys.Day;
 import de.beachboys.OCR;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,8 +13,8 @@ import java.util.Set;
 
 public class Day13 extends Day {
 
-    private Set<Pair<Integer, Integer>> dots = new HashSet<>();
-    private final List<Pair<Boolean, Integer>> foldInstructions = new ArrayList<>();
+    private Set<Tuple2<Integer, Integer>> dots = new HashSet<>();
+    private final List<Tuple2<Boolean, Integer>> foldInstructions = new ArrayList<>();
 
     public Object part1(List<String> input) {
         parseInput(input);
@@ -23,7 +24,7 @@ public class Day13 extends Day {
     public Object part2(List<String> input) {
         parseInput(input);
 
-        for (Pair<Boolean, Integer> foldInstruction : foldInstructions) {
+        for (Tuple2<Boolean, Integer> foldInstruction : foldInstructions) {
             dots = foldPaper(dots, foldInstruction);
         }
 
@@ -39,23 +40,23 @@ public class Day13 extends Day {
                 parseFoldInstructions = true;
             } else if (parseFoldInstructions) {
                 String[] foldInstructionAsStrings = line.substring("fold along ".length()).split("=");
-                foldInstructions.add(Pair.with("x".equals(foldInstructionAsStrings[0]), Integer.parseInt(foldInstructionAsStrings[1])));
+                foldInstructions.add(Tuple.tuple("x".equals(foldInstructionAsStrings[0]), Integer.parseInt(foldInstructionAsStrings[1])));
             } else {
                 String[] dotCoordinatesAsStrings = line.split(",");
-                dots.add(Pair.with(Integer.parseInt(dotCoordinatesAsStrings[0]), Integer.parseInt(dotCoordinatesAsStrings[1])));
+                dots.add(Tuple.tuple(Integer.parseInt(dotCoordinatesAsStrings[0]), Integer.parseInt(dotCoordinatesAsStrings[1])));
             }
         }
     }
 
-    private Set<Pair<Integer, Integer>> foldPaper(Set<Pair<Integer, Integer>> dots, Pair<Boolean, Integer> fold) {
-        Set<Pair<Integer, Integer>> newDots = new HashSet<>();
-        for (Pair<Integer, Integer> dot : dots) {
-            if (fold.getValue0() && dot.getValue0() < fold.getValue1() || !fold.getValue0() && dot.getValue1() < fold.getValue1()) {
-                newDots.add(Pair.with(dot.getValue0(), dot.getValue1()));
-            } else if (fold.getValue0() && dot.getValue0() > fold.getValue1()) {
-                newDots.add(Pair.with(fold.getValue1() - (dot.getValue0() - fold.getValue1()), dot.getValue1()));
-            } else if (!fold.getValue0() && dot.getValue1() > fold.getValue1()) {
-                newDots.add(Pair.with(dot.getValue0(), fold.getValue1() - (dot.getValue1() - fold.getValue1())));
+    private Set<Tuple2<Integer, Integer>> foldPaper(Set<Tuple2<Integer, Integer>> dots, Tuple2<Boolean, Integer> fold) {
+        Set<Tuple2<Integer, Integer>> newDots = new HashSet<>();
+        for (Tuple2<Integer, Integer> dot : dots) {
+            if (fold.v1 && dot.v1 < fold.v2 || !fold.v1 && dot.v2 < fold.v2) {
+                newDots.add(Tuple.tuple(dot.v1, dot.v2));
+            } else if (fold.v1 && dot.v1 > fold.v2) {
+                newDots.add(Tuple.tuple(fold.v2 - (dot.v1 - fold.v2), dot.v2));
+            } else if (!fold.v1 && dot.v2 > fold.v2) {
+                newDots.add(Tuple.tuple(dot.v1, fold.v2 - (dot.v2 - fold.v2)));
             }
         }
         return newDots;

@@ -1,7 +1,8 @@
 package de.beachboys.aoc2017;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,24 +27,24 @@ public class Day24 extends Day {
         fillStrongestBridgeByLengthBruteForce(0, parseComponents(input), 0, 0);
     }
 
-    private void fillStrongestBridgeByLengthBruteForce(int connector, List<Pair<Integer, Integer>> components, int currentLength, int currentStrength) {
-        for (Pair<Integer, Integer> component : components) {
-            if (component.getValue0() == connector || component.getValue1() == connector) {
-                List<Pair<Integer, Integer>> otherComponents = new ArrayList<>(components);
+    private void fillStrongestBridgeByLengthBruteForce(int connector, List<Tuple2<Integer, Integer>> components, int currentLength, int currentStrength) {
+        for (Tuple2<Integer, Integer> component : components) {
+            if (component.v1 == connector || component.v2 == connector) {
+                List<Tuple2<Integer, Integer>> otherComponents = new ArrayList<>(components);
                 otherComponents.remove(component);
-                int newConnector = component.getValue0() == connector ? component.getValue1() : component.getValue0();
-                int newStrength = currentStrength + component.getValue0() + component.getValue1();
+                int newConnector = component.v1 == connector ? component.v2 : component.v1;
+                int newStrength = currentStrength + component.v1 + component.v2;
                 fillStrongestBridgeByLengthBruteForce(newConnector, otherComponents, currentLength + 1, newStrength);
             }
         }
         strongestBridgeByLength.put(currentLength, Math.max(strongestBridgeByLength.getOrDefault(currentLength, 0), currentStrength));
     }
 
-    private List<Pair<Integer, Integer>> parseComponents(List<String> input) {
-        List<Pair<Integer, Integer>> components = new ArrayList<>();
+    private List<Tuple2<Integer, Integer>> parseComponents(List<String> input) {
+        List<Tuple2<Integer, Integer>> components = new ArrayList<>();
         for (String line : input) {
             String[] split = line.split("/");
-            components.add(Pair.with(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
+            components.add(Tuple.tuple(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
         }
         return components;
     }

@@ -3,8 +3,9 @@ package de.beachboys.aoc2023;
 import com.microsoft.z3.*;
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class Day24 extends Day {
 
-    private List<Pair<Triplet<BigDecimal, BigDecimal, BigDecimal>, Triplet<BigDecimal, BigDecimal, BigDecimal>>> hailstones;
+    private List<Tuple2<Tuple3<BigDecimal, BigDecimal, BigDecimal>, Tuple3<BigDecimal, BigDecimal, BigDecimal>>> hailstones;
 
     public Object part1(List<String> input) {
         parseInput(input);
@@ -23,20 +24,20 @@ public class Day24 extends Day {
         long result = 0;
         for (int i = 0; i < hailstones.size()-1; i++) {
             for (int j = i+1; j < hailstones.size(); j++) {
-                Pair<Triplet<BigDecimal, BigDecimal, BigDecimal>, Triplet<BigDecimal, BigDecimal, BigDecimal>> hailstone1 = hailstones.get(i);
-                Pair<Triplet<BigDecimal, BigDecimal, BigDecimal>, Triplet<BigDecimal, BigDecimal, BigDecimal>> hailstone2 = hailstones.get(j);
-                Triplet<BigDecimal, BigDecimal, BigDecimal> pos1 = hailstone1.getValue0();
-                Triplet<BigDecimal, BigDecimal, BigDecimal> pos2 = hailstone2.getValue0();
-                Triplet<BigDecimal, BigDecimal, BigDecimal> v1 = hailstone1.getValue1();
-                Triplet<BigDecimal, BigDecimal, BigDecimal> v2 = hailstone2.getValue1();
-                BigDecimal x1 = pos1.getValue0();
-                BigDecimal y1 = pos1.getValue1();
-                BigDecimal x2 = pos1.getValue0().add(v1.getValue0());
-                BigDecimal y2 = pos1.getValue1().add(v1.getValue1());
-                BigDecimal x3 = pos2.getValue0();
-                BigDecimal y3 = pos2.getValue1();
-                BigDecimal x4 = pos2.getValue0().add(v2.getValue0());
-                BigDecimal y4 = pos2.getValue1().add(v2.getValue1());
+                Tuple2<Tuple3<BigDecimal, BigDecimal, BigDecimal>, Tuple3<BigDecimal, BigDecimal, BigDecimal>> hailstone1 = hailstones.get(i);
+                Tuple2<Tuple3<BigDecimal, BigDecimal, BigDecimal>, Tuple3<BigDecimal, BigDecimal, BigDecimal>> hailstone2 = hailstones.get(j);
+                Tuple3<BigDecimal, BigDecimal, BigDecimal> pos1 = hailstone1.v1;
+                Tuple3<BigDecimal, BigDecimal, BigDecimal> pos2 = hailstone2.v1;
+                Tuple3<BigDecimal, BigDecimal, BigDecimal> v1 = hailstone1.v2;
+                Tuple3<BigDecimal, BigDecimal, BigDecimal> v2 = hailstone2.v2;
+                BigDecimal x1 = pos1.v1;
+                BigDecimal y1 = pos1.v2;
+                BigDecimal x2 = pos1.v1.add(v1.v1);
+                BigDecimal y2 = pos1.v2.add(v1.v2);
+                BigDecimal x3 = pos2.v1;
+                BigDecimal y3 = pos2.v2;
+                BigDecimal x4 = pos2.v1.add(v2.v1);
+                BigDecimal y4 = pos2.v2.add(v2.v2);
 
                 BigDecimal denominator = x1.subtract(x2).multiply(y3.subtract(y4)).subtract(y1.subtract(y2).multiply((x3.subtract(x4))));
                 if (!denominator.equals(BigDecimal.ZERO)) {
@@ -44,8 +45,8 @@ public class Day24 extends Day {
                     BigDecimal f2 = x3.multiply(y4).subtract(y3.multiply(x4));
                     BigDecimal x = f1.multiply(x3.subtract(x4)).subtract(x1.subtract(x2).multiply(f2)).divide(denominator, RoundingMode.HALF_UP);
                     BigDecimal y = f1.multiply(y3.subtract(y4)).subtract(y1.subtract(y2).multiply(f2)).divide(denominator, RoundingMode.HALF_UP);
-                    BigDecimal time = x.subtract(x1).divide(v1.getValue0(), RoundingMode.HALF_UP);
-                    BigDecimal time2 = x.subtract(x3).divide(v2.getValue0(), RoundingMode.HALF_UP);
+                    BigDecimal time = x.subtract(x1).divide(v1.v1, RoundingMode.HALF_UP);
+                    BigDecimal time2 = x.subtract(x3).divide(v2.v1, RoundingMode.HALF_UP);
 
                     if (time.compareTo(BigDecimal.ZERO) > 0 && time2.compareTo(BigDecimal.ZERO) > 0
                             && x.doubleValue() >= min && x.doubleValue() <= max
@@ -74,10 +75,10 @@ public class Day24 extends Day {
         int numEquations = 0;
         for (int i = 0; numEquations < numVariables; i++) {
             IntExpr timeVar = z3Context.mkIntConst("t" + i);
-            Pair<Triplet<BigDecimal, BigDecimal, BigDecimal>, Triplet<BigDecimal, BigDecimal, BigDecimal>> hailstone = hailstones.get(i);
-            z3Solver.add(getEquationForDimension(z3Context, startPositionXVar, velocityXVar, timeVar, hailstone.getValue0().getValue0(), hailstone.getValue1().getValue0()));
-            z3Solver.add(getEquationForDimension(z3Context, startPositionYVar, velocityYVar, timeVar, hailstone.getValue0().getValue1(), hailstone.getValue1().getValue1()));
-            z3Solver.add(getEquationForDimension(z3Context, startPositionZVar, velocityZVar, timeVar, hailstone.getValue0().getValue2(), hailstone.getValue1().getValue2()));
+            Tuple2<Tuple3<BigDecimal, BigDecimal, BigDecimal>, Tuple3<BigDecimal, BigDecimal, BigDecimal>> hailstone = hailstones.get(i);
+            z3Solver.add(getEquationForDimension(z3Context, startPositionXVar, velocityXVar, timeVar, hailstone.v1.v1, hailstone.v2.v1));
+            z3Solver.add(getEquationForDimension(z3Context, startPositionYVar, velocityYVar, timeVar, hailstone.v1.v2, hailstone.v2.v2));
+            z3Solver.add(getEquationForDimension(z3Context, startPositionZVar, velocityZVar, timeVar, hailstone.v1.v3, hailstone.v2.v3));
             numVariables += 1;
             numEquations += 3;
         }
@@ -105,10 +106,10 @@ public class Day24 extends Day {
         Solver z3Solver = z3Context.mkSolver();
         for (int i = 0; i < hailstones.size(); i++) {
             IntExpr timeVar = z3Context.mkIntConst("t" + i);
-            Pair<Triplet<BigDecimal, BigDecimal, BigDecimal>, Triplet<BigDecimal, BigDecimal, BigDecimal>> hailstone = hailstones.get(i);
-            Status res1 = z3Solver.check(getValidationEquationForDimension(z3Context, startPositionXVar, velocityXVar, timeVar, hailstone.getValue0().getValue0(), hailstone.getValue1().getValue0()));
-            Status res2 = z3Solver.check(getValidationEquationForDimension(z3Context, startPositionYVar, velocityYVar, timeVar, hailstone.getValue0().getValue1(), hailstone.getValue1().getValue1()));
-            Status res3 = z3Solver.check(getValidationEquationForDimension(z3Context, startPositionZVar, velocityZVar, timeVar, hailstone.getValue0().getValue2(), hailstone.getValue1().getValue2()));
+            Tuple2<Tuple3<BigDecimal, BigDecimal, BigDecimal>, Tuple3<BigDecimal, BigDecimal, BigDecimal>> hailstone = hailstones.get(i);
+            Status res1 = z3Solver.check(getValidationEquationForDimension(z3Context, startPositionXVar, velocityXVar, timeVar, hailstone.v1.v1, hailstone.v2.v1));
+            Status res2 = z3Solver.check(getValidationEquationForDimension(z3Context, startPositionYVar, velocityYVar, timeVar, hailstone.v1.v2, hailstone.v2.v2));
+            Status res3 = z3Solver.check(getValidationEquationForDimension(z3Context, startPositionZVar, velocityZVar, timeVar, hailstone.v1.v3, hailstone.v2.v3));
             if (!(Status.SATISFIABLE.equals(res1) && Status.SATISFIABLE.equals(res2) && Status.SATISFIABLE.equals(res3))) {
                 throw new IllegalArgumentException("Unsatisfiable hailstone at index " + i + ". Individual results: " + res1 + " " + res2 + " " + res3);
             }
@@ -141,9 +142,9 @@ public class Day24 extends Day {
             String[] positionAndVelocity = line.split(" @ ");
             String[] positionAsStrings = positionAndVelocity[0].split(", ");
             String[] velocityAsStrings = positionAndVelocity[1].split(", ");
-            Triplet<BigDecimal, BigDecimal, BigDecimal> position = Triplet.with(parseBigDecimal(positionAsStrings[0]), parseBigDecimal(positionAsStrings[1]), parseBigDecimal(positionAsStrings[2]));
-            Triplet<BigDecimal, BigDecimal, BigDecimal> velocity = Triplet.with(parseBigDecimal(velocityAsStrings[0]), parseBigDecimal(velocityAsStrings[1]), parseBigDecimal(velocityAsStrings[2]));
-            hailstones.add(Pair.with(position, velocity));
+            Tuple3<BigDecimal, BigDecimal, BigDecimal> position = Tuple.tuple(parseBigDecimal(positionAsStrings[0]), parseBigDecimal(positionAsStrings[1]), parseBigDecimal(positionAsStrings[2]));
+            Tuple3<BigDecimal, BigDecimal, BigDecimal> velocity = Tuple.tuple(parseBigDecimal(velocityAsStrings[0]), parseBigDecimal(velocityAsStrings[1]), parseBigDecimal(velocityAsStrings[2]));
+            hailstones.add(Tuple.tuple(position, velocity));
         }
     }
 

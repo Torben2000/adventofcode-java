@@ -2,14 +2,15 @@ package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day11 extends Day {
 
-    private final Map<Pair<Integer, Integer>, Integer> map = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, Integer> map = new HashMap<>();
     private int maxX ;
     private int maxY;
 
@@ -23,7 +24,7 @@ public class Day11 extends Day {
 
     private long runLogic(List<String> input, int numberOfSteps, boolean breakOnSimultaneousFlashAndReturnSteps) {
         map.clear();
-        Map<Pair<Integer, Integer>, String> tempMap = Util.buildImageMap(input);
+        Map<Tuple2<Integer, Integer>, String> tempMap = Util.buildImageMap(input);
         tempMap.forEach((k, v) -> map.put(k, Integer.valueOf(v)));
         maxX = input.get(0).length();
         maxY = input.size();
@@ -31,11 +32,11 @@ public class Day11 extends Day {
 
         for (int step = 0; step < numberOfSteps; step++) {
             increaseEnergyLevel();
-            Set<Pair<Integer, Integer>> flashes = new HashSet<>();
-            Set<Pair<Integer, Integer>> newFlashes;
+            Set<Tuple2<Integer, Integer>> flashes = new HashSet<>();
+            Set<Tuple2<Integer, Integer>> newFlashes;
             do {
                 newFlashes = map.entrySet().stream().filter(e -> e.getValue() > 9).map(Map.Entry::getKey).filter(pos -> !flashes.contains(pos)).collect(Collectors.toSet());
-                for (Pair<Integer, Integer> flash : newFlashes) {
+                for (Tuple2<Integer, Integer> flash : newFlashes) {
                     increaseEnergyLevelOfNeighbors(flash);
                 }
                 flashes.addAll(newFlashes);
@@ -47,7 +48,7 @@ public class Day11 extends Day {
 
             sum += flashes.size();
 
-            for (Pair<Integer, Integer> flashedOctopus : flashes) {
+            for (Tuple2<Integer, Integer> flashedOctopus : flashes) {
                 map.put(flashedOctopus, 0);
             }
         }
@@ -55,11 +56,11 @@ public class Day11 extends Day {
         return sum;
     }
 
-    private void increaseEnergyLevelOfNeighbors(Pair<Integer, Integer> flash) {
+    private void increaseEnergyLevelOfNeighbors(Tuple2<Integer, Integer> flash) {
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 if (x != 0 || y != 0) {
-                    Pair<Integer, Integer> neighbor = Pair.with(flash.getValue0() + x, flash.getValue1() + y);
+                    Tuple2<Integer, Integer> neighbor = Tuple.tuple(flash.v1 + x, flash.v2 + y);
                     if (map.containsKey(neighbor)) {
                         map.put(neighbor, map.get(neighbor) + 1);
                     }
@@ -71,7 +72,7 @@ public class Day11 extends Day {
     private void increaseEnergyLevel() {
         for (int x = 0; x < maxX; x++) {
             for (int y = 0; y < maxY; y++) {
-                Pair<Integer, Integer> pos = Pair.with(x, y);
+                Tuple2<Integer, Integer> pos = Tuple.tuple(x, y);
                 map.put(pos, map.get(pos) + 1);
             }
         }

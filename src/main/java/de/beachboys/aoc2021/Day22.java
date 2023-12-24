@@ -1,8 +1,9 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -12,18 +13,18 @@ import java.util.stream.Collectors;
 public class Day22 extends Day {
 
     public Object part1(List<String> input) {
-        List<Pair<Boolean, Cuboid>> steps = parseInput(input);
+        List<Tuple2<Boolean, Cuboid>> steps = parseInput(input);
 
-        Set<Triplet<Integer, Integer, Integer>> cubeSet = new HashSet<>();
-        for (Pair<Boolean, Cuboid> step : steps) {
-            Cuboid cuboid = step.getValue1();
+        Set<Tuple3<Integer, Integer, Integer>> cubeSet = new HashSet<>();
+        for (Tuple2<Boolean, Cuboid> step : steps) {
+            Cuboid cuboid = step.v2;
             for (int i = Math.max(cuboid.minX, -50); i <= Math.min(cuboid.maxX, 50); i++) {
                 for (int j = Math.max(cuboid.minY, -50); j <= Math.min(cuboid.maxY, 50); j++) {
                     for (int k = Math.max(cuboid.minZ, -50); k <= Math.min(cuboid.maxZ, 50); k++) {
-                        if (step.getValue0()) {
-                            cubeSet.add(Triplet.with(i, j, k));
+                        if (step.v1) {
+                            cubeSet.add(Tuple.tuple(i, j, k));
                         } else {
-                            cubeSet.remove(Triplet.with(i, j, k));
+                            cubeSet.remove(Tuple.tuple(i, j, k));
                         }
                     }
                 }
@@ -34,11 +35,11 @@ public class Day22 extends Day {
     }
 
     public Object part2(List<String> input) {
-        List<Pair<Boolean, Cuboid>> steps = parseInput(input);
+        List<Tuple2<Boolean, Cuboid>> steps = parseInput(input);
 
         Set<Cuboid> cuboidSet = new HashSet<>();
-        for (Pair<Boolean, Cuboid> step : steps) {
-            Cuboid cuboid = step.getValue1();
+        for (Tuple2<Boolean, Cuboid> step : steps) {
+            Cuboid cuboid = step.v2;
             Set<Cuboid> cuboidsToAdd = new HashSet<>();
             Set<Cuboid> cuboidsToRemove = new HashSet<>();
             for (Cuboid existingCuboid : cuboidSet) {
@@ -47,7 +48,7 @@ public class Day22 extends Day {
                     cuboidsToAdd.addAll(cuboidAMinusCuboidB(existingCuboid, cuboid));
                 }
             }
-            if (step.getValue0()) {
+            if (step.v1) {
                 cuboidsToAdd.add(cuboid);
             }
             cuboidSet.removeAll(cuboidsToRemove);
@@ -69,27 +70,27 @@ public class Day22 extends Day {
     private Set<Cuboid> cuboidAMinusCuboidB(Cuboid cuboidA, Cuboid cuboidB) {
         Set<Cuboid> cuboids = new HashSet<>();
 
-        Pair<Integer, Integer> xBefore = Pair.with(cuboidA.minX, Math.min(cuboidB.minX - 1, cuboidA.maxX));
-        Pair<Integer, Integer> xInner = Pair.with(Math.max(cuboidB.minX, cuboidA.minX), Math.min(cuboidB.maxX, cuboidA.maxX));
-        Pair<Integer, Integer> xAfter = Pair.with(Math.max(cuboidB.maxX + 1, cuboidA.minX), cuboidA.maxX);
+        Tuple2<Integer, Integer> xBefore = Tuple.tuple(cuboidA.minX, Math.min(cuboidB.minX - 1, cuboidA.maxX));
+        Tuple2<Integer, Integer> xInner = Tuple.tuple(Math.max(cuboidB.minX, cuboidA.minX), Math.min(cuboidB.maxX, cuboidA.maxX));
+        Tuple2<Integer, Integer> xAfter = Tuple.tuple(Math.max(cuboidB.maxX + 1, cuboidA.minX), cuboidA.maxX);
 
-        Pair<Integer, Integer> yBefore = Pair.with(cuboidA.minY, Math.min(cuboidB.minY - 1, cuboidA.maxY));
-        Pair<Integer, Integer> yInner = Pair.with(Math.max(cuboidB.minY, cuboidA.minY), Math.min(cuboidB.maxY, cuboidA.maxY));
-        Pair<Integer, Integer> yAfter = Pair.with(Math.max(cuboidB.maxY + 1, cuboidA.minY), cuboidA.maxY);
+        Tuple2<Integer, Integer> yBefore = Tuple.tuple(cuboidA.minY, Math.min(cuboidB.minY - 1, cuboidA.maxY));
+        Tuple2<Integer, Integer> yInner = Tuple.tuple(Math.max(cuboidB.minY, cuboidA.minY), Math.min(cuboidB.maxY, cuboidA.maxY));
+        Tuple2<Integer, Integer> yAfter = Tuple.tuple(Math.max(cuboidB.maxY + 1, cuboidA.minY), cuboidA.maxY);
 
-        Pair<Integer, Integer> zBefore = Pair.with(cuboidA.minZ, Math.min(cuboidB.minZ - 1, cuboidA.maxZ));
-        Pair<Integer, Integer> zInner = Pair.with(Math.max(cuboidB.minZ, cuboidA.minZ), Math.min(cuboidB.maxZ, cuboidA.maxZ));
-        Pair<Integer, Integer> zAfter = Pair.with(Math.max(cuboidB.maxZ + 1, cuboidA.minZ), cuboidA.maxZ);
+        Tuple2<Integer, Integer> zBefore = Tuple.tuple(cuboidA.minZ, Math.min(cuboidB.minZ - 1, cuboidA.maxZ));
+        Tuple2<Integer, Integer> zInner = Tuple.tuple(Math.max(cuboidB.minZ, cuboidA.minZ), Math.min(cuboidB.maxZ, cuboidA.maxZ));
+        Tuple2<Integer, Integer> zAfter = Tuple.tuple(Math.max(cuboidB.maxZ + 1, cuboidA.minZ), cuboidA.maxZ);
 
-        List<Pair<Integer, Integer>> xPairs = List.of(xBefore, xInner, xAfter);
-        List<Pair<Integer, Integer>> yPairs = List.of(yBefore, yInner, yAfter);
-        List<Pair<Integer, Integer>> zPairs = List.of(zBefore, zInner, zAfter);
+        List<Tuple2<Integer, Integer>> xPairs = List.of(xBefore, xInner, xAfter);
+        List<Tuple2<Integer, Integer>> yPairs = List.of(yBefore, yInner, yAfter);
+        List<Tuple2<Integer, Integer>> zPairs = List.of(zBefore, zInner, zAfter);
 
         Cuboid innerCuboid = new Cuboid(xInner, yInner, zInner);
 
-        for (Pair<Integer, Integer> xPair : xPairs) {
-            for(Pair<Integer, Integer> yPair : yPairs) {
-                for (Pair<Integer, Integer> zPair : zPairs) {
+        for (Tuple2<Integer, Integer> xPair : xPairs) {
+            for(Tuple2<Integer, Integer> yPair : yPairs) {
+                for (Tuple2<Integer, Integer> zPair : zPairs) {
                     cuboids.add(new Cuboid(xPair, yPair, zPair));
                 }
             }
@@ -108,8 +109,8 @@ public class Day22 extends Day {
                 && cuboidA.minZ >= cuboidB.minZ && cuboidA.maxZ <= cuboidB.maxZ;
     }
 
-    private List<Pair<Boolean, Cuboid>> parseInput(List<String> input) {
-        List<Pair<Boolean, Cuboid>> steps = new ArrayList<>();
+    private List<Tuple2<Boolean, Cuboid>> parseInput(List<String> input) {
+        List<Tuple2<Boolean, Cuboid>> steps = new ArrayList<>();
         Pattern linePattern = Pattern.compile("(on|off) x=([-0-9]+)..([-0-9]+),y=([-0-9]+)..([-0-9]+),z=([-0-9]+)..([-0-9]+)");
         for (String line : input) {
             Matcher m = linePattern.matcher(line);
@@ -121,7 +122,7 @@ public class Day22 extends Day {
                 int maxY = Integer.parseInt(m.group(5));
                 int minZ = Integer.parseInt(m.group(6));
                 int maxZ = Integer.parseInt(m.group(7));
-                steps.add(Pair.with(on, new Cuboid(minX, maxX, minY, maxY, minZ, maxZ)));
+                steps.add(Tuple.tuple(on, new Cuboid(minX, maxX, minY, maxY, minZ, maxZ)));
             }
         }
         return steps;
@@ -145,13 +146,13 @@ public class Day22 extends Day {
             this.maxZ = maxZ;
         }
 
-        public Cuboid(Pair<Integer, Integer> x, Pair<Integer, Integer> y, Pair<Integer, Integer> z) {
-            this.minX = x.getValue0();
-            this.maxX = x.getValue1();
-            this.minY = y.getValue0();
-            this.maxY = y.getValue1();
-            this.minZ = z.getValue0();
-            this.maxZ = z.getValue1();
+        public Cuboid(Tuple2<Integer, Integer> x, Tuple2<Integer, Integer> y, Tuple2<Integer, Integer> z) {
+            this.minX = x.v1;
+            this.maxX = x.v2;
+            this.minY = y.v1;
+            this.maxY = y.v2;
+            this.minZ = z.v1;
+            this.maxZ = z.v2;
         }
 
         @Override

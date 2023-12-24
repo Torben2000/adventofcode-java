@@ -3,16 +3,19 @@ package de.beachboys.aoc2022;
 import de.beachboys.Day;
 import de.beachboys.OCR;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Day10 extends Day {
 
     private int currentCycle = 1;
     private int currentX = 1;
     private int part1Result = 0;
-    private final Set<Pair<Integer, Integer>> pixels = new HashSet<>();
+    private final Set<Tuple2<Integer, Integer>> pixels = new HashSet<>();
 
     public Object part1(List<String> input) {
         runLogic(input, this::checkPart1);
@@ -46,7 +49,7 @@ public class Day10 extends Day {
         currentCycle = 1;
         part1Result = 0;
         pixels.clear();
-        pixels.add(Pair.with(0, 0));
+        pixels.add(Tuple.tuple(0, 0));
     }
 
     private void checkPart1() {
@@ -58,7 +61,7 @@ public class Day10 extends Day {
     private void checkPart2() {
         int x = (currentCycle - 1) % 40;
         if (x - 1 <= currentX && x + 1 >= currentX) {
-            pixels.add(Pair.with(x, (currentCycle - 1) / 40));
+            pixels.add(Tuple.tuple(x, (currentCycle - 1) / 40));
         }
     }
 

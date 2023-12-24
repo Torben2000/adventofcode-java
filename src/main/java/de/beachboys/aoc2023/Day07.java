@@ -1,9 +1,13 @@
 package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Day07 extends Day {
 
@@ -25,19 +29,19 @@ public class Day07 extends Day {
 
     private static long runLogic(List<String> input, boolean useJoker) {
         long result = 0;
-        List<Triplet<Integer, String, Integer>> list = new ArrayList<>();
+        List<Tuple3<Integer, String, Integer>> list = new ArrayList<>();
         for (String line : input) {
             String[] splitLine = line.split(" ");
             int bid = Integer.parseInt(splitLine[1]);
             String cards = splitLine[0];
             int score = getScore(useJoker, cards);
             String tieBreakingHexString = getTieBreakingHexString(useJoker, cards);
-            list.add(Triplet.with(score, tieBreakingHexString, bid));
+            list.add(Tuple.tuple(score, tieBreakingHexString, bid));
         }
 
-        List<Triplet<Integer, String, Integer>> sorted = list.stream().sorted().toList();
+        List<Tuple3<Integer, String, Integer>> sorted = list.stream().sorted().toList();
         for (int i = 0; i < sorted.size(); i++) {
-            result += (long) (i + 1) * sorted.get(i).getValue2();
+            result += (long) (i + 1) * sorted.get(i).v3;
         }
         return result;
     }

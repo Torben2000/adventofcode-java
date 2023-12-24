@@ -1,7 +1,8 @@
 package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -15,7 +16,7 @@ public class Day23 extends Day {
         Bot botWithLongestRange = bots.stream().max(Comparator.comparing(bot -> bot.range)).orElseThrow();
         long botsInRange = 0L;
         for (Bot bot : bots) {
-            boolean inRange = isInRangeOfBot(botWithLongestRange, bot.position.getValue0(), bot.position.getValue1(), bot.position.getValue2());
+            boolean inRange = isInRangeOfBot(botWithLongestRange, bot.position.v1, bot.position.v2, bot.position.v3);
             if (inRange) {
                 botsInRange++;
             }
@@ -34,12 +35,12 @@ public class Day23 extends Day {
         long minZ = Long.MIN_VALUE;
         long maxZ = Long.MAX_VALUE;
         for (Bot bot : botsWithIntersectingRanges) {
-            minX = Math.max(minX, bot.position.getValue0() - bot.range);
-            maxX = Math.min(maxX, bot.position.getValue0() + bot.range);
-            minY = Math.max(minY, bot.position.getValue1() - bot.range);
-            maxY = Math.min(maxY, bot.position.getValue1() + bot.range);
-            minZ = Math.max(minZ, bot.position.getValue2() - bot.range);
-            maxZ = Math.min(maxZ, bot.position.getValue2() + bot.range);
+            minX = Math.max(minX, bot.position.v1 - bot.range);
+            maxX = Math.min(maxX, bot.position.v1 + bot.range);
+            minY = Math.max(minY, bot.position.v2 - bot.range);
+            maxY = Math.min(maxY, bot.position.v2 + bot.range);
+            minZ = Math.max(minZ, bot.position.v3 - bot.range);
+            maxZ = Math.min(maxZ, bot.position.v3 + bot.range);
         }
 
         Optional<Long> minDistance = getMinimalDistanceToCenterFast(botsWithIntersectingRanges, minX, maxX, minY, maxY, minZ, maxZ);
@@ -55,8 +56,8 @@ public class Day23 extends Day {
             long minDistance = minX + minY + minZ;
             long maxDistance = maxX + maxY + maxZ;
             for (Bot bot : botsWithIntersectingRanges) {
-                minDistance = Math.max(minDistance, bot.position.getValue0() + bot.position.getValue1() + bot.position.getValue2() - bot.range);
-                maxDistance = Math.min(maxDistance, bot.position.getValue0() + bot.position.getValue1() + bot.position.getValue2() + bot.range);
+                minDistance = Math.max(minDistance, bot.position.v1 + bot.position.v2 + bot.position.v3 - bot.range);
+                maxDistance = Math.min(maxDistance, bot.position.v1 + bot.position.v2 + bot.position.v3 + bot.range);
             }
             if (minDistance == maxDistance) {
                 return Optional.of(minDistance);
@@ -144,7 +145,7 @@ public class Day23 extends Day {
         for (String line : input) {
             Matcher m = pattern.matcher(line);
             if (m.matches()) {
-                Triplet<Long, Long, Long> position = Triplet.with(Long.parseLong(m.group(1)), Long.parseLong(m.group(2)), Long.parseLong(m.group(3)));
+                Tuple3<Long, Long, Long> position = Tuple.tuple(Long.parseLong(m.group(1)), Long.parseLong(m.group(2)), Long.parseLong(m.group(3)));
                 bots.add(new Bot(position, Long.parseLong(m.group(4))));
             }
         }
@@ -153,9 +154,9 @@ public class Day23 extends Day {
 
     private boolean isInRangeOfBot(Bot bot, long x, long y, long z) {
         boolean inRange = false;
-        long distance = Math.abs(bot.position.getValue0() - x)
-                    + Math.abs(bot.position.getValue1() - y)
-                    + Math.abs(bot.position.getValue2() - z);
+        long distance = Math.abs(bot.position.v1 - x)
+                    + Math.abs(bot.position.v2 - y)
+                    + Math.abs(bot.position.v3 - z);
         if (distance <= bot.range) {
             inRange = true;
         }
@@ -163,9 +164,9 @@ public class Day23 extends Day {
     }
 
     private long getBotDistance(Bot bot1, Bot bot2) {
-        return Math.abs(bot1.position.getValue0() - bot2.position.getValue0())
-                + Math.abs(bot1.position.getValue1() - bot2.position.getValue1())
-                + Math.abs(bot1.position.getValue2() - bot2.position.getValue2());
+        return Math.abs(bot1.position.v1 - bot2.position.v1)
+                + Math.abs(bot1.position.v2 - bot2.position.v2)
+                + Math.abs(bot1.position.v3 - bot2.position.v3);
     }
 
     private long getDistanceToCenter(long x, long y, long z) {
@@ -174,10 +175,10 @@ public class Day23 extends Day {
 
     private static class Bot {
 
-        Triplet<Long, Long, Long> position;
+        Tuple3<Long, Long, Long> position;
         long range;
 
-        public Bot(Triplet<Long, Long, Long> position, Long range) {
+        public Bot(Tuple3<Long, Long, Long> position, Long range) {
             this.position = position;
             this.range = range;
         }

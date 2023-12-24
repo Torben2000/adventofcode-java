@@ -1,7 +1,8 @@
 package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +15,11 @@ public class Day02 extends Day {
         for (String line : input) {
             Game game = parseGame(line);
             boolean gamePossible = true;
-            for (Pair<String, Integer> cubeSet : game.cubeSets) {
-                if (!cubeSet.getValue0().equals("red") && !cubeSet.getValue0().equals("green") && !cubeSet.getValue0().equals("blue")
-                        || cubeSet.getValue0().equals("red") && cubeSet.getValue1() > 12
-                        || cubeSet.getValue0().equals("green") && cubeSet.getValue1() > 13
-                        || cubeSet.getValue0().equals("blue") && cubeSet.getValue1() > 14) {
+            for (Tuple2<String, Integer> cubeSet : game.cubeSets) {
+                if (!cubeSet.v1.equals("red") && !cubeSet.v1.equals("green") && !cubeSet.v1.equals("blue")
+                        || cubeSet.v1.equals("red") && cubeSet.v2 > 12
+                        || cubeSet.v1.equals("green") && cubeSet.v2 > 13
+                        || cubeSet.v1.equals("blue") && cubeSet.v2 > 14) {
                     gamePossible = false;
                     break;
                 }
@@ -39,15 +40,15 @@ public class Day02 extends Day {
             int minRedCubes = 0;
             int minBlueCubes = 0;
             int minGreenCubes = 0;
-            for (Pair<String, Integer> cubeSet : game.cubeSets) {
-                if (cubeSet.getValue0().equals("red")) {
-                    minRedCubes = Math.max(minRedCubes, cubeSet.getValue1());
+            for (Tuple2<String, Integer> cubeSet : game.cubeSets) {
+                if (cubeSet.v1.equals("red")) {
+                    minRedCubes = Math.max(minRedCubes, cubeSet.v2);
                 }
-                if (cubeSet.getValue0().equals("green")) {
-                    minGreenCubes = Math.max(minGreenCubes, cubeSet.getValue1());
+                if (cubeSet.v1.equals("green")) {
+                    minGreenCubes = Math.max(minGreenCubes, cubeSet.v2);
                 }
-                if (cubeSet.getValue0().equals("blue")) {
-                    minBlueCubes = Math.max(minBlueCubes, cubeSet.getValue1());
+                if (cubeSet.v1.equals("blue")) {
+                    minBlueCubes = Math.max(minBlueCubes, cubeSet.v2);
                 }
 
             }
@@ -67,7 +68,7 @@ public class Day02 extends Day {
             String[] singleColorCubeSets = multiColorCubeSet.split(", ");
             for (String singleColorCubeSet : singleColorCubeSets) {
                 String[] numberAndColor = singleColorCubeSet.split(" ");
-                game.cubeSets.add(Pair.with(numberAndColor[1], Integer.parseInt(numberAndColor[0])));
+                game.cubeSets.add(Tuple.tuple(numberAndColor[1], Integer.parseInt(numberAndColor[0])));
             }
         }
         return game;
@@ -75,7 +76,7 @@ public class Day02 extends Day {
 
     private static class Game {
         int id;
-        List<Pair<String, Integer>> cubeSets;
+        List<Tuple2<String, Integer>> cubeSets;
     }
 
 }

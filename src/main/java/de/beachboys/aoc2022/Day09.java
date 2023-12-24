@@ -2,7 +2,8 @@ package de.beachboys.aoc2022;
 
 import de.beachboys.Day;
 import de.beachboys.Direction;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,11 +21,11 @@ public class Day09 extends Day {
     }
 
     private static int runLogic(List<String> input, int numberOfKnots) {
-        List<Pair<Integer, Integer>> knots = new ArrayList<>();
+        List<Tuple2<Integer, Integer>> knots = new ArrayList<>();
         for (int i = 0; i < numberOfKnots; i++) {
-            knots.add(Pair.with(0, 0));
+            knots.add(Tuple.tuple(0, 0));
         }
-        Set<Pair<Integer, Integer>> visitedPositionsOfTail = new HashSet<>();
+        Set<Tuple2<Integer, Integer>> visitedPositionsOfTail = new HashSet<>();
         visitedPositionsOfTail.add(knots.get(knots.size() - 1));
 
         for (String line : input) {
@@ -43,14 +44,14 @@ public class Day09 extends Day {
         return visitedPositionsOfTail.size();
     }
 
-    private static Pair<Integer, Integer> getNewFollowingKnot(Pair<Integer, Integer> oldFollowingKnot, Pair<Integer, Integer> newHead) {
-        int xDiff = newHead.getValue0() - oldFollowingKnot.getValue0();
-        int yDiff = newHead.getValue1() - oldFollowingKnot.getValue1();
+    private static Tuple2<Integer, Integer> getNewFollowingKnot(Tuple2<Integer, Integer> oldFollowingKnot, Tuple2<Integer, Integer> newHead) {
+        int xDiff = newHead.v1 - oldFollowingKnot.v1;
+        int yDiff = newHead.v2 - oldFollowingKnot.v2;
 
-        int newX = getNewValue(xDiff, yDiff, oldFollowingKnot.getValue0(), newHead.getValue0());
-        int newY = getNewValue(yDiff, xDiff, oldFollowingKnot.getValue1(), newHead.getValue1());
+        int newX = getNewValue(xDiff, yDiff, oldFollowingKnot.v1, newHead.v1);
+        int newY = getNewValue(yDiff, xDiff, oldFollowingKnot.v2, newHead.v2);
 
-        return Pair.with(newX, newY);
+        return Tuple.tuple(newX, newY);
     }
 
     private static int getNewValue(int diffInThisDimension, int diffInOtherDimension, int oldValue, int headValue) {

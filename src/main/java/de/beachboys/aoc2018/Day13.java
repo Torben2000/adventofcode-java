@@ -2,7 +2,8 @@ package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
 import de.beachboys.Direction;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.function.BooleanSupplier;
@@ -16,43 +17,43 @@ public class Day13 extends Day {
 
     private static class Cart implements Comparable<Cart> {
 
-        Pair<Integer, Integer> position;
+        Tuple2<Integer, Integer> position;
         Direction currentDirection;
         NextAction nextAction = NextAction.TURN_LEFT;
         boolean hasCrashed = false;
 
-        public Cart(Pair<Integer, Integer> position,  Direction currentDirection) {
+        public Cart(Tuple2<Integer, Integer> position,  Direction currentDirection) {
             this.position = position;
             this.currentDirection = currentDirection;
         }
 
         @Override
         public int compareTo(Cart o) {
-            int yComparison = position.getValue1().compareTo(o.position.getValue1());
+            int yComparison = position.v2.compareTo(o.position.v2);
             if (yComparison == 0) {
-                return position.getValue0().compareTo(o.position.getValue0());
+                return position.v1.compareTo(o.position.v1);
             }
             return yComparison;
         }
     }
 
-    private final Map<Pair<Integer, Integer>, Set<Direction>> connections = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, Set<Direction>> connections = new HashMap<>();
 
     private final List<Cart> carts = new ArrayList<>();
 
-    private final Set<Pair<Integer, Integer>> currentCartPositions = new HashSet<>();
+    private final Set<Tuple2<Integer, Integer>> currentCartPositions = new HashSet<>();
 
-    private Pair<Integer, Integer> firstCrashPosition;
+    private Tuple2<Integer, Integer> firstCrashPosition;
 
     public Object part1(List<String> input) {
         runLogic(input, () -> firstCrashPosition == null);
-        return firstCrashPosition.getValue0() + "," + firstCrashPosition.getValue1();
+        return firstCrashPosition.v1 + "," + firstCrashPosition.v2;
     }
 
     public Object part2(List<String> input) {
         runLogic(input, () -> carts.size() > 1);
         Cart finalCart = carts.stream().filter(cart -> !cart.hasCrashed).findAny().orElseThrow();
-        return finalCart.position.getValue0() + "," + finalCart.position.getValue1();
+        return finalCart.position.v1 + "," + finalCart.position.v2;
     }
 
     private void runLogic(List<String> input, BooleanSupplier continueWithNextTick) {
@@ -140,7 +141,7 @@ public class Day13 extends Day {
                         connectionsAtPosition.add(Direction.SOUTH);
                         break;
                     case '\\':
-                        if (connections.getOrDefault(Pair.with(x - 1, y), Set.of()).contains(Direction.EAST)) {
+                        if (connections.getOrDefault(Tuple.tuple(x - 1, y), Set.of()).contains(Direction.EAST)) {
                             connectionsAtPosition.add(Direction.WEST);
                             connectionsAtPosition.add(Direction.SOUTH);
                         } else {
@@ -149,7 +150,7 @@ public class Day13 extends Day {
                         }
                         break;
                     case '/':
-                        if (connections.getOrDefault(Pair.with(x - 1, y), Set.of()).contains(Direction.EAST)) {
+                        if (connections.getOrDefault(Tuple.tuple(x - 1, y), Set.of()).contains(Direction.EAST)) {
                             connectionsAtPosition.add(Direction.WEST);
                             connectionsAtPosition.add(Direction.NORTH);
                         } else {
@@ -160,26 +161,26 @@ public class Day13 extends Day {
                     case '>':
                         connectionsAtPosition.add(Direction.WEST);
                         connectionsAtPosition.add(Direction.EAST);
-                        carts.add(new Cart(Pair.with(x, y), Direction.EAST));
+                        carts.add(new Cart(Tuple.tuple(x, y), Direction.EAST));
                         break;
                     case '<':
                         connectionsAtPosition.add(Direction.WEST);
                         connectionsAtPosition.add(Direction.EAST);
-                        carts.add(new Cart(Pair.with(x, y), Direction.WEST));
+                        carts.add(new Cart(Tuple.tuple(x, y), Direction.WEST));
                         break;
                     case 'v':
                         connectionsAtPosition.add(Direction.NORTH);
                         connectionsAtPosition.add(Direction.SOUTH);
-                        carts.add(new Cart(Pair.with(x, y), Direction.SOUTH));
+                        carts.add(new Cart(Tuple.tuple(x, y), Direction.SOUTH));
                         break;
                     case '^':
                         connectionsAtPosition.add(Direction.NORTH);
                         connectionsAtPosition.add(Direction.SOUTH);
-                        carts.add(new Cart(Pair.with(x, y), Direction.NORTH));
+                        carts.add(new Cart(Tuple.tuple(x, y), Direction.NORTH));
                         break;
 
                 }
-                connections.put(Pair.with(x, y), connectionsAtPosition);
+                connections.put(Tuple.tuple(x, y), connectionsAtPosition);
             }
         }
     }

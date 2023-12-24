@@ -3,7 +3,8 @@ package de.beachboys.aoc2019;
 import de.beachboys.Day;
 import de.beachboys.IOHelper;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -15,7 +16,7 @@ public class Day23 extends Day {
         INIT, ADDRESS, X, Y
     }
 
-    private final Map<Integer, Deque<Pair<Long, Long>>> traffic = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Integer, Deque<Tuple2<Long, Long>>> traffic = Collections.synchronizedMap(new HashMap<>());
 
     private final Map<Integer, IntcodeComputer> nics = Collections.synchronizedMap(new HashMap<>());
 
@@ -23,7 +24,7 @@ public class Day23 extends Day {
 
     private final Map<Integer, Mode> outputModes = Collections.synchronizedMap(new HashMap<>());
 
-    private final Map<Integer, Pair<Long, Long>> tempOutputs = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Integer, Tuple2<Long, Long>> tempOutputs = Collections.synchronizedMap(new HashMap<>());
 
     private final Set<Thread> threads = new HashSet<>();
 
@@ -59,9 +60,9 @@ public class Day23 extends Day {
         threads.forEach(Thread::start);
     }
 
-    private void monitorNat(Consumer<Deque<Pair<Long, Long>>> natTrafficHandler) {
+    private void monitorNat(Consumer<Deque<Tuple2<Long, Long>>> natTrafficHandler) {
         while (isAnyThreadActive()) {
-            Deque<Pair<Long, Long>> natTraffic = traffic.get(255);
+            Deque<Tuple2<Long, Long>> natTraffic = traffic.get(255);
             if (!natTraffic.isEmpty()) {
                 natTrafficHandler.accept(natTraffic);
             }
@@ -74,24 +75,24 @@ public class Day23 extends Day {
         }
     }
 
-    private void handleNatTrafficPart1(Deque<Pair<Long, Long>> natTraffic) {
+    private void handleNatTrafficPart1(Deque<Tuple2<Long, Long>> natTraffic) {
         for (int i = 0; i < 50; i++) {
             nics.get(i).setKillSwitch(true);
         }
-        returnValue = natTraffic.stream().findFirst().orElseThrow().getValue1();
+        returnValue = natTraffic.stream().findFirst().orElseThrow().v2;
     }
 
-    private void handleNatTrafficPart2(Deque<Pair<Long, Long>> natTraffic) {
+    private void handleNatTrafficPart2(Deque<Tuple2<Long, Long>> natTraffic) {
         if (idleNics.size() == 50) {
-            Pair<Long, Long> valueToSend = natTraffic.getLast();
+            Tuple2<Long, Long> valueToSend = natTraffic.getLast();
             natTraffic.clear();
             traffic.get(0).add(valueToSend);
-            if (valueToSend.getValue1() == returnValue) {
+            if (valueToSend.v2 == returnValue) {
                 for (int i = 0; i < 50; i++) {
                     nics.get(i).setKillSwitch(true);
                 }
             }
-            returnValue = valueToSend.getValue1();
+            returnValue = valueToSend.v2;
         }
     }
 
@@ -111,9 +112,9 @@ public class Day23 extends Day {
                         inputModes.put(address, Mode.X);
                         break;
                     case X:
-                        Deque<Pair<Long, Long>> nicTraffic = traffic.get(address);
+                        Deque<Tuple2<Long, Long>> nicTraffic = traffic.get(address);
                         if (!nicTraffic.isEmpty()) {
-                            returnValue = nicTraffic.peek().getValue0();
+                            returnValue = nicTraffic.peek().v1;
                             inputModes.put(address, Mode.Y);
                             idleNics.remove(address);
                         } else {
@@ -123,7 +124,7 @@ public class Day23 extends Day {
                         break;
                     case Y:
                         //noinspection ConstantConditions
-                        returnValue = traffic.get(address).poll().getValue1();
+                        returnValue = traffic.get(address).poll().v2;
                         inputModes.put(address, Mode.X);
                         break;
                     default:
@@ -137,16 +138,16 @@ public class Day23 extends Day {
                 long output = Long.parseLong(infoText.toString());
                 switch (outputModes.get(address)) {
                     case ADDRESS:
-                        tempOutputs.put(address, Pair.with(output, null));
+                        tempOutputs.put(address, Tuple.tuple(output, null));
                         outputModes.put(address, Mode.X);
                         break;
                     case X:
-                        tempOutputs.put(address, Pair.with(tempOutputs.get(address).getValue0(), output));
+                        tempOutputs.put(address, Tuple.tuple(tempOutputs.get(address).v1, output));
                         outputModes.put(address, Mode.Y);
                         break;
                     case Y:
-                        Pair<Long, Long> tempOutput = tempOutputs.get(address);
-                        traffic.get(tempOutput.getValue0().intValue()).add(Pair.with(tempOutput.getValue1(), output));
+                        Tuple2<Long, Long> tempOutput = tempOutputs.get(address);
+                        traffic.get(tempOutput.v1.intValue()).add(Tuple.tuple(tempOutput.v2, output));
                         outputModes.put(address, Mode.ADDRESS);
                         break;
                 }

@@ -3,20 +3,23 @@ package de.beachboys.aoc2023;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Day23 extends Day {
 
     public static final String START_VERTEX = "S";
     public static final String END_VERTEX = "E";
     private Graph<String, DefaultWeightedEdge> graphPart2;
-    private Map<Pair<Integer, Integer>, String> map;
-    private Pair<Integer, Integer> start;
-    private Pair<Integer, Integer> end;
+    private Map<Tuple2<Integer, Integer>, String> map;
+    private Tuple2<Integer, Integer> start;
+    private Tuple2<Integer, Integer> end;
 
     public Object part1(List<String> input) {
         parseInput(input);
@@ -24,7 +27,7 @@ public class Day23 extends Day {
         return getMaxDistanceToEnd(start, 0, new HashSet<>());
     }
 
-    private int getMaxDistanceToEnd(Pair<Integer, Integer> pos, int distanceFromStart, Set<Pair<Integer, Integer>> history) {
+    private int getMaxDistanceToEnd(Tuple2<Integer, Integer> pos, int distanceFromStart, Set<Tuple2<Integer, Integer>> history) {
         if (end.equals(pos)) {
             return distanceFromStart;
         }
@@ -36,13 +39,13 @@ public class Day23 extends Day {
         String mapChar = map.get(pos);
         if (".".equals(mapChar)) {
             for (Direction dir : Direction.values()) {
-                Pair<Integer, Integer> newPos = dir.move(pos, 1);
+                Tuple2<Integer, Integer> newPos = dir.move(pos, 1);
                 if (!history.contains(newPos) && !"#".equals(map.getOrDefault(newPos, "#"))) {
                     result = Math.max(getMaxDistanceToEnd(newPos, distanceFromStart + 1, history), result);
                 }
             }
         } else {
-            Pair<Integer, Integer> newPos = Direction.fromString(mapChar).move(pos, 1);
+            Tuple2<Integer, Integer> newPos = Direction.fromString(mapChar).move(pos, 1);
             if (!history.contains(newPos)) {
                 result = getMaxDistanceToEnd(newPos, distanceFromStart + 1, history);
             }
@@ -78,13 +81,13 @@ public class Day23 extends Day {
 
     private void parseInput(List<String> input) {
         map = Util.buildImageMap(input);
-        start = map.keySet().stream().filter(p -> p.getValue1() == 0 && ".".equals(map.get(p))).findFirst().orElseThrow();
-        end = map.keySet().stream().filter(p -> p.getValue1() == input.size() - 1 && ".".equals(map.get(p))).findFirst().orElseThrow();
+        start = map.keySet().stream().filter(p -> p.v2 == 0 && ".".equals(map.get(p))).findFirst().orElseThrow();
+        end = map.keySet().stream().filter(p -> p.v2 == input.size() - 1 && ".".equals(map.get(p))).findFirst().orElseThrow();
     }
 
 
     private void modifyMapAndBuildGraphForPart2() {
-        for (Pair<Integer, Integer> pos : map.keySet()) {
+        for (Tuple2<Integer, Integer> pos : map.keySet()) {
             String s = map.get(pos);
             if ("^".equals(s) || "v".equals(s) || "<".equals(s) || ">".equals(s)) {
                 map.put(pos, ".");

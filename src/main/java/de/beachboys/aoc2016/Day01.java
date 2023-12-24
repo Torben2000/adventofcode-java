@@ -3,7 +3,8 @@ package de.beachboys.aoc2016;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Set;
 public class Day01 extends Day {
 
     public Object part1(List<String> input) {
-        Pair<Integer, Integer> currentPosition = Pair.with(0, 0);
+        Tuple2<Integer, Integer> currentPosition = Tuple.tuple(0, 0);
         Direction currentDir = Direction.NORTH;
 
         for (String command : Util.parseToList(input.get(0), ", ")) {
@@ -22,12 +23,12 @@ public class Day01 extends Day {
             currentPosition = currentDir.move(currentPosition, distance);
         }
 
-        return Math.abs(currentPosition.getValue0()) + Math.abs(currentPosition.getValue1());
+        return Math.abs(currentPosition.v1) + Math.abs(currentPosition.v2);
     }
 
     public Object part2(List<String> input) {
-        Set<Pair<Integer, Integer>> visitedPositions = new HashSet<>();
-        Pair<Integer, Integer> currentPosition = Pair.with(0, 0);
+        Set<Tuple2<Integer, Integer>> visitedPositions = new HashSet<>();
+        Tuple2<Integer, Integer> currentPosition = Tuple.tuple(0, 0);
         Direction currentDir = Direction.NORTH;
 
         for (String command : Util.parseToList(input.get(0), ", ")) {
@@ -37,7 +38,7 @@ public class Day01 extends Day {
             for (int i = 0; i < distance; i++) {
                 currentPosition = currentDir.move(currentPosition, 1);
                 if (visitedPositions.contains(currentPosition)) {
-                    return Math.abs(currentPosition.getValue0()) + Math.abs(currentPosition.getValue1());
+                    return Math.abs(currentPosition.v1) + Math.abs(currentPosition.v2);
                 }
                 visitedPositions.add(currentPosition);
             }

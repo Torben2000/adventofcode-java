@@ -27,11 +27,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.javatuples</groupId>
-            <artifactId>javatuples</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20231013</version>
@@ -56,7 +51,11 @@
             <artifactId>z3-turnkey</artifactId>
             <version>4.12.2.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jool</artifactId>
+            <version>0.9.15</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

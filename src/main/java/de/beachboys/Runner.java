@@ -101,7 +101,7 @@ public class Runner {
 
     private static List<String> loadInputLines() throws IOException {
         String fileNameWithPath = DATA_FOLDER + "aoc" + CURRENT_YEAR + "/" + getInputFileName();
-        try(BufferedReader r = new BufferedReader((new FileReader(fileNameWithPath)))){
+        try (BufferedReader r = new BufferedReader((new FileReader(fileNameWithPath)))) {
             return Util.removeEmptyTrailingStrings(r.lines().collect(toList()));
         }
     }

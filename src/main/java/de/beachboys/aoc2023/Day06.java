@@ -1,7 +1,8 @@
 package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,23 +18,23 @@ public class Day06 extends Day {
     }
 
     private static long runLogic(List<String> input, boolean isJustOneRace) {
-        List<Pair<Long, Long>> races = parseInput(input, isJustOneRace);
+        List<Tuple2<Long, Long>> races = parseInput(input, isJustOneRace);
 
         long result = 1;
-        for (Pair<Long, Long> race : races) {
-            long leftBound = getInnerBound(race, race.getValue0() - 1, 1);
-            long rightBound = getInnerBound(race, leftBound, race.getValue0() - 1);
+        for (Tuple2<Long, Long> race : races) {
+            long leftBound = getInnerBound(race, race.v1 - 1, 1);
+            long rightBound = getInnerBound(race, leftBound, race.v1 - 1);
             result *= (rightBound - leftBound + 1);
         }
         return result;
     }
 
-    private static long getInnerBound(Pair<Long, Long> race, long extremeInnerBound, long extremeOuterBound) {
+    private static long getInnerBound(Tuple2<Long, Long> race, long extremeInnerBound, long extremeOuterBound) {
         long outerBound = extremeOuterBound;
         long innerBound = extremeInnerBound;
         while (Math.abs(outerBound - innerBound) != 1) {
             long toCheck = (outerBound + innerBound) / 2;
-            if (race.getValue1() < toCheck * (race.getValue0() - toCheck)) {
+            if (race.v2 < toCheck * (race.v1 - toCheck)) {
                 innerBound = toCheck;
             } else {
                 outerBound = toCheck;
@@ -42,7 +43,7 @@ public class Day06 extends Day {
         return innerBound;
     }
 
-    private static List<Pair<Long, Long>> parseInput(List<String> input, boolean isJustOneRace) {
+    private static List<Tuple2<Long, Long>> parseInput(List<String> input, boolean isJustOneRace) {
         String multiSpaceReplacement;
         if (isJustOneRace) {
             multiSpaceReplacement = "";
@@ -61,9 +62,9 @@ public class Day06 extends Day {
                 }
             }
         }
-        List<Pair<Long, Long>> races = new ArrayList<>();
+        List<Tuple2<Long, Long>> races = new ArrayList<>();
         for (int i = 0; i < times.size(); i++) {
-            races.add(Pair.with(times.get(i), distances.get(i)));
+            races.add(Tuple.tuple(times.get(i), distances.get(i)));
         }
         return races;
     }

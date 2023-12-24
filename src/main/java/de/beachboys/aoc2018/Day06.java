@@ -3,7 +3,8 @@ package de.beachboys.aoc2018;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -15,12 +16,12 @@ public class Day06 extends Day {
 
     private static final int AREA_BELONGING_TO_NO_ONE = -1;
 
-    private Pair<Integer, Integer> upperLeft;
-    private Pair<Integer, Integer> lowerRight;
+    private Tuple2<Integer, Integer> upperLeft;
+    private Tuple2<Integer, Integer> lowerRight;
 
     public Object part1(List<String> input) {
-        Map<Pair<Integer, Integer>, Integer> closestPositions = new HashMap<>();
-        Map<Pair<Integer, Integer>, Integer> newClosestPositions = getInitialPositions(input);
+        Map<Tuple2<Integer, Integer>, Integer> closestPositions = new HashMap<>();
+        Map<Tuple2<Integer, Integer>, Integer> newClosestPositions = getInitialPositions(input);
         setAreaBorders(newClosestPositions.keySet());
 
         Set<Integer> infiniteAreas = new HashSet<>();
@@ -28,10 +29,10 @@ public class Day06 extends Day {
 
         while (!newClosestPositions.isEmpty()) {
             closestPositions.putAll(newClosestPositions);
-            Map<Pair<Integer, Integer>, Integer> nextNewClosestPositions = new HashMap<>();
-            for (Map.Entry<Pair<Integer, Integer>, Integer> entry : newClosestPositions.entrySet()) {
+            Map<Tuple2<Integer, Integer>, Integer> nextNewClosestPositions = new HashMap<>();
+            for (Map.Entry<Tuple2<Integer, Integer>, Integer> entry : newClosestPositions.entrySet()) {
                 if (AREA_BELONGING_TO_NO_ONE != entry.getValue()) {
-                    for (Pair<Integer, Integer> adjacentPosition : getAdjacentPositions(entry.getKey())) {
+                    for (Tuple2<Integer, Integer> adjacentPosition : getAdjacentPositions(entry.getKey())) {
                         if (!closestPositions.containsKey(adjacentPosition)) {
                             if (isOutsideOfAreas(adjacentPosition)) {
                                 infiniteAreas.add(entry.getValue());
@@ -52,12 +53,12 @@ public class Day06 extends Day {
 
     public Object part2(List<String> input) {
         int maxDistance = Util.getIntValueFromUser("Max distance", 10000, io);
-        Set<Pair<Integer, Integer>> positions = getInitialPositions(input).keySet();
+        Set<Tuple2<Integer, Integer>> positions = getInitialPositions(input).keySet();
         setAreaBorders(positions);
 
         int counter = 0;
-        for (int i = upperLeft.getValue0(); i <= lowerRight.getValue0(); i++) {
-            for (int j = upperLeft.getValue1(); j <= lowerRight.getValue1(); j++) {
+        for (int i = upperLeft.v1; i <= lowerRight.v1; i++) {
+            for (int j = upperLeft.v2; j <= lowerRight.v2; j++) {
                 if (getSumOfDistances(positions, i, j) < maxDistance) {
                     counter++;
                     if (isOnBorder(i, j)) {
@@ -69,7 +70,7 @@ public class Day06 extends Day {
         return counter;
     }
 
-    private Map<Integer, Integer> countNonInfiniteAreas(Map<Pair<Integer, Integer>, Integer> closestPositions, Set<Integer> infiniteAreas) {
+    private Map<Integer, Integer> countNonInfiniteAreas(Map<Tuple2<Integer, Integer>, Integer> closestPositions, Set<Integer> infiniteAreas) {
         List<Integer> areaIds = closestPositions.values().stream().filter(Predicate.not(infiniteAreas::contains)).collect(Collectors.toList());
         Map<Integer, Integer> counter = new HashMap<>();
         for (Integer areaId : areaIds) {
@@ -78,36 +79,36 @@ public class Day06 extends Day {
         return counter;
     }
 
-    private void setAreaBorders(Set<Pair<Integer, Integer>> positions) {
-        int maxX = positions.stream().map(Pair::getValue0).max(Integer::compareTo).orElseThrow();
-        int maxY = positions.stream().map(Pair::getValue1).max(Integer::compareTo).orElseThrow();
-        int minX = positions.stream().map(Pair::getValue0).min(Integer::compareTo).orElseThrow();
-        int minY = positions.stream().map(Pair::getValue1).min(Integer::compareTo).orElseThrow();
-        upperLeft = Pair.with(minX, minY);
-        lowerRight = Pair.with(maxX, maxY);
+    private void setAreaBorders(Set<Tuple2<Integer, Integer>> positions) {
+        int maxX = positions.stream().map(Tuple2::v1).max(Integer::compareTo).orElseThrow();
+        int maxY = positions.stream().map(Tuple2::v2).max(Integer::compareTo).orElseThrow();
+        int minX = positions.stream().map(Tuple2::v1).min(Integer::compareTo).orElseThrow();
+        int minY = positions.stream().map(Tuple2::v2).min(Integer::compareTo).orElseThrow();
+        upperLeft = Tuple.tuple(minX, minY);
+        lowerRight = Tuple.tuple(maxX, maxY);
     }
 
-    private boolean isOutsideOfAreas(Pair<Integer, Integer> position) {
-        return position.getValue0() < upperLeft.getValue0()
-                || position.getValue0() > lowerRight.getValue0()
-                || position.getValue1() < upperLeft.getValue1()
-                || position.getValue1() > lowerRight.getValue1();
+    private boolean isOutsideOfAreas(Tuple2<Integer, Integer> position) {
+        return position.v1 < upperLeft.v1
+                || position.v1 > lowerRight.v1
+                || position.v2 < upperLeft.v2
+                || position.v2 > lowerRight.v2;
     }
 
-    private Map<Pair<Integer, Integer>, Integer> getInitialPositions(List<String> input) {
-        Map<Pair<Integer, Integer>, Integer> newClosestPositions = new HashMap<>();
+    private Map<Tuple2<Integer, Integer>, Integer> getInitialPositions(List<String> input) {
+        Map<Tuple2<Integer, Integer>, Integer> newClosestPositions = new HashMap<>();
         Pattern p = Pattern.compile("([0-9]+), ([0-9]+)");
         for (int i = 0; i < input.size(); i++) {
             Matcher m = p.matcher(input.get(i));
             if (m.matches()) {
-                newClosestPositions.put(Pair.with(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))), i);
+                newClosestPositions.put(Tuple.tuple(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))), i);
             }
         }
         return newClosestPositions;
     }
 
-    private List<Pair<Integer, Integer>> getAdjacentPositions(Pair<Integer, Integer> position) {
-        List<Pair<Integer, Integer>> list = new ArrayList<>();
+    private List<Tuple2<Integer, Integer>> getAdjacentPositions(Tuple2<Integer, Integer> position) {
+        List<Tuple2<Integer, Integer>> list = new ArrayList<>();
         for (Direction dir : Direction.values()) {
             list.add(dir.move(position, 1));
         }
@@ -115,13 +116,13 @@ public class Day06 extends Day {
     }
 
     private boolean isOnBorder(int x, int y) {
-        return x == upperLeft.getValue0() || x == lowerRight.getValue0() || y == upperLeft.getValue1() || y == lowerRight.getValue1();
+        return x == upperLeft.v1 || x == lowerRight.v1 || y == upperLeft.v2 || y == lowerRight.v2;
     }
 
-    private int getSumOfDistances(Set<Pair<Integer, Integer>> positions, int x, int y) {
+    private int getSumOfDistances(Set<Tuple2<Integer, Integer>> positions, int x, int y) {
         int distance = 0;
-        for (Pair<Integer, Integer> position : positions) {
-            distance += Math.abs(position.getValue0() - x) + Math.abs(position.getValue1() - y);
+        for (Tuple2<Integer, Integer> position : positions) {
+            distance += Math.abs(position.v1 - x) + Math.abs(position.v2 - y);
         }
         return distance;
     }

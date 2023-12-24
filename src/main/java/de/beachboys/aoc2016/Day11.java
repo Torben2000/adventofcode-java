@@ -1,7 +1,8 @@
 package de.beachboys.aoc2016;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,10 +54,10 @@ public class Day11 extends Day {
 
     private void manipulateInitialStatePart2(State initialState) {
         initialState.stuffPerFloor.get(1).addAll(List.of(
-                Pair.with(Type.RTG, "elerium"),
-                Pair.with(Type.MICROCHIP, "elerium"),
-                Pair.with(Type.RTG, "dilithium"),
-                Pair.with(Type.MICROCHIP, "dilithium")));
+                Tuple.tuple(Type.RTG, "elerium"),
+                Tuple.tuple(Type.MICROCHIP, "elerium"),
+                Tuple.tuple(Type.RTG, "dilithium"),
+                Tuple.tuple(Type.MICROCHIP, "dilithium")));
     }
 
     private void queueState(State state) {
@@ -65,15 +66,15 @@ public class Day11 extends Day {
     }
 
     private boolean queueFollowUpStatesAndCheckForFinalState(State state) {
-        Set<Set<Pair<Type, String>>> stuffToMovePossibilities = getStuffToMovePossibilities(state);
+        Set<Set<Tuple2<Type, String>>> stuffToMovePossibilities = getStuffToMovePossibilities(state);
         boolean moveDown = state.elevatorFloor > 1 && state.stuffPerFloor.entrySet().stream().filter(e -> e.getKey() < state.elevatorFloor).mapToInt(e -> e.getValue().size()).sum() > 0;
         boolean moveUp = state.elevatorFloor < 4;
         return (moveUp && queueFollowUpStatesAndCheckForFinalState(state, stuffToMovePossibilities, floor -> floor + 1))
             || (moveDown && queueFollowUpStatesAndCheckForFinalState(state, stuffToMovePossibilities, floor -> floor - 1));
     }
 
-    private boolean queueFollowUpStatesAndCheckForFinalState(State state, Set<Set<Pair<Type, String>>> stuffToMovePossibilities, Function<Integer, Integer> elevatorFloorManipulator) {
-        for (Set<Pair<Type, String>> stuffToMovePossibility : stuffToMovePossibilities) {
+    private boolean queueFollowUpStatesAndCheckForFinalState(State state, Set<Set<Tuple2<Type, String>>> stuffToMovePossibilities, Function<Integer, Integer> elevatorFloorManipulator) {
+        for (Set<Tuple2<Type, String>> stuffToMovePossibility : stuffToMovePossibilities) {
             if (queueFollowUpStateAndCheckForFinalState(state, stuffToMovePossibility, elevatorFloorManipulator)) {
                 return true;
             }
@@ -81,7 +82,7 @@ public class Day11 extends Day {
         return false;
     }
 
-    private boolean queueFollowUpStateAndCheckForFinalState(State state, Set<Pair<Type, String>> stuffToMovePossibility, Function<Integer, Integer> elevatorFloorManipulator) {
+    private boolean queueFollowUpStateAndCheckForFinalState(State state, Set<Tuple2<Type, String>> stuffToMovePossibility, Function<Integer, Integer> elevatorFloorManipulator) {
         State copy = state.copy();
         copy.stepsUntilThisState++;
         copy.elevatorFloor = elevatorFloorManipulator.apply(copy.elevatorFloor);
@@ -96,14 +97,14 @@ public class Day11 extends Day {
         return false;
     }
 
-    private Set<Set<Pair<Type, String>>> getStuffToMovePossibilities(State state) {
-        Set<Set<Pair<Type, String>>> stuffToMovePossibilities = new HashSet<>();
-        Set<Pair<Type, String>> possibleElements = state.stuffPerFloor.get(state.elevatorFloor);
-        for (Pair<Type, String> element : possibleElements) {
+    private Set<Set<Tuple2<Type, String>>> getStuffToMovePossibilities(State state) {
+        Set<Set<Tuple2<Type, String>>> stuffToMovePossibilities = new HashSet<>();
+        Set<Tuple2<Type, String>> possibleElements = state.stuffPerFloor.get(state.elevatorFloor);
+        for (Tuple2<Type, String> element : possibleElements) {
             if (!containsEquivalentPossibilities(stuffToMovePossibilities, possibleElements, element)) {
                 stuffToMovePossibilities.add(Set.of(element));
-                for (Pair<Type, String> element2 : possibleElements) {
-                    if (element != element2 && (element.getValue0() == element2.getValue0() || element.getValue1().equals(element2.getValue1()))) {
+                for (Tuple2<Type, String> element2 : possibleElements) {
+                    if (element != element2 && (element.v1 == element2.v1 || element.v2.equals(element2.v2))) {
                         stuffToMovePossibilities.add(Set.of(element, element2));
                     }
                 }
@@ -112,22 +113,22 @@ public class Day11 extends Day {
         return stuffToMovePossibilities;
     }
 
-    private boolean containsEquivalentPossibilities(Set<Set<Pair<Type, String>>> stuffToMovePossibilities, Set<Pair<Type, String>> possibleElements, Pair<Type, String> element) {
+    private boolean containsEquivalentPossibilities(Set<Set<Tuple2<Type, String>>> stuffToMovePossibilities, Set<Tuple2<Type, String>> possibleElements, Tuple2<Type, String> element) {
         return containsPartnerElement(possibleElements, element) && containsPartnerElementPairSet(stuffToMovePossibilities);
     }
 
-    private boolean containsPartnerElement(Set<Pair<Type, String>> possibleElements, Pair<Type, String> element) {
-        return possibleElements.contains(Pair.with(element.getValue0().other(), element.getValue1()));
+    private boolean containsPartnerElement(Set<Tuple2<Type, String>> possibleElements, Tuple2<Type, String> element) {
+        return possibleElements.contains(Tuple.tuple(element.v1.other(), element.v2));
     }
 
-    private boolean containsPartnerElementPairSet(Set<Set<Pair<Type, String>>> setOfElementSets) {
-        return setOfElementSets.stream().anyMatch(set -> set.size() == 2 && set.stream().map(Pair::getValue1).distinct().count() == 1);
+    private boolean containsPartnerElementPairSet(Set<Set<Tuple2<Type, String>>> setOfElementSets) {
+        return setOfElementSets.stream().anyMatch(set -> set.size() == 2 && set.stream().map(Tuple2::v2).distinct().count() == 1);
     }
 
     private boolean isValidState(State state) {
-        for (Set<Pair<Type, String>> stuff : state.stuffPerFloor.values()) {
-            for (Pair<Type, String> element : stuff) {
-                if (element.getValue0() == Type.MICROCHIP && !stuff.contains(Pair.with(Type.RTG, element.getValue1())) && stuff.stream().anyMatch(e -> e.getValue0() == Type.RTG)) {
+        for (Set<Tuple2<Type, String>> stuff : state.stuffPerFloor.values()) {
+            for (Tuple2<Type, String> element : stuff) {
+                if (element.v1 == Type.MICROCHIP && !stuff.contains(Tuple.tuple(Type.RTG, element.v2)) && stuff.stream().anyMatch(e -> e.v1 == Type.RTG)) {
                     return false;
                 }
             }
@@ -158,9 +159,9 @@ public class Day11 extends Day {
                             if (!contentPart.isEmpty()) {
                                 String[] elementAndType = contentPart.split(" ");
                                 if ("generator".equals(elementAndType[1])) {
-                                    initialState.stuffPerFloor.get(floor).add(Pair.with(Type.RTG, elementAndType[0]));
+                                    initialState.stuffPerFloor.get(floor).add(Tuple.tuple(Type.RTG, elementAndType[0]));
                                 } else {
-                                    initialState.stuffPerFloor.get(floor).add(Pair.with(Type.MICROCHIP, elementAndType[0]));
+                                    initialState.stuffPerFloor.get(floor).add(Tuple.tuple(Type.MICROCHIP, elementAndType[0]));
                                 }
                             }
                         }
@@ -191,7 +192,7 @@ public class Day11 extends Day {
 
         int stepsUntilThisState = 0;
 
-        Map<Integer, Set<Pair<Type, String>>> stuffPerFloor = new HashMap<>();
+        Map<Integer, Set<Tuple2<Type, String>>> stuffPerFloor = new HashMap<>();
 
         private String equivalenceRepresentation;
 
@@ -240,7 +241,7 @@ public class Day11 extends Day {
         }
 
         private List<Integer> getIdsFromContentOfFloor(int floor, Type type, Map<String, Integer> nameToIdMap, AtomicInteger idCounter) {
-            List<String> elementNames = stuffPerFloor.get(floor).stream().filter(p -> p.getValue0() == type).map(Pair::getValue1).sorted().collect(Collectors.toList());
+            List<String> elementNames = stuffPerFloor.get(floor).stream().filter(p -> p.v1 == type).map(Tuple2::v2).sorted().collect(Collectors.toList());
             List<Integer> ids = new ArrayList<>();
             for (String elementName : elementNames) {
                 if (!nameToIdMap.containsKey(elementName)) {

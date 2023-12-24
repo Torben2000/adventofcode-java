@@ -1,7 +1,8 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class Day05 extends Day {
     }
 
     private long runLogic(List<String> input, boolean diagonalsCount) {
-        Map<Pair<Integer, Integer>, Integer> counts = new HashMap<>();
+        Map<Tuple2<Integer, Integer>, Integer> counts = new HashMap<>();
         Pattern p = Pattern.compile("([0-9]+),([0-9]+) -> ([0-9]+),([0-9]+)");
         for (String line : input) {
             Matcher m = p.matcher(line);
@@ -38,7 +39,7 @@ public class Day05 extends Day {
                 if (isHorizontalOrVerticalLine(minX, minY, maxX, maxY)) {
                     for (int i = minX; i <= maxX; i++) {
                         for (int j = minY; j <= maxY; j++) {
-                            Pair<Integer, Integer> pos = Pair.with(i, j);
+                            Tuple2<Integer, Integer> pos = Tuple.tuple(i, j);
                             counts.put(pos, counts.getOrDefault(pos, 0) + 1);
                         }
                     }
@@ -53,7 +54,7 @@ public class Day05 extends Day {
                         yModifier = -1;
                     }
                     for (int i = minX; i <= maxX; i++) {
-                        Pair<Integer, Integer> pos = Pair.with(i, y);
+                        Tuple2<Integer, Integer> pos = Tuple.tuple(i, y);
                         counts.put(pos, counts.getOrDefault(pos, 0) + 1);
                         y += yModifier;
                     }

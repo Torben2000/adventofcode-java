@@ -2,7 +2,8 @@ package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class Day09 extends Day {
     public Object part2(List<String> input) {
         List<Long> longList = input.stream().map(Long::valueOf).collect(Collectors.toList());
         long wrongValue = getFirstWrongSum(longList);
-        Pair<Integer, Long> foundMatch = Pair.with(0, -1L);
+        Tuple2<Integer, Long> foundMatch = Tuple.tuple(0, -1L);
         for (int i = 0; i < longList.size(); i++) {
             for (int j = i + 1; j < longList.size(); j++) {
                 long sum = 0L;
@@ -35,14 +36,14 @@ public class Day09 extends Day {
                 }
                 if (sum == wrongValue) {
                     int indexDiff = j - i;
-                    if (indexDiff > foundMatch.getValue0()) {
-                        foundMatch = Pair.with(indexDiff, min + max);
+                    if (indexDiff > foundMatch.v1) {
+                        foundMatch = Tuple.tuple(indexDiff, min + max);
                     }
                 }
             }
 
         }
-        return foundMatch.getValue1();
+        return foundMatch.v2;
     }
 
     private long getFirstWrongSum(List<Long> longList) {

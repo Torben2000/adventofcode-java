@@ -2,8 +2,7 @@ package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
 import org.apache.commons.lang3.mutable.MutableLong;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +14,7 @@ public class Day21 extends Day {
     public Object part1(List<String> input) {
         Device device = new Device(input);
         Optional<Object> returnValue = device.runProgram(programLine -> {
-            if (Pair.with("eqrr", Triplet.with(2, 0, 4)).equals(programLine)) {
+            if (Tuple.tuple("eqrr", Tuple.tuple(2, 0, 4)).equals(programLine)) {
                 return Optional.of(device.registers.get(2));
             }
             return Optional.empty();
@@ -29,7 +28,7 @@ public class Day21 extends Day {
 
         Device device = new Device(input);
         Optional<Object> returnValue = device.runProgram(programLine -> {
-            if (Pair.with("eqrr", Triplet.with(2, 0, 4)).equals(programLine)) {
+            if (Tuple.tuple("eqrr", Tuple.tuple(2, 0, 4)).equals(programLine)) {
                 Long currentValue = device.registers.get(2);
                 if (seenValues.contains(currentValue)) {
                     return Optional.of(lastSeen.getValue());

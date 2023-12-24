@@ -3,7 +3,8 @@ package de.beachboys.aoc2019;
 import de.beachboys.Day;
 import de.beachboys.OCR;
 import de.beachboys.Util;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,20 +19,20 @@ public class Day08 extends Day {
     public Object part1(List<String> input) {
         setImageDimensionsFromUserInput();
         List<String> layers = getLayers(input);
-        Map<Integer, Triplet<Integer, Integer, Integer>> numbers = new HashMap<>();
+        Map<Integer, Tuple3<Integer, Integer, Integer>> numbers = new HashMap<>();
         for (int i=0; i < layers.size(); i++) {
             String layerString = layers.get(i);
-            Triplet<Integer, Integer, Integer> counts = new Triplet<>(0,0,0);
+            Tuple3<Integer, Integer, Integer> counts = new Tuple3<>(0,0,0);
             for (int j=0; j <width*height; j++) {
                 switch (layerString.substring(j, j+1)) {
                     case "0":
-                        counts = counts.setAt0(counts.getValue0()+1);
+                        counts = Tuple.tuple(counts.v1+1, counts.v2, counts.v3);
                         break;
                     case "1":
-                        counts = counts.setAt1(counts.getValue1()+1);
+                        counts = Tuple.tuple(counts.v1, counts.v2+1, counts.v3);
                         break;
                     case "2":
-                        counts = counts.setAt2(counts.getValue2()+1);
+                        counts = Tuple.tuple(counts.v1, counts.v2, counts.v3+1);
                         break;
                 }
             }
@@ -40,14 +41,14 @@ public class Day08 extends Day {
 
         int selectedLayer = 0;
         int minZeros = Integer.MAX_VALUE;
-        for (Map.Entry<Integer, Triplet<Integer, Integer, Integer>> entry : numbers.entrySet()) {
-            if (entry.getValue().getValue0() < minZeros) {
+        for (Map.Entry<Integer, Tuple3<Integer, Integer, Integer>> entry : numbers.entrySet()) {
+            if (entry.getValue().v1 < minZeros) {
                 selectedLayer = entry.getKey();
-                minZeros = entry.getValue().getValue0();
+                minZeros = entry.getValue().v1;
             }
         }
 
-        return numbers.get(selectedLayer).getValue1() * numbers.get(selectedLayer).getValue2();
+        return numbers.get(selectedLayer).v2 * numbers.get(selectedLayer).v3;
     }
 
     private List<String> getLayers(List<String> input) {

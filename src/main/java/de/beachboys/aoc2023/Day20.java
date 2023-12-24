@@ -2,14 +2,15 @@ package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
 
 public class Day20 extends Day {
 
-    private final Map<String, Pair<Character, List<String>>> rules = new HashMap<>();
+    private final Map<String, Tuple2<Character, List<String>>> rules = new HashMap<>();
     private final Map<String, Set<String>> inputs = new HashMap<>();
     private long high;
     private long low;
@@ -44,41 +45,41 @@ public class Day20 extends Day {
         clearState();
 
         for (int i = 1; i <= numOfButtonPresses; i++) {
-            Deque<Triplet<String,String, Boolean>> queue = new LinkedList<>();
-            queue.add(Triplet.with("broadcaster".substring(1), null, false));
+            Deque<Tuple3<String,String, Boolean>> queue = new LinkedList<>();
+            queue.add(Tuple.tuple("broadcaster".substring(1), null, false));
             while (!queue.isEmpty()) {
-                Triplet<String, String, Boolean> queueEntry = queue.poll();
-                if (queueEntry.getValue2()) {
+                Tuple3<String, String, Boolean> queueEntry = queue.poll();
+                if (queueEntry.v3) {
                     high++;
                 } else {
                     low++;
                 }
-                Pair<Character, List<String>> rule = rules.get(queueEntry.getValue0());
+                Tuple2<Character, List<String>> rule = rules.get(queueEntry.v1);
                 if (rule != null){
-                    switch (rule.getValue0()) {
+                    switch (rule.v1) {
                         case 'b' -> {
-                            for (String s : rule.getValue1()) {
-                                queue.add(Triplet.with(s, queueEntry.getValue0(), queueEntry.getValue2()));
+                            for (String s : rule.v2) {
+                                queue.add(Tuple.tuple(s, queueEntry.v1, queueEntry.v3));
                             }
                         }
                         case '%' -> {
-                            if (!queueEntry.getValue2()) {
-                                boolean state = stateFlipFlop.getOrDefault(queueEntry.getValue0(), false);
-                                stateFlipFlop.put(queueEntry.getValue0(), !state);
-                                for (String target : rule.getValue1()) {
-                                    queue.add(Triplet.with(target, queueEntry.getValue0(), !state));
+                            if (!queueEntry.v3) {
+                                boolean state = stateFlipFlop.getOrDefault(queueEntry.v1, false);
+                                stateFlipFlop.put(queueEntry.v1, !state);
+                                for (String target : rule.v2) {
+                                    queue.add(Tuple.tuple(target, queueEntry.v1, !state));
                                 }
                             }
                         }
                         case '&' -> {
-                            Map<String, Boolean> state = stateConjunction.get(queueEntry.getValue0());
-                            state.put(queueEntry.getValue1(), queueEntry.getValue2());
+                            Map<String, Boolean> state = stateConjunction.get(queueEntry.v1);
+                            state.put(queueEntry.v2, queueEntry.v3);
                             boolean pulse = !state.values().stream().allMatch(b -> b);
-                            if (pulse && highPulseRoundMemory.getOrDefault(queueEntry.getValue0(), -1) == 0) {
-                                highPulseRoundMemory.put(queueEntry.getValue0(), i);
+                            if (pulse && highPulseRoundMemory.getOrDefault(queueEntry.v1, -1) == 0) {
+                                highPulseRoundMemory.put(queueEntry.v1, i);
                             }
-                            for (String target : rule.getValue1()) {
-                                queue.add(Triplet.with(target, queueEntry.getValue0(), pulse));
+                            for (String target : rule.v2) {
+                                queue.add(Tuple.tuple(target, queueEntry.v1, pulse));
                             }
                         }
                     }
@@ -91,7 +92,7 @@ public class Day20 extends Day {
         stateFlipFlop.clear();
         stateConjunction.clear();
         for (Map.Entry<String, Set<String>> inputEntry : inputs.entrySet()) {
-            if (rules.containsKey(inputEntry.getKey()) && rules.get(inputEntry.getKey()).getValue0() == '&') {
+            if (rules.containsKey(inputEntry.getKey()) && rules.get(inputEntry.getKey()).v1 == '&') {
                 Map<String, Boolean> inputStateMap = new HashMap<>();
                 for (String source : inputEntry.getValue()) {
                     inputStateMap.put(source, false);
@@ -118,7 +119,7 @@ public class Day20 extends Day {
             char type = rulesAsSplitString[0].charAt(0);
             String name = rulesAsSplitString[0].substring(1);
             List<String> targets = Arrays.stream(rulesAsSplitString[1].split(", ")).toList();
-            rules.put(name, Pair.with(type, targets));
+            rules.put(name, Tuple.tuple(type, targets));
 
             for (String target : targets) {
                 Set<String> sources = inputs.getOrDefault(target, new HashSet<>());

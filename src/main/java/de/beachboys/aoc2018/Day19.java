@@ -1,10 +1,10 @@
 package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 public class Day19 extends Day {
 
@@ -18,7 +18,7 @@ public class Day19 extends Day {
         Device device = new Device(input);
         device.registers.set(0, 1L);
         Optional<Object> returnValue = device.runProgram(programLine -> {
-            if (Pair.with("seti", Triplet.with(1, 5, 2)).equals(programLine)) {
+            if (Tuple.tuple("seti", Tuple.tuple(1, 5, 2)).equals(programLine)) {
                 return Optional.of(getSumOfAllDivisors(device.registers.get(5)));
             }
             return Optional.empty();

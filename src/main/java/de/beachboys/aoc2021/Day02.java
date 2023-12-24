@@ -1,11 +1,8 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
-import de.beachboys.Direction;
-import org.javatuples.Pair;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Day02 extends Day {
 

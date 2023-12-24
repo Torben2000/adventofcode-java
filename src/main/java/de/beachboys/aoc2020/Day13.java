@@ -2,7 +2,8 @@ package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +43,12 @@ public class Day13 extends Day {
 
     public Object part2(List<String> input) {
         List<String> bussesAsString = Util.parseCsv(input.get(1));
-        List<Pair<Long, Long>> busses = new ArrayList<>();
+        List<Tuple2<Long, Long>> busses = new ArrayList<>();
         long counter = 0L;
         for (String bus : bussesAsString) {
             try {
                 long busId = Long.parseLong(bus);
-                busses.add(Pair.with(busId, busId - counter));
+                busses.add(Tuple.tuple(busId, busId - counter));
             } catch (NumberFormatException e) {
                 // ignore non-numbers
             }

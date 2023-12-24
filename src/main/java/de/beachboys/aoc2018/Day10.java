@@ -3,7 +3,8 @@ package de.beachboys.aoc2018;
 import de.beachboys.Day;
 import de.beachboys.OCR;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,21 +30,21 @@ public class Day10 extends Day {
     }
 
     private void runLogic(List<String> input) {
-        List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> points = buildInitialPointsList(input);
+        List<Tuple2<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>> points = buildInitialPointsList(input);
         String userInput = "";
         skyContent = "";
         seconds = 0;
 
         while (!"s".equals(userInput)) {
             seconds++;
-            List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> newPoints = new ArrayList<>();
+            List<Tuple2<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>> newPoints = new ArrayList<>();
             int minY = Integer.MAX_VALUE;
             int maxY = Integer.MIN_VALUE;
-            for (Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> point : points) {
-                Pair<Integer, Integer> newPosition = Pair.with(point.getValue0().getValue0() + point.getValue1().getValue0(), point.getValue0().getValue1() + point.getValue1().getValue1());
-                newPoints.add(Pair.with(newPosition, point.getValue1()));
-                minY = Math.min(minY, newPosition.getValue1());
-                maxY = Math.max(maxY, newPosition.getValue1());
+            for (Tuple2<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> point : points) {
+                Tuple2<Integer, Integer> newPosition = Tuple.tuple(point.v1.v1 + point.v2.v1, point.v1.v2 + point.v2.v2);
+                newPoints.add(Tuple.tuple(newPosition, point.v2));
+                minY = Math.min(minY, newPosition.v2);
+                maxY = Math.max(maxY, newPosition.v2);
             }
             points = newPoints;
             if (maxY - minY <= MAX_LETTER_HEIGHT) {
@@ -53,24 +54,24 @@ public class Day10 extends Day {
         }
     }
 
-    private void fillAndPaintSkyContent(List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> points) {
-        Map<Pair<Integer, Integer>, String> skyContentMap = new HashMap<>();
-        for (Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> point : points) {
-            skyContentMap.put(point.getValue0(), "*");
+    private void fillAndPaintSkyContent(List<Tuple2<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>> points) {
+        Map<Tuple2<Integer, Integer>, String> skyContentMap = new HashMap<>();
+        for (Tuple2<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> point : points) {
+            skyContentMap.put(point.v1, "*");
         }
         skyContent = OCR.runOCRAndReturnOriginalOnError(Util.paintMap(skyContentMap));
         io.logDebug(skyContent);
     }
 
-    private List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> buildInitialPointsList(List<String> input) {
+    private List<Tuple2<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>> buildInitialPointsList(List<String> input) {
         Pattern p = Pattern.compile("position=< *(-*[0-9]+), *(-*[0-9]+)> velocity=< *(-*[0-9]+), *(-*[0-9]+)>");
-        List<Pair<Pair<Integer, Integer>, Pair<Integer, Integer>>> points = new ArrayList<>();
+        List<Tuple2<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>>> points = new ArrayList<>();
         for (String line : input) {
             Matcher m = p.matcher(line);
             if (m.matches()) {
-                Pair<Integer, Integer> position = Pair.with(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
-                Pair<Integer, Integer> velocity = Pair.with(Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)));
-                points.add(Pair.with(position, velocity));
+                Tuple2<Integer, Integer> position = Tuple.tuple(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+                Tuple2<Integer, Integer> velocity = Tuple.tuple(Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)));
+                points.add(Tuple.tuple(position, velocity));
             }
         }
         return points;

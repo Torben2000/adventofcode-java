@@ -1,6 +1,7 @@
 package de.beachboys;
 
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -44,8 +45,8 @@ public enum DirectionHexPointyTop {
         }
     }
 
-    public Triplet<Integer, Integer, Integer> move(Triplet<Integer, Integer, Integer> currentPosition, int distance) {
-        return Triplet.with(currentPosition.getValue0() + distance * stepX, currentPosition.getValue1() + distance * stepY, currentPosition.getValue2() + distance * stepZ);
+    public Tuple3<Integer, Integer, Integer> move(Tuple3<Integer, Integer, Integer> currentPosition, int distance) {
+        return Tuple.tuple(currentPosition.v1 + distance * stepX, currentPosition.v2 + distance * stepY, currentPosition.v3 + distance * stepZ);
     }
 
     public DirectionHexPointyTop turn(boolean left) {
@@ -109,8 +110,8 @@ public enum DirectionHexPointyTop {
         throw new IllegalStateException();
     }
 
-    public static Set<Triplet<Integer, Integer, Integer>> getDirectNeighbors(Triplet<Integer, Integer, Integer> position) {
-        Set<Triplet<Integer, Integer, Integer>> neighbors = new HashSet<>();
+    public static Set<Tuple3<Integer, Integer, Integer>> getDirectNeighbors(Tuple3<Integer, Integer, Integer> position) {
+        Set<Tuple3<Integer, Integer, Integer>> neighbors = new HashSet<>();
         for (DirectionHexPointyTop dir : values()) {
             neighbors.add(dir.move(position, 1));
         }

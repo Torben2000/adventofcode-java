@@ -1,18 +1,22 @@
 package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class Day03 extends Day {
 
     public Object part1(List<String> input) {
         Set<Number> numbers = getNumbers(input);
-        Set<Pair<Integer, Integer>> symbolPositions = getSymbolPositions(input);
+        Set<Tuple2<Integer, Integer>> symbolPositions = getSymbolPositions(input);
 
         Set<Number> numbersNextToSymbols = new HashSet<>();
-        for (Pair<Integer, Integer> symbolPosition : symbolPositions) {
+        for (Tuple2<Integer, Integer> symbolPosition : symbolPositions) {
             numbersNextToSymbols.addAll(getAdjacentNumbers(symbolPosition, numbers));
         }
 
@@ -24,11 +28,11 @@ public class Day03 extends Day {
     }
 
     public Object part2(List<String> input) {
-        Set<Pair<Integer, Integer>> asteriskPositions = getAsteriskPositions(input);
+        Set<Tuple2<Integer, Integer>> asteriskPositions = getAsteriskPositions(input);
         Set<Number> numbers = getNumbers(input);
 
         long result = 0;
-        for (Pair<Integer, Integer> asteriskPosition : asteriskPositions) {
+        for (Tuple2<Integer, Integer> asteriskPosition : asteriskPositions) {
             Set<Number> adjacentNumbers = getAdjacentNumbers(asteriskPosition, numbers);
             if (adjacentNumbers.size() == 2) {
                 result += adjacentNumbers.stream().mapToInt(n -> n.value).reduce((a, b) -> a * b).orElseThrow();
@@ -37,14 +41,14 @@ public class Day03 extends Day {
         return result;
     }
 
-    private static Set<Pair<Integer, Integer>> getSymbolPositions(List<String> input) {
-        Set<Pair<Integer, Integer>> symbolPositions = new HashSet<>();
+    private static Set<Tuple2<Integer, Integer>> getSymbolPositions(List<String> input) {
+        Set<Tuple2<Integer, Integer>> symbolPositions = new HashSet<>();
         for (int y = 0; y < input.size(); y++) {
             String line = input.get(y);
             for (int x = 0; x < line.length(); x++) {
                 char c = line.charAt(x);
                 if (c != '.' && (c < '0' || c > '9')) {
-                    symbolPositions.add(Pair.with(x, y));
+                    symbolPositions.add(Tuple.tuple(x, y));
                 }
             }
         }
@@ -76,11 +80,11 @@ public class Day03 extends Day {
         return numbers;
     }
 
-    private static Set<Number> getAdjacentNumbers(Pair<Integer, Integer> position, Set<Number> numbers) {
+    private static Set<Number> getAdjacentNumbers(Tuple2<Integer, Integer> position, Set<Number> numbers) {
         Set<Number> adjacentNumbers = new HashSet<>();
-        for (int x = position.getValue0() - 1; x <= position.getValue0() + 1 ; x++) {
-            for (int y = position.getValue1() - 1; y <= position.getValue1() + 1; y++) {
-                if (position.getValue0() != x || position.getValue1() != y) {
+        for (int x = position.v1 - 1; x <= position.v1 + 1 ; x++) {
+            for (int y = position.v2 - 1; y <= position.v2 + 1; y++) {
+                if (position.v1 != x || position.v2 != y) {
                     for (Number number : numbers) {
                         if (number.minX <= x && number.maxX >= x && number.y == y) {
                             adjacentNumbers.add(number);
@@ -93,13 +97,13 @@ public class Day03 extends Day {
         return adjacentNumbers;
     }
 
-    private static Set<Pair<Integer, Integer>> getAsteriskPositions(List<String> input) {
-        Set<Pair<Integer, Integer>> asterisks = new HashSet<>();
+    private static Set<Tuple2<Integer, Integer>> getAsteriskPositions(List<String> input) {
+        Set<Tuple2<Integer, Integer>> asterisks = new HashSet<>();
         for (int y = 0; y < input.size(); y++) {
             String line = input.get(y);
             for (int x = 0; x < line.length(); x++) {
                 if (line.charAt(x) == '*') {
-                    asterisks.add(Pair.with(x, y));
+                    asterisks.add(Tuple.tuple(x, y));
                 }
             }
         }

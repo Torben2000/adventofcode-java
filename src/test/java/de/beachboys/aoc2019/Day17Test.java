@@ -1,7 +1,10 @@
 package de.beachboys.aoc2019;
 
-import de.beachboys.*;
-import org.javatuples.Pair;
+import de.beachboys.DayTest;
+import de.beachboys.IOHelper;
+import de.beachboys.IOHelperForTests;
+import de.beachboys.Util;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,7 +49,7 @@ public class Day17Test extends DayTest {
                 "....#...#......\n" +
                 "....#####......";
 
-        Map<Pair<Integer, Integer>, String> imageMap = Util.buildImageMap(input);
+        Map<Tuple2<Integer, Integer>, String> imageMap = Util.buildImageMap(input);
 
         Assertions.assertEquals("R,8,R,8,R,4,R,4,R,8,L,6,L,2,R,4,R,4,R,8,R,8,R,8,L,6,L,2", day.buildUnoptimizedInputString(imageMap));
     }
@@ -69,7 +72,7 @@ public class Day17Test extends DayTest {
                 "#############\n" +
                 "..#...#...#..\n" +
                 "..#####...^..";
-        Map<Pair<Integer, Integer>, String> imageMap = Util.buildImageMap(input);
+        Map<Tuple2<Integer, Integer>, String> imageMap = Util.buildImageMap(input);
 
         Assertions.assertEquals(76, day.calculateAlignmentSum(imageMap));
     }

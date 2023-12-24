@@ -3,14 +3,15 @@ package de.beachboys.aoc2022;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day17 extends Day {
 
-    Map<PatternKey, Pair<Integer, Integer>> patterns = new HashMap<>();
+    Map<PatternKey, Tuple2<Integer, Integer>> patterns = new HashMap<>();
 
     Map<Integer, Integer> heights = new HashMap<>();
 
@@ -23,9 +24,9 @@ public class Day17 extends Day {
 
 
     private long runLogic(List<String> input, long target, boolean optimizeForLargeNumbers) {
-        List<Set<Pair<Integer, Integer>>> rockShapes = getRockShapes();
+        List<Set<Tuple2<Integer, Integer>>> rockShapes = getRockShapes();
         List<Direction> jetDirections = Util.parseToList(input.get(0), "").stream().map(Direction::fromString).collect(Collectors.toList());
-        Set<Pair<Integer, Integer>> restingRocks = prepareRestingRocksWithBase();
+        Set<Tuple2<Integer, Integer>> restingRocks = prepareRestingRocksWithBase();
 
 
         int highestLine = 1;
@@ -40,16 +41,16 @@ public class Day17 extends Day {
 
         while (rockCounter < target) {
             currentRockShape = rockCounter % 5;
-            Set<Pair<Integer, Integer>> rock = getRockPreparedForFalling(rockShapes, currentRockShape, towerHeight);
+            Set<Tuple2<Integer, Integer>> rock = getRockPreparedForFalling(rockShapes, currentRockShape, towerHeight);
             boolean rockIsDown = false;
             while (!rockIsDown) {
                 currentJetDirection = (currentJetDirection + 1) % jetDirections.size();
                 Direction jetDirection = jetDirections.get(currentJetDirection);
-                Set<Pair<Integer, Integer>> rockAfterJetOfGas = applyJetOfGas(rock, jetDirection, restingRocks);
+                Set<Tuple2<Integer, Integer>> rockAfterJetOfGas = applyJetOfGas(rock, jetDirection, restingRocks);
 
-                Set<Pair<Integer, Integer>> fallenRock = new HashSet<>();
-                for (Pair<Integer, Integer> rockPart : rockAfterJetOfGas) {
-                    Pair<Integer, Integer> fallenRockPart = Direction.SOUTH.move(rockPart, 1);
+                Set<Tuple2<Integer, Integer>> fallenRock = new HashSet<>();
+                for (Tuple2<Integer, Integer> rockPart : rockAfterJetOfGas) {
+                    Tuple2<Integer, Integer> fallenRockPart = Direction.SOUTH.move(rockPart, 1);
                     if (isValidRockPartPosition(fallenRockPart, restingRocks)) {
                         fallenRock.add(fallenRockPart);
                     } else {
@@ -67,28 +68,28 @@ public class Day17 extends Day {
                 lastKnownBaseLine = updateLastKnownBaseLine(restingRocks, highestLine, lastKnownBaseLine);
 
                 int finalBaseLine = lastKnownBaseLine;
-                Set<Pair<Integer, Integer>> rockPatternFromBaseLine = restingRocks.stream().filter(rockPart -> rockPart.getValue1() < finalBaseLine).map(rockPart -> Pair.with(rockPart.getValue0(), rockPart.getValue1() - finalBaseLine)).collect(Collectors.toSet());
+                Set<Tuple2<Integer, Integer>> rockPatternFromBaseLine = restingRocks.stream().filter(rockPart -> rockPart.v2 < finalBaseLine).map(rockPart -> Tuple.tuple(rockPart.v1, rockPart.v2 - finalBaseLine)).collect(Collectors.toSet());
 
                 PatternKey patternKey = new PatternKey(rockPatternFromBaseLine, currentRockShape, currentJetDirection);
                 if (patterns.containsKey(patternKey)) {
-                    Pair<Integer, Integer> res = patterns.get(patternKey);
-                    int diffCounter = rockCounter - res.getValue1();
-                    int diffHeight = Math.abs(lastKnownBaseLine - res.getValue0());
+                    Tuple2<Integer, Integer> res = patterns.get(patternKey);
+                    int diffCounter = rockCounter - res.v2;
+                    int diffHeight = Math.abs(lastKnownBaseLine - res.v1);
                     long roundsOfSamePatterns = target / diffCounter;
-                    int rocksOnTopOfCalculatedTower = (int) (target % diffCounter) - res.getValue1();
+                    int rocksOnTopOfCalculatedTower = (int) (target % diffCounter) - res.v2;
                     if (rocksOnTopOfCalculatedTower > 0) {
-                        int otherHeight = heights.get(res.getValue1() + rocksOnTopOfCalculatedTower);
+                        int otherHeight = heights.get(res.v2 + rocksOnTopOfCalculatedTower);
                         return roundsOfSamePatterns * diffHeight + otherHeight;
                     } else {
                         int otherHeight = heights.get(rockCounter + rocksOnTopOfCalculatedTower);
                         return (roundsOfSamePatterns - 1) * diffHeight + otherHeight;
                     }
                 } else {
-                    patterns.put(patternKey, Pair.with(lastKnownBaseLine, rockCounter));
+                    patterns.put(patternKey, Tuple.tuple(lastKnownBaseLine, rockCounter));
                 }
             }
 
-            highestLine = restingRocks.stream().map(Pair::getValue1).min(Integer::compareTo).orElseThrow();
+            highestLine = restingRocks.stream().map(Tuple2::v2).min(Integer::compareTo).orElseThrow();
             towerHeight = -highestLine + 1;
             rockCounter++;
         }
@@ -96,10 +97,10 @@ public class Day17 extends Day {
         return towerHeight;
     }
 
-    private static int updateLastKnownBaseLine(Set<Pair<Integer, Integer>> restingRocks, int highestLine, int lastKnownBaseLine) {
+    private static int updateLastKnownBaseLine(Set<Tuple2<Integer, Integer>> restingRocks, int highestLine, int lastKnownBaseLine) {
         for (int line = highestLine; line < lastKnownBaseLine; line++) {
             int finalLine = line;
-            Set<Integer> rockPartsInLine = restingRocks.stream().filter(p -> p.getValue1() == finalLine).map(Pair::getValue0).collect(Collectors.toSet());
+            Set<Integer> rockPartsInLine = restingRocks.stream().filter(p -> p.v2 == finalLine).map(Tuple2::v1).collect(Collectors.toSet());
             // this pattern works for both the example and the real data
             if (rockPartsInLine.size() == 6 && !rockPartsInLine.contains(0)) {
                 lastKnownBaseLine = line;
@@ -109,14 +110,14 @@ public class Day17 extends Day {
         return lastKnownBaseLine;
     }
 
-    private static boolean isValidRockPartPosition(Pair<Integer, Integer> rockPart, Set<Pair<Integer, Integer>> fallenRocks) {
-        return !fallenRocks.contains(rockPart) && Util.isInRectangle(rockPart, Pair.with(0, Integer.MIN_VALUE), Pair.with(6, 0));
+    private static boolean isValidRockPartPosition(Tuple2<Integer, Integer> rockPart, Set<Tuple2<Integer, Integer>> fallenRocks) {
+        return !fallenRocks.contains(rockPart) && Util.isInRectangle(rockPart, Tuple.tuple(0, Integer.MIN_VALUE), Tuple.tuple(6, 0));
     }
 
-    private static Set<Pair<Integer, Integer>> applyJetOfGas(Set<Pair<Integer, Integer>> rock, Direction jetDirection, Set<Pair<Integer, Integer>> fallenRocks) {
-        Set<Pair<Integer, Integer>> rockShapeAfterJetOfGas = new HashSet<>();
-        for (Pair<Integer, Integer> rockPart : rock) {
-            Pair<Integer, Integer> movedRockPart = jetDirection.move(rockPart, 1);
+    private static Set<Tuple2<Integer, Integer>> applyJetOfGas(Set<Tuple2<Integer, Integer>> rock, Direction jetDirection, Set<Tuple2<Integer, Integer>> fallenRocks) {
+        Set<Tuple2<Integer, Integer>> rockShapeAfterJetOfGas = new HashSet<>();
+        for (Tuple2<Integer, Integer> rockPart : rock) {
+            Tuple2<Integer, Integer> movedRockPart = jetDirection.move(rockPart, 1);
             if (isValidRockPartPosition(movedRockPart, fallenRocks)) {
                 rockShapeAfterJetOfGas.add(movedRockPart);
             } else {
@@ -127,48 +128,48 @@ public class Day17 extends Day {
         return rockShapeAfterJetOfGas;
     }
 
-    private static Set<Pair<Integer, Integer>> getRockPreparedForFalling(List<Set<Pair<Integer, Integer>>> rockShapes, int currentRockShape, int towerHeight) {
-        Set<Pair<Integer, Integer>> movedUpStone = new HashSet<>();
-        Set<Pair<Integer, Integer>> stone = rockShapes.get(currentRockShape);
-        for (Pair<Integer, Integer> s : stone) {
-            Pair<Integer, Integer> s2 = Direction.NORTH.move(s, towerHeight + 3);
+    private static Set<Tuple2<Integer, Integer>> getRockPreparedForFalling(List<Set<Tuple2<Integer, Integer>>> rockShapes, int currentRockShape, int towerHeight) {
+        Set<Tuple2<Integer, Integer>> movedUpStone = new HashSet<>();
+        Set<Tuple2<Integer, Integer>> stone = rockShapes.get(currentRockShape);
+        for (Tuple2<Integer, Integer> s : stone) {
+            Tuple2<Integer, Integer> s2 = Direction.NORTH.move(s, towerHeight + 3);
                 movedUpStone.add(s2);
         }
         stone = movedUpStone;
         return stone;
     }
 
-    private static Set<Pair<Integer, Integer>> prepareRestingRocksWithBase() {
-        Set<Pair<Integer, Integer>> restingRocks = new HashSet<>();
-        restingRocks.add(Pair.with(-1, 1));
-        restingRocks.add(Pair.with(0, 1));
-        restingRocks.add(Pair.with(1, 1));
-        restingRocks.add(Pair.with(2, 1));
-        restingRocks.add(Pair.with(3, 1));
-        restingRocks.add(Pair.with(4, 1));
-        restingRocks.add(Pair.with(5, 1));
-        restingRocks.add(Pair.with(6, 1));
-        restingRocks.add(Pair.with(7, 1));
+    private static Set<Tuple2<Integer, Integer>> prepareRestingRocksWithBase() {
+        Set<Tuple2<Integer, Integer>> restingRocks = new HashSet<>();
+        restingRocks.add(Tuple.tuple(-1, 1));
+        restingRocks.add(Tuple.tuple(0, 1));
+        restingRocks.add(Tuple.tuple(1, 1));
+        restingRocks.add(Tuple.tuple(2, 1));
+        restingRocks.add(Tuple.tuple(3, 1));
+        restingRocks.add(Tuple.tuple(4, 1));
+        restingRocks.add(Tuple.tuple(5, 1));
+        restingRocks.add(Tuple.tuple(6, 1));
+        restingRocks.add(Tuple.tuple(7, 1));
         return restingRocks;
     }
 
-    private static List<Set<Pair<Integer, Integer>>> getRockShapes() {
-        List<Set<Pair<Integer, Integer>>> rockShapes = new ArrayList<>();
-        rockShapes.add(Set.of(Pair.with(2, 0), Pair.with(3, 0), Pair.with(4, 0), Pair.with(5, 0)));
-        rockShapes.add(Set.of(Pair.with(3, -2), Pair.with(2, -1), Pair.with(3, -1), Pair.with(4, -1), Pair.with(3, 0)));
-        rockShapes.add(Set.of(Pair.with(4, -2), Pair.with(4, -1), Pair.with(2, 0), Pair.with(3, 0), Pair.with(4, 0)));
-        rockShapes.add(Set.of(Pair.with(2, 0), Pair.with(2, -1), Pair.with(2, -2), Pair.with(2, -3)));
-        rockShapes.add(Set.of(Pair.with(2, 0), Pair.with(3, 0), Pair.with(2, -1), Pair.with(3, -1)));
+    private static List<Set<Tuple2<Integer, Integer>>> getRockShapes() {
+        List<Set<Tuple2<Integer, Integer>>> rockShapes = new ArrayList<>();
+        rockShapes.add(Set.of(Tuple.tuple(2, 0), Tuple.tuple(3, 0), Tuple.tuple(4, 0), Tuple.tuple(5, 0)));
+        rockShapes.add(Set.of(Tuple.tuple(3, -2), Tuple.tuple(2, -1), Tuple.tuple(3, -1), Tuple.tuple(4, -1), Tuple.tuple(3, 0)));
+        rockShapes.add(Set.of(Tuple.tuple(4, -2), Tuple.tuple(4, -1), Tuple.tuple(2, 0), Tuple.tuple(3, 0), Tuple.tuple(4, 0)));
+        rockShapes.add(Set.of(Tuple.tuple(2, 0), Tuple.tuple(2, -1), Tuple.tuple(2, -2), Tuple.tuple(2, -3)));
+        rockShapes.add(Set.of(Tuple.tuple(2, 0), Tuple.tuple(3, 0), Tuple.tuple(2, -1), Tuple.tuple(3, -1)));
         return rockShapes;
     }
 
     private static class PatternKey {
 
-        Set<Pair<Integer, Integer>> pattern;
+        Set<Tuple2<Integer, Integer>> pattern;
         int currentRockShape;
         int currentJetDirection;
 
-        public PatternKey(Set<Pair<Integer, Integer>> pattern, int currentRockShape, int currentJetDirection) {
+        public PatternKey(Set<Tuple2<Integer, Integer>> pattern, int currentRockShape, int currentJetDirection) {
             this.pattern = pattern;
             this.currentRockShape = currentRockShape;
             this.currentJetDirection = currentJetDirection;

@@ -3,12 +3,13 @@ package de.beachboys.aoc2018;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -47,7 +48,7 @@ public class Day20 extends Day {
 
     private ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> runLogicAndReturnShortestPaths(List<String> input) {
         String stringWithoutParentheses = buildNavRegexWithoutParentheses(input);
-        Pair<Integer, Integer> startingPosition = Pair.with(0, 0);
+        Tuple2<Integer, Integer> startingPosition = Tuple.tuple(0, 0);
         buildGraph(startingPosition, stringWithoutParentheses);
         return getShortestPaths(startingPosition);
     }
@@ -71,7 +72,7 @@ public class Day20 extends Day {
         return input;
     }
 
-    private void buildGraph(Pair<Integer, Integer> startingPosition, String stringWithoutParentheses) {
+    private void buildGraph(Tuple2<Integer, Integer> startingPosition, String stringWithoutParentheses) {
         graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
         graph.addVertex(startingPosition.toString());
         queue.clear();
@@ -82,7 +83,7 @@ public class Day20 extends Day {
     }
 
     private void buildGraphParts(GraphBuilderQueueElement poll) {
-        Pair<Integer, Integer> currentPos = poll.pos;
+        Tuple2<Integer, Integer> currentPos = poll.pos;
         int index = 0;
         while (index < poll.navRegex.length()) {
             switch (poll.navRegex.charAt(index)) {
@@ -118,24 +119,24 @@ public class Day20 extends Day {
         }
     }
 
-    private Pair<Integer, Integer> moveThroughDoorAndAdjustGraph(Pair<Integer, Integer> currentPos, Direction dir) {
-        Pair<Integer, Integer> oldPos = currentPos;
+    private Tuple2<Integer, Integer> moveThroughDoorAndAdjustGraph(Tuple2<Integer, Integer> currentPos, Direction dir) {
+        Tuple2<Integer, Integer> oldPos = currentPos;
         currentPos = dir.move(oldPos, 1);
         graph.addVertex(currentPos.toString());
         Util.addEdge(graph, oldPos.toString(), currentPos.toString(), 1);
         return currentPos;
     }
 
-    private ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> getShortestPaths(Pair<Integer, Integer> startingPosition) {
+    private ShortestPathAlgorithm.SingleSourcePaths<String, DefaultWeightedEdge> getShortestPaths(Tuple2<Integer, Integer> startingPosition) {
         DijkstraShortestPath<String, DefaultWeightedEdge> alg = new DijkstraShortestPath<>(graph);
         return alg.getPaths(startingPosition.toString());
     }
 
     private static class GraphBuilderQueueElement {
-        private final Pair<Integer, Integer> pos;
+        private final Tuple2<Integer, Integer> pos;
         private final String navRegex;
 
-        public GraphBuilderQueueElement(Pair<Integer, Integer> pos, String navRegex) {
+        public GraphBuilderQueueElement(Tuple2<Integer, Integer> pos, String navRegex) {
             this.pos = pos;
             this.navRegex = navRegex;
         }

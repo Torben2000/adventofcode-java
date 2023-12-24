@@ -3,7 +3,8 @@ package de.beachboys.aoc2019;
 import de.beachboys.Day;
 import de.beachboys.IOHelper;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class Day13 extends Day {
         X, Y, TILE
     }
 
-    private final Map<Pair<Integer, Integer>, String> tileMap = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, String> tileMap = new HashMap<>();
 
     private final IntcodeComputer computer = new IntcodeComputer();
 
@@ -28,9 +29,9 @@ public class Day13 extends Day {
 
     private int currentScore = 0;
 
-    private Pair<Integer, Integer> oldBallPosition;
-    private Pair<Integer, Integer> ballPosition;
-    private Pair<Integer, Integer> paddlePosition;
+    private Tuple2<Integer, Integer> oldBallPosition;
+    private Tuple2<Integer, Integer> ballPosition;
+    private Tuple2<Integer, Integer> paddlePosition;
 
     public Object part1(List<String> input) {
         List<Long> list = Util.parseLongCsv(input.get(0));
@@ -53,9 +54,9 @@ public class Day13 extends Day {
                     oldBallPosition = ballPosition;
                 }
                 int targetX = calculateTargetXValue(ballPosition);
-                if (targetX > paddlePosition.getValue0()) {
+                if (targetX > paddlePosition.v1) {
                     return "1";
-                } else if (targetX < paddlePosition.getValue0()) {
+                } else if (targetX < paddlePosition.v1) {
                     return "-1";
                 }
                 return "0";
@@ -79,7 +80,7 @@ public class Day13 extends Day {
                             currentScore = value;
                             super.logInfo("Current score: " + currentScore);
                         } else {
-                            tileMap.put(Pair.with(Day13.this.currentX, currentY), String.valueOf(value));
+                            tileMap.put(Tuple.tuple(Day13.this.currentX, currentY), String.valueOf(value));
                         }
                         break;
                 }
@@ -94,13 +95,13 @@ public class Day13 extends Day {
         computer.runLogic(new ArrayList<>(list), io);
     }
 
-    private int calculateTargetXValue(Pair<Integer, Integer> ballPosition) {
-        Pair<Integer, Integer> nextBallPosition = Pair.with(ballPosition.getValue0() + (ballPosition.getValue0() - oldBallPosition.getValue0()), ballPosition.getValue1() + (ballPosition.getValue1() - oldBallPosition.getValue1()));
-        int targetX = nextBallPosition.getValue0();
+    private int calculateTargetXValue(Tuple2<Integer, Integer> ballPosition) {
+        Tuple2<Integer, Integer> nextBallPosition = Tuple.tuple(ballPosition.v1 + (ballPosition.v1 - oldBallPosition.v1), ballPosition.v2 + (ballPosition.v2 - oldBallPosition.v2));
+        int targetX = nextBallPosition.v1;
         if (hitsPanel(nextBallPosition)) {
-            targetX = ballPosition.getValue0();
+            targetX = ballPosition.v1;
         } else if (hitsCorner(nextBallPosition) || (hitsSide(nextBallPosition) && hitsTop(nextBallPosition))) {
-            targetX = oldBallPosition.getValue0();
+            targetX = oldBallPosition.v1;
         } else if (hitsLeftSide(nextBallPosition) && !hitsOpposingCorner(nextBallPosition)) {
             targetX += 2;
         } else if (hitsRightSide(nextBallPosition) && !hitsOpposingCorner(nextBallPosition)) {
@@ -110,40 +111,40 @@ public class Day13 extends Day {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean hitsOpposingCorner(Pair<Integer, Integer> nextBallPosition) {
-        return isBlockingTile(tileMap.get(Pair.with(oldBallPosition.getValue0(), nextBallPosition.getValue1())));
+    private boolean hitsOpposingCorner(Tuple2<Integer, Integer> nextBallPosition) {
+        return isBlockingTile(tileMap.get(Tuple.tuple(oldBallPosition.v1, nextBallPosition.v2)));
     }
 
-    private boolean hitsRightSide(Pair<Integer, Integer> nextBallPosition) {
-        return hitsSide(nextBallPosition) && nextBallPosition.getValue0() > ballPosition.getValue0();
+    private boolean hitsRightSide(Tuple2<Integer, Integer> nextBallPosition) {
+        return hitsSide(nextBallPosition) && nextBallPosition.v1 > ballPosition.v1;
     }
 
-    private boolean hitsLeftSide(Pair<Integer, Integer> nextBallPosition) {
-        return hitsSide(nextBallPosition) && nextBallPosition.getValue0() < ballPosition.getValue0();
+    private boolean hitsLeftSide(Tuple2<Integer, Integer> nextBallPosition) {
+        return hitsSide(nextBallPosition) && nextBallPosition.v1 < ballPosition.v1;
     }
 
-    private boolean hitsSide(Pair<Integer, Integer> nextBallPosition) {
-        return isBlockingTile(tileMap.get(Pair.with(nextBallPosition.getValue0(), ballPosition.getValue1())));
+    private boolean hitsSide(Tuple2<Integer, Integer> nextBallPosition) {
+        return isBlockingTile(tileMap.get(Tuple.tuple(nextBallPosition.v1, ballPosition.v2)));
     }
 
-    private boolean hitsTop(Pair<Integer, Integer> nextBallPosition) {
-        return isBlockingTile(tileMap.get(Pair.with(ballPosition.getValue0(), nextBallPosition.getValue1())));
+    private boolean hitsTop(Tuple2<Integer, Integer> nextBallPosition) {
+        return isBlockingTile(tileMap.get(Tuple.tuple(ballPosition.v1, nextBallPosition.v2)));
     }
 
     private boolean isBlockingTile(String tile) {
         return "1".equals(tile) || "2".equals(tile);
     }
 
-    private boolean hitsCorner(Pair<Integer, Integer> nextBallPosition) {
+    private boolean hitsCorner(Tuple2<Integer, Integer> nextBallPosition) {
         return isBlockingTile(tileMap.get(nextBallPosition)) && !hitsSide(nextBallPosition) && !hitsTop(nextBallPosition);
     }
 
-    private boolean hitsPanel(Pair<Integer, Integer> nextBallPosition) {
-        return paddlePosition.getValue1().equals(nextBallPosition.getValue1());
+    private boolean hitsPanel(Tuple2<Integer, Integer> nextBallPosition) {
+        return paddlePosition.v2.equals(nextBallPosition.v2);
     }
 
-    private Pair<Integer, Integer> getTilePosition(String tileType) {
-        return tileMap.keySet().stream().filter(key -> tileMap.get(key).equals(tileType)).findFirst().orElse(Pair.with(-1, -1));
+    private Tuple2<Integer, Integer> getTilePosition(String tileType) {
+        return tileMap.keySet().stream().filter(key -> tileMap.get(key).equals(tileType)).findFirst().orElse(Tuple.tuple(-1, -1));
     }
 
     public Object part2(List<String> input) {

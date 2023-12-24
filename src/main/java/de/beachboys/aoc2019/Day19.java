@@ -3,13 +3,17 @@ package de.beachboys.aoc2019;
 import de.beachboys.Day;
 import de.beachboys.IOHelper;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Day19 extends Day {
 
-    private final Map<Pair<Integer, Integer>, String> imageMap = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, String> imageMap = new HashMap<>();
 
     private final IntcodeComputer computer = new IntcodeComputer();
 
@@ -31,7 +35,7 @@ public class Day19 extends Day {
             boolean beamFoundInLine = false;
             for (int i = startOfBeam; i < 50; i++) {
                 boolean inBeam = isInBeam(j, i);
-                imageMap.put(Pair.with(i, j), inBeam ? "#" : ".");
+                imageMap.put(Tuple.tuple(i, j), inBeam ? "#" : ".");
                 if (!beamFoundInLine && inBeam) {
                     beamFoundInLine = true;
                     startOfBeam = i;

@@ -1,14 +1,15 @@
 package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day19 extends Day {
 
-    private final Map<Pair<Integer, String>, Boolean> cache = new HashMap<>();
+    private final Map<Tuple2<Integer, String>, Boolean> cache = new HashMap<>();
     private final Map<Integer, Set<String>> patterns = new HashMap<>();
 
     public Object part2(List<String> input) {
@@ -48,7 +49,7 @@ public class Day19 extends Day {
     }
 
     private boolean matchesPattern(int patternIndex, String possibleMatch) {
-        Pair<Integer, String> cacheKey = Pair.with(patternIndex, possibleMatch);
+        Tuple2<Integer, String> cacheKey = Tuple.tuple(patternIndex, possibleMatch);
         if (cache.containsKey(cacheKey)) {
             return cache.get(cacheKey);
         }

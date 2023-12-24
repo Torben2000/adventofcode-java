@@ -3,7 +3,8 @@ package de.beachboys.aoc2019;
 import de.beachboys.Day;
 import de.beachboys.IOHelper;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class Day17 extends Day {
     }
     private String imageString = "";
 
-    private Map<Pair<Integer, Integer>, String> imageMap = new HashMap<>();
+    private Map<Tuple2<Integer, Integer>, String> imageMap = new HashMap<>();
 
     private final IntcodeComputer computer = new IntcodeComputer();
 
@@ -137,16 +138,16 @@ public class Day17 extends Day {
         computer.runLogic(new ArrayList<>(list), io);
     }
 
-    protected int calculateAlignmentSum(Map<Pair<Integer, Integer>, String> imageMap) {
+    protected int calculateAlignmentSum(Map<Tuple2<Integer, Integer>, String> imageMap) {
         int total = 0;
-        for (Pair<Integer, Integer> point : imageMap.keySet()) {
+        for (Tuple2<Integer, Integer> point : imageMap.keySet()) {
             String self = imageMap.get(point);
-            String north = imageMap.get(point.setAt1(point.getValue1() - 1));
-            String south = imageMap.get(point.setAt1(point.getValue1() + 1));
-            String west = imageMap.get(point.setAt0(point.getValue0() - 1));
-            String east = imageMap.get(point.setAt0(point.getValue0() + 1));
+            String north = imageMap.get(Tuple.tuple(point.v1, point.v2 - 1));
+            String south = imageMap.get(Tuple.tuple(point.v1, point.v2 + 1));
+            String west = imageMap.get(Tuple.tuple(point.v1 - 1, point.v2));
+            String east = imageMap.get(Tuple.tuple(point.v1 + 1, point.v2));
             if (isScaffold(self) && isScaffold(north) && isScaffold(south) && isScaffold(west) && isScaffold(east)) {
-                total += point.getValue0() * point.getValue1();
+                total += point.v1 * point.v2;
             }
         }
         return total;
@@ -160,17 +161,17 @@ public class Day17 extends Day {
         return "^".equals(mapString) || "v".equals(mapString) || "<".equals(mapString) || ">".equals(mapString);
     }
 
-    protected String buildUnoptimizedInputString(Map<Pair<Integer, Integer>, String> imageMap) {
+    protected String buildUnoptimizedInputString(Map<Tuple2<Integer, Integer>, String> imageMap) {
         StringBuilder inputString = new StringBuilder();
-        Map.Entry<Pair<Integer, Integer>, String> robot = imageMap.entrySet().stream().filter(entry -> isRobot(entry.getValue())).findFirst().orElseThrow();
+        Map.Entry<Tuple2<Integer, Integer>, String> robot = imageMap.entrySet().stream().filter(entry -> isRobot(entry.getValue())).findFirst().orElseThrow();
         Direction currentDirection = getRobotDirection(robot.getValue());
-        Pair<Integer, Integer> currentPosition = robot.getKey();
+        Tuple2<Integer, Integer> currentPosition = robot.getKey();
         Direction newDirection = getNewDirection(imageMap, currentDirection, currentPosition);
         while (newDirection != null) {
             inputString.append(getTurnCommand(currentDirection, newDirection)).append(",");
             currentDirection = newDirection;
-            Pair<Integer, Integer> newPosition = getNewPositionToMoveForwardTo(imageMap, currentPosition, currentDirection);
-            int walkingLength = Math.abs(newPosition.getValue0() - currentPosition.getValue0() + newPosition.getValue1() - currentPosition.getValue1());
+            Tuple2<Integer, Integer> newPosition = getNewPositionToMoveForwardTo(imageMap, currentPosition, currentDirection);
+            int walkingLength = Math.abs(newPosition.v1 - currentPosition.v1 + newPosition.v2 - currentPosition.v2);
             inputString.append(walkingLength).append(",");
             currentPosition = newPosition;
             newDirection = getNewDirection(imageMap, currentDirection, currentPosition);
@@ -181,9 +182,9 @@ public class Day17 extends Day {
         return inputString.toString();
     }
 
-    private Pair<Integer, Integer> getNewPositionToMoveForwardTo(Map<Pair<Integer, Integer>, String> imageMap, Pair<Integer, Integer> currentPosition, Direction direction) {
-        Pair<Integer, Integer> newPosition;
-        Pair<Integer, Integer> nextPosition = currentPosition;
+    private Tuple2<Integer, Integer> getNewPositionToMoveForwardTo(Map<Tuple2<Integer, Integer>, String> imageMap, Tuple2<Integer, Integer> currentPosition, Direction direction) {
+        Tuple2<Integer, Integer> newPosition;
+        Tuple2<Integer, Integer> nextPosition = currentPosition;
         do {
             newPosition = nextPosition;
             nextPosition = getNewPosition(newPosition, direction);
@@ -207,7 +208,7 @@ public class Day17 extends Day {
         throw new IllegalArgumentException("Turn not possible");
     }
 
-    private Direction getNewDirection(Map<Pair<Integer, Integer>, String> imageMap, Direction currentDirection, Pair<Integer, Integer> currentPosition) {
+    private Direction getNewDirection(Map<Tuple2<Integer, Integer>, String> imageMap, Direction currentDirection, Tuple2<Integer, Integer> currentPosition) {
         switch (currentDirection) {
             case NORTH:
             case SOUTH:
@@ -219,9 +220,9 @@ public class Day17 extends Day {
         throw new IllegalArgumentException("Illegal current direction");
     }
 
-    private Direction getNewDirection(Map<Pair<Integer, Integer>, String> imageMap, Pair<Integer, Integer> currentPosition, List<Direction> possibleNewDirections) {
+    private Direction getNewDirection(Map<Tuple2<Integer, Integer>, String> imageMap, Tuple2<Integer, Integer> currentPosition, List<Direction> possibleNewDirections) {
         for (Direction newDirection : possibleNewDirections) {
-            Pair<Integer, Integer> newPosition = getNewPosition(currentPosition, newDirection);
+            Tuple2<Integer, Integer> newPosition = getNewPosition(currentPosition, newDirection);
             if (isScaffold(imageMap.get(newPosition))) {
                 return newDirection;
             }
@@ -229,8 +230,8 @@ public class Day17 extends Day {
         return null;
     }
 
-    private Pair<Integer, Integer> getNewPosition(Pair<Integer, Integer> currentPosition, Direction direction) {
-        return Pair.with(currentPosition.getValue0() + direction.stepX, currentPosition.getValue1() + direction.stepY);
+    private Tuple2<Integer, Integer> getNewPosition(Tuple2<Integer, Integer> currentPosition, Direction direction) {
+        return Tuple.tuple(currentPosition.v1 + direction.stepX, currentPosition.v2 + direction.stepY);
     }
 
     private Direction getRobotDirection(String mapString) {

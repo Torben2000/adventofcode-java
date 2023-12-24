@@ -1,7 +1,8 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.function.IntUnaryOperator;
@@ -28,7 +29,7 @@ public class Day24 extends Day {
     }
 
     private int[] getFirstPossibleModelNumber(List<String> aluProgram, int firstDigitValueToTry, IntUnaryOperator nextDigitToTry) {
-        Map<Integer, Pair<Integer, Integer>> calculatedDigits = getCalculatedDigits(aluProgram);
+        Map<Integer, Tuple2<Integer, Integer>> calculatedDigits = getCalculatedDigits(aluProgram);
 
         int[] modelNumber = new int[14];
 
@@ -39,14 +40,14 @@ public class Day24 extends Day {
                 currentDigitIndex++;
             }
 
-            Pair<Integer, Integer> calculation = calculatedDigits.get(currentDigitIndex);
+            Tuple2<Integer, Integer> calculation = calculatedDigits.get(currentDigitIndex);
 
             boolean digitFound = false;
             while (digit > 0 && digit < 10) {
-                int otherDigit = digit + calculation.getValue1();
+                int otherDigit = digit + calculation.v2;
                 if (otherDigit > 0 && otherDigit < 10) {
                     modelNumber[currentDigitIndex] = digit;
-                    modelNumber[calculation.getValue0()] = otherDigit;
+                    modelNumber[calculation.v1] = otherDigit;
                     digitFound = true;
                     break;
                 }
@@ -60,8 +61,8 @@ public class Day24 extends Day {
         return modelNumber;
     }
 
-    private Map<Integer, Pair<Integer, Integer>> getCalculatedDigits(List<String> aluProgram) {
-        Map<Integer, Pair<Integer, Integer>> calculatedDigits = new HashMap<>();
+    private Map<Integer, Tuple2<Integer, Integer>> getCalculatedDigits(List<String> aluProgram) {
+        Map<Integer, Tuple2<Integer, Integer>> calculatedDigits = new HashMap<>();
 
         int curDigit = -1;
         Deque<Integer> inputDigits = new LinkedList<>();
@@ -75,7 +76,7 @@ public class Day24 extends Day {
                 } else {
                     Integer inputDigit = inputDigits.pollLast();
                     int diff = diffValues.get(inputDigit) + Integer.parseInt(aluProgram.get(i + 1).substring("add x ".length()));
-                    calculatedDigits.put(inputDigit, Pair.with(curDigit, diff));
+                    calculatedDigits.put(inputDigit, Tuple.tuple(curDigit, diff));
                 }
             } else if ("add y w".equals(line)) {
                 diffValues.put(curDigit, Integer.valueOf(aluProgram.get(i + 1).substring("add y ".length())));

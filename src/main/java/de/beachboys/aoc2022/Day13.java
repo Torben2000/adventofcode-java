@@ -1,7 +1,8 @@
 package de.beachboys.aoc2022;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
@@ -13,16 +14,16 @@ public class Day13 extends Day {
     public Object part1(List<String> input) {
         long result = 0;
 
-        List<Pair<JSONArray, JSONArray>> pairs = new ArrayList<>();
+        List<Tuple2<JSONArray, JSONArray>> pairs = new ArrayList<>();
         for (int i = 0; i < input.size(); i += 3) {
             JSONArray e1 = new JSONArray(input.get(i));
             JSONArray e2 = new JSONArray(input.get(i + 1));
-            pairs.add(Pair.with(e1, e2));
+            pairs.add(Tuple.tuple(e1, e2));
         }
 
         for (int i = 0; i < pairs.size(); i++) {
-            Pair<JSONArray, JSONArray> pair = pairs.get(i);
-            if (compare(pair.getValue0(), pair.getValue1()) < 0) {
+            Tuple2<JSONArray, JSONArray> pair = pairs.get(i);
+            if (compare(pair.v1, pair.v2) < 0) {
                 result += i + 1;
             }
         }

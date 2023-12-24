@@ -4,7 +4,8 @@ import de.beachboys.Day;
 import de.beachboys.IOHelper;
 import de.beachboys.OCR;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,9 +20,9 @@ public class Day11 extends Day {
 
     private final IntcodeComputer computer = new IntcodeComputer();
 
-    private final Map<Pair<Integer, Integer>, String> colorMap = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, String> colorMap = new HashMap<>();
 
-    private Pair<Integer, Integer> robotPosition = Pair.with(0, 0);
+    private Tuple2<Integer, Integer> robotPosition = Tuple.tuple(0, 0);
 
     private Direction currentDirection = Direction.UP;
 
@@ -78,16 +79,16 @@ public class Day11 extends Day {
     private void moveRobot() {
         switch (currentDirection) {
             case UP:
-                robotPosition = robotPosition.setAt1(robotPosition.getValue1() - 1);
+                robotPosition = Tuple.tuple(robotPosition.v1, robotPosition.v2 - 1);
                 break;
             case RIGHT:
-                robotPosition = robotPosition.setAt0(robotPosition.getValue0() + 1);
+                robotPosition = Tuple.tuple(robotPosition.v1 + 1, robotPosition.v2);
                 break;
             case DOWN:
-                robotPosition = robotPosition.setAt1(robotPosition.getValue1() + 1);
+                robotPosition = Tuple.tuple(robotPosition.v1, robotPosition.v2 + 1);
                 break;
             case LEFT:
-                robotPosition = robotPosition.setAt0(robotPosition.getValue0() - 1);
+                robotPosition = Tuple.tuple(robotPosition.v1 - 1, robotPosition.v2);
                 break;
         }
     }
@@ -100,7 +101,7 @@ public class Day11 extends Day {
     }
 
     public Object part2(List<String> input) {
-        colorMap.put(Pair.with(0, 0), "1");
+        colorMap.put(Tuple.tuple(0, 0), "1");
         part1(input);
         return OCR.runOCRAndReturnOriginalOnError(Util.paintMap(colorMap, Map.of("1", "*")));
     }

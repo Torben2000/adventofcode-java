@@ -14,7 +14,8 @@
     - try out different inputs for the current puzzle
     - download your puzzle input
     - run your logic with your puzzle input
-- Tuples (Pair, Triplet, ...)
+- Tuples with up to 16 elements via jOOλ
+- Functional interfaces with up to 16 parameters via jOOλ
 - JSON parsing/writing etc. via json.org lib
 - Simple CSV parsing (to String/int/long)
 - Direction enums to help with navigating using square or hex fields

@@ -1,34 +1,33 @@
 package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import de.beachboys.Direction;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.List;
 
 public class Day12 extends Day {
 
-    private enum Direction {
-        NORTH, SOUTH, EAST, WEST
-    }
 
     public Object part1(List<String> input) {
-        Pair<Long, Long>  pos = Pair.with(0L, 0L);
+        Tuple2<Long, Long> pos = Tuple.tuple(0L, 0L);
         Direction curDir = Direction.EAST;
         for (String command : input) {
             String op = command.substring(0, 1);
             int intValue = Integer.parseInt(command.substring(1));
             switch (op) {
                 case "N":
-                    pos = pos.setAt1(pos.getValue1() - intValue);
+                    pos = Tuple.tuple(pos.v1, pos.v2 - intValue);
                     break;
                 case "S":
-                    pos = pos.setAt1(pos.getValue1() + intValue);
+                    pos = Tuple.tuple(pos.v1, pos.v2 + intValue);
                     break;
                 case "E":
-                    pos = pos.setAt0(pos.getValue0() + intValue);
+                    pos = Tuple.tuple(pos.v1 + intValue, pos.v2);
                     break;
                 case "W":
-                    pos = pos.setAt0(pos.getValue0() - intValue);
+                    pos = Tuple.tuple(pos.v1 - intValue, pos.v2);
                     break;
                 case "L":
                     curDir = turnShip(true, curDir, intValue / 90);
@@ -41,27 +40,27 @@ public class Day12 extends Day {
                     break;
             }
         }
-        return Math.abs(pos.getValue0()) + Math.abs(pos.getValue1());
+        return Math.abs(pos.v1) + Math.abs(pos.v2);
     }
 
     public Object part2(List<String> input) {
-        Pair<Long, Long>  pos = Pair.with(0L, 0L);
-        Pair<Long, Long>  wayPoint = Pair.with(10L, -1L);
+        Tuple2<Long, Long>  pos = Tuple.tuple(0L, 0L);
+        Tuple2<Long, Long>  wayPoint = Tuple.tuple(10L, -1L);
         for (String command : input) {
             String op = command.substring(0, 1);
             int intValue = Integer.parseInt(command.substring(1));
             switch (op) {
                 case "N":
-                    wayPoint = wayPoint.setAt1(wayPoint.getValue1() - intValue);
+                    wayPoint = Tuple.tuple(wayPoint.v1, wayPoint.v2 - intValue);
                     break;
                 case "S":
-                    wayPoint = wayPoint.setAt1(wayPoint.getValue1() + intValue);
+                    wayPoint = Tuple.tuple(wayPoint.v1, wayPoint.v2 + intValue);
                     break;
                 case "E":
-                    wayPoint = wayPoint.setAt0(wayPoint.getValue0() + intValue);
+                    wayPoint = Tuple.tuple(wayPoint.v1 + intValue, wayPoint.v2);
                     break;
                 case "W":
-                    wayPoint = wayPoint.setAt0(wayPoint.getValue0() - intValue);
+                    wayPoint = Tuple.tuple(wayPoint.v1 - intValue, wayPoint.v2);
                     break;
                 case "L":
                     wayPoint = turnWayPoint(true, wayPoint, intValue / 90);
@@ -70,11 +69,11 @@ public class Day12 extends Day {
                     wayPoint = turnWayPoint(false, wayPoint, intValue / 90);
                     break;
                 case "F":
-                    pos = Pair.with(pos.getValue0() + intValue * wayPoint.getValue0(),  pos.getValue1() + intValue * wayPoint.getValue1());
+                    pos = Tuple.tuple(pos.v1 + intValue * wayPoint.v1,  pos.v2 + intValue * wayPoint.v2);
                     break;
             }
         }
-        return Math.abs(pos.getValue0()) + Math.abs(pos.getValue1());
+        return Math.abs(pos.v1) + Math.abs(pos.v2);
     }
 
     private Direction turnShip(boolean turnLeft, Direction currentDirection, int turnCount) {
@@ -85,8 +84,8 @@ public class Day12 extends Day {
         return newDirection;
     }
 
-    private Pair<Long, Long> turnWayPoint(boolean turnLeft, Pair<Long, Long> currentWayPoint, int turnCount) {
-        Pair<Long, Long> newWayPoint = currentWayPoint;
+    private Tuple2<Long, Long> turnWayPoint(boolean turnLeft, Tuple2<Long, Long> currentWayPoint, int turnCount) {
+        Tuple2<Long, Long> newWayPoint = currentWayPoint;
         for (int i = 0; i < turnCount; i++) {
             newWayPoint = turnWayPoint(turnLeft, newWayPoint);
         }
@@ -112,22 +111,22 @@ public class Day12 extends Day {
         return newDirection;
     }
 
-    private Pair<Long, Long> turnWayPoint(boolean turnLeft, Pair<Long, Long> currentWayPoint) {
-        long newX = turnLeft ? currentWayPoint.getValue1() : currentWayPoint.getValue1() * -1;
-        long newY = turnLeft ? currentWayPoint.getValue0() * -1 : currentWayPoint.getValue0();
-        return Pair.with(newX, newY);
+    private Tuple2<Long, Long> turnWayPoint(boolean turnLeft, Tuple2<Long, Long> currentWayPoint) {
+        long newX = turnLeft ? currentWayPoint.v2 : currentWayPoint.v2 * -1;
+        long newY = turnLeft ? currentWayPoint.v1 * -1 : currentWayPoint.v1;
+        return Tuple.tuple(newX, newY);
     }
 
-    private Pair<Long, Long> moveInDirection(Pair<Long, Long> currentPosition, Direction direction, Integer distance) {
+    private Tuple2<Long, Long> moveInDirection(Tuple2<Long, Long> currentPosition, Direction direction, Integer distance) {
         switch (direction) {
             case NORTH:
-                return currentPosition.setAt1(currentPosition.getValue1() - distance);
+                return Tuple.tuple(currentPosition.v1, currentPosition.v2 - distance);
             case EAST:
-                return currentPosition.setAt0(currentPosition.getValue0() + distance);
+                return Tuple.tuple(currentPosition.v1 + distance, currentPosition.v2);
             case SOUTH:
-                return currentPosition.setAt1(currentPosition.getValue1() + distance);
+                return Tuple.tuple(currentPosition.v1, currentPosition.v2 + distance);
             case WEST:
-                return currentPosition.setAt0(currentPosition.getValue0() - distance);
+                return Tuple.tuple(currentPosition.v1 - distance, currentPosition.v2);
         }
         return currentPosition;
     }

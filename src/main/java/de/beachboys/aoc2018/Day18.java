@@ -2,7 +2,8 @@ package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,15 +25,15 @@ public class Day18 extends Day {
     }
 
     private long runLogic(List<String> input, int minutes) {
-        Map<Pair<Integer, Integer>, String> map = Util.buildImageMap(input);
+        Map<Tuple2<Integer, Integer>, String> map = Util.buildImageMap(input);
         map = Util.manipulateStateMultipleTimesOptimized(minutes, map, this::transformAcres);
         return map.values().stream().filter(this::isWooded).count() * map.values().stream().filter(this::isLumberyard).count();
     }
 
-    private Map<Pair<Integer, Integer>, String> transformAcres(Map<Pair<Integer, Integer>, String> map) {
-        Map<Pair<Integer, Integer>, String> newMap = new HashMap<>();
-        for (Map.Entry<Pair<Integer, Integer>, String> mapEntry : map.entrySet()) {
-            Pair<Integer, Integer> position = mapEntry.getKey();
+    private Map<Tuple2<Integer, Integer>, String> transformAcres(Map<Tuple2<Integer, Integer>, String> map) {
+        Map<Tuple2<Integer, Integer>, String> newMap = new HashMap<>();
+        for (Map.Entry<Tuple2<Integer, Integer>, String> mapEntry : map.entrySet()) {
+            Tuple2<Integer, Integer> position = mapEntry.getKey();
             String mapValue = mapEntry.getValue();
             if (isOpen(mapValue) && countNeighbors(map, position, this::isWooded) >= 3) {
                 newMap.put(position, TREE);
@@ -47,12 +48,12 @@ public class Day18 extends Day {
         return newMap;
     }
 
-    private int countNeighbors(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> position, Predicate<String> neighborFilter) {
+    private int countNeighbors(Map<Tuple2<Integer, Integer>, String> map, Tuple2<Integer, Integer> position, Predicate<String> neighborFilter) {
         int count = 0;
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 if (i != 0 || j != 0) {
-                    if (neighborFilter.test(map.get(Pair.with(position.getValue0() + i, position.getValue1() + j)))) {
+                    if (neighborFilter.test(map.get(Tuple.tuple(position.v1 + i, position.v2 + j)))) {
                         count++;
                     }
                 }

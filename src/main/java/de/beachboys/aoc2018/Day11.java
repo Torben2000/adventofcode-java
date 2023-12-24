@@ -1,7 +1,8 @@
 package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.List;
 import java.util.function.IntBinaryOperator;
@@ -12,19 +13,19 @@ public class Day11 extends Day {
 
     public Object part1(List<String> input) {
         IntBinaryOperator getMaxSquareSize = (i, j) -> Math.min(3, Math.min(300 - i, 300 - j));
-        Triplet<Integer, Integer, Integer> bestPositionWithSize = runLogicAndGetBestPositionWithSize(input, 3, getMaxSquareSize);
-        return bestPositionWithSize.getValue0() + "," + bestPositionWithSize.getValue1();
+        Tuple3<Integer, Integer, Integer> bestPositionWithSize = runLogicAndGetBestPositionWithSize(input, 3, getMaxSquareSize);
+        return bestPositionWithSize.v1 + "," + bestPositionWithSize.v2;
     }
 
     public Object part2(List<String> input) {
         IntBinaryOperator getMaxSquareSize = (i, j) -> Math.min(300 - i, 300 - j);
-        Triplet<Integer, Integer, Integer> bestPositionWithSize = runLogicAndGetBestPositionWithSize(input, 1, getMaxSquareSize);
-        return bestPositionWithSize.getValue0() + "," + bestPositionWithSize.getValue1() + "," + bestPositionWithSize.getValue2();
+        Tuple3<Integer, Integer, Integer> bestPositionWithSize = runLogicAndGetBestPositionWithSize(input, 1, getMaxSquareSize);
+        return bestPositionWithSize.v1 + "," + bestPositionWithSize.v2 + "," + bestPositionWithSize.v3;
     }
 
-    private Triplet<Integer, Integer, Integer> runLogicAndGetBestPositionWithSize(List<String> input, int minSquareSize, IntBinaryOperator getMaxSquareSize) {
+    private Tuple3<Integer, Integer, Integer> runLogicAndGetBestPositionWithSize(List<String> input, int minSquareSize, IntBinaryOperator getMaxSquareSize) {
         fillSummedAreaTable(input);
-        Triplet<Integer, Integer, Integer> bestPositionWithSize = Triplet.with(0, 0, 0);
+        Tuple3<Integer, Integer, Integer> bestPositionWithSize = Tuple.tuple(0, 0, 0);
         int maxValue = Integer.MIN_VALUE;
         for (int i = 0; i < 300; i++) {
             for (int j = 0; j < 300; j++) {
@@ -33,7 +34,7 @@ public class Day11 extends Day {
                     int value = getValue(i, j, squareSize);
                     if (value > maxValue) {
                         maxValue = value;
-                        bestPositionWithSize = Triplet.with(i + 1, j + 1, squareSize);
+                        bestPositionWithSize = Tuple.tuple(i + 1, j + 1, squareSize);
                     }
                 }
             }

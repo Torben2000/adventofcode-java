@@ -2,9 +2,13 @@ package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Day12 extends Day {
 
@@ -40,14 +44,14 @@ public class Day12 extends Day {
         return result;
     }
 
-    private final Map<Triplet<Integer, Integer, Integer>, Long> cache = new HashMap<>();
+    private final Map<Tuple3<Integer, Integer, Integer>, Long> cache = new HashMap<>();
 
     private long getNumberOfPossibleArrangements(String records, List<Integer> damagedGroups) {
         cache.clear();
         return getNumberOfPossibleArrangements(records, damagedGroups, 0, 0, 0);
     }
     private long getNumberOfPossibleArrangements(String records, List<Integer> damagedGroups, int currentRecordIndex, int currentGroupIndex, int currentDamagedCounter) {
-        Triplet<Integer, Integer, Integer> key = Triplet.with(currentRecordIndex, currentGroupIndex, currentDamagedCounter);
+        Tuple3<Integer, Integer, Integer> key = Tuple.tuple(currentRecordIndex, currentGroupIndex, currentDamagedCounter);
         if (cache.containsKey(key)) {
             return cache.get(key);
         }

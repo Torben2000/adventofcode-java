@@ -1,9 +1,13 @@
 package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
-import org.javatuples.Quartet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple4;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -20,7 +24,7 @@ public class Day22 extends Day {
         return playGameAndGetWinnerScore(input, this::isPlayerOneWinnerPart2);
     }
 
-    private Object playGameAndGetWinnerScore(List<String> input, Predicate<Quartet<LinkedList<Integer>, Integer, LinkedList<Integer>, Integer>> isPlayerOneWinner) {
+    private Object playGameAndGetWinnerScore(List<String> input, Predicate<Tuple4<LinkedList<Integer>, Integer, LinkedList<Integer>, Integer>> isPlayerOneWinner) {
         buildCardDecks(input);
         boolean playerOneWins = playGame(completePlayer1Deck, completePlayer2Deck, isPlayerOneWinner);
         LinkedList<Integer> winningDeck = playerOneWins ? completePlayer1Deck : completePlayer2Deck;
@@ -45,7 +49,7 @@ public class Day22 extends Day {
         }
     }
 
-    private boolean playGame(LinkedList<Integer> player1Deck, LinkedList<Integer> player2Deck, Predicate<Quartet<LinkedList<Integer>, Integer, LinkedList<Integer>, Integer>> isPlayerOneWinner) {
+    private boolean playGame(LinkedList<Integer> player1Deck, LinkedList<Integer> player2Deck, Predicate<Tuple4<LinkedList<Integer>, Integer, LinkedList<Integer>, Integer>> isPlayerOneWinner) {
         Set<String> player1History = new HashSet<>();
         Set<String> player2History = new HashSet<>();
         while (!(player1Deck.isEmpty() || player2Deck.isEmpty())) {
@@ -54,7 +58,7 @@ public class Day22 extends Day {
             }
             @SuppressWarnings("ConstantConditions") int player1Card = player1Deck.poll();
             @SuppressWarnings("ConstantConditions") int player2Card = player2Deck.poll();
-            if (isPlayerOneWinner.test(Quartet.with(player1Deck, player1Card, player2Deck, player2Card))) {
+            if (isPlayerOneWinner.test(Tuple.tuple(player1Deck, player1Card, player2Deck, player2Card))) {
                 player1Deck.add(player1Card);
                 player1Deck.add(player2Card);
             } else {
@@ -77,17 +81,17 @@ public class Day22 extends Day {
         return cycleDetected;
     }
 
-    private boolean isPlayerOneWinnerPart1(Quartet<LinkedList<Integer>, Integer, LinkedList<Integer>, Integer> currentState) {
-        int player1Card = currentState.getValue1();
-        int player2Card = currentState.getValue3();
+    private boolean isPlayerOneWinnerPart1(Tuple4<LinkedList<Integer>, Integer, LinkedList<Integer>, Integer> currentState) {
+        int player1Card = currentState.v2;
+        int player2Card = currentState.v4;
         return player1Card > player2Card;
     }
 
-    private boolean isPlayerOneWinnerPart2(Quartet<LinkedList<Integer>, Integer, LinkedList<Integer>, Integer> currentState) {
-        LinkedList<Integer> player1Deck = currentState.getValue0();
-        LinkedList<Integer> player2Deck = currentState.getValue2();
-        int player1Card = currentState.getValue1();
-        int player2Card = currentState.getValue3();
+    private boolean isPlayerOneWinnerPart2(Tuple4<LinkedList<Integer>, Integer, LinkedList<Integer>, Integer> currentState) {
+        LinkedList<Integer> player1Deck = currentState.v1;
+        LinkedList<Integer> player2Deck = currentState.v3;
+        int player1Card = currentState.v2;
+        int player2Card = currentState.v4;
         if (player1Card <= player1Deck.size() && player2Card <= player2Deck.size()) {
             LinkedList<Integer> player1SubDeck = new LinkedList<>(player1Deck.subList(0, player1Card));
             LinkedList<Integer> player2SubDeck = new LinkedList<>(player2Deck.subList(0, player2Card));

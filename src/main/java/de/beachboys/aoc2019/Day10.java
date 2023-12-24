@@ -1,7 +1,8 @@
 package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.TreeMap;
 
 public class Day10 extends Day {
 
-    Pair<Integer, Integer> station = Pair.with(-1, -1);
+    Tuple2<Integer, Integer> station = Tuple.tuple(-1, -1);
 
     public Object part1(List<String> input) {
         boolean[][] isAsteroid = buildAsteroidMap(input);
@@ -29,13 +30,13 @@ public class Day10 extends Day {
                     }
                     if (maxAsteroids < numOfAsteroidsInSight) {
                         maxAsteroids = numOfAsteroidsInSight;
-                        station = Pair.with(i, j);
+                        station = Tuple.tuple(i, j);
                         io.logDebug(station  + ": " + numOfAsteroidsInSight);
                     }
                 }
             }
         }
-        io.logInfo("Found station: " + station.getValue0() + "," + station.getValue1());
+        io.logInfo("Found station: " + station.v1 + "," + station.v2);
         return maxAsteroids;
     }
 
@@ -114,20 +115,20 @@ public class Day10 extends Day {
         int currentIndex = 0;
         boolean asteroidsFound = true;
         while (asteroidsFound) {
-            boolean[][] asteroidsInSight = getAsteroidsInLineOfSight(isAsteroid, station.getValue0(), station.getValue1());
-            Map<Double, Pair<Integer, Integer>> orderedAsteroidsInSight = new TreeMap<>();
+            boolean[][] asteroidsInSight = getAsteroidsInLineOfSight(isAsteroid, station.v1, station.v2);
+            Map<Double, Tuple2<Integer, Integer>> orderedAsteroidsInSight = new TreeMap<>();
             for (int i = 0; i < asteroidsInSight.length; i++) {
                 for (int j = 0; j < asteroidsInSight[i].length; j++) {
                     if (asteroidsInSight[i][j]) {
-                        orderedAsteroidsInSight.put(getOrderValueOfAsteroid(station, i, j), Pair.with(i, j));
+                        orderedAsteroidsInSight.put(getOrderValueOfAsteroid(station, i, j), Tuple.tuple(i, j));
                         isAsteroid[i][j] = false;
                     }
                 }
             }
-            for (Map.Entry<Double, Pair<Integer, Integer>> entry : orderedAsteroidsInSight.entrySet()) {
+            for (Map.Entry<Double, Tuple2<Integer, Integer>> entry : orderedAsteroidsInSight.entrySet()) {
                 currentIndex++;
                 if (currentIndex == asteroidIndex) {
-                    return entry.getValue().getValue0()*100+entry.getValue().getValue1();
+                    return entry.getValue().v1*100+entry.getValue().v2;
                 }
 
             }
@@ -136,9 +137,9 @@ public class Day10 extends Day {
         return"error";
     }
 
-    private Double getOrderValueOfAsteroid(Pair<Integer, Integer> station, int x, int y) {
-        int diffX = x-station.getValue0();
-        int diffY = y-station.getValue1();
+    private Double getOrderValueOfAsteroid(Tuple2<Integer, Integer> station, int x, int y) {
+        int diffX = x-station.v1;
+        int diffY = y-station.v2;
         return -1 * Math.atan2(diffX, diffY);
     }
 

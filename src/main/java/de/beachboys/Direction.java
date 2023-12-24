@@ -1,6 +1,7 @@
 package de.beachboys;
 
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -48,8 +49,8 @@ public enum Direction {
         }
     }
 
-    public Pair<Integer, Integer> move(Pair<Integer, Integer> currentPosition, int distance) {
-        return Pair.with(currentPosition.getValue0() + distance * stepX, currentPosition.getValue1() + distance * stepY);
+    public Tuple2<Integer, Integer> move(Tuple2<Integer, Integer> currentPosition, int distance) {
+        return Tuple.tuple(currentPosition.v1 + distance * stepX, currentPosition.v2 + distance * stepY);
     }
 
     public Direction turn(boolean left) {
@@ -101,8 +102,8 @@ public enum Direction {
         throw new IllegalStateException();
     }
 
-    public static Set<Pair<Integer, Integer>> getDirectNeighbors(Pair<Integer, Integer> position) {
-        Set<Pair<Integer, Integer>> neighbors = new HashSet<>();
+    public static Set<Tuple2<Integer, Integer>> getDirectNeighbors(Tuple2<Integer, Integer> position) {
+        Set<Tuple2<Integer, Integer>> neighbors = new HashSet<>();
         for (Direction dir : values()) {
             neighbors.add(dir.move(position, 1));
         }

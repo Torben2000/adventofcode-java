@@ -3,7 +3,7 @@ package de.beachboys.aoc2017;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +27,9 @@ public class Day19 extends Day {
     private void runLogic(List<String> input) {
         letters = new StringBuilder();
         numberOfSteps = 0;
-        Map<Pair<Integer, Integer>, String> map = Util.buildImageMap(input);
+        Map<Tuple2<Integer, Integer>, String> map = Util.buildImageMap(input);
 
-        Pair<Integer, Integer> currentPosition = map.entrySet().stream().filter(entry -> isOnRoute(entry.getValue()) && entry.getKey().getValue1() == 0).findFirst().orElseThrow().getKey();
+        Tuple2<Integer, Integer> currentPosition = map.entrySet().stream().filter(entry -> isOnRoute(entry.getValue()) && entry.getKey().v2 == 0).findFirst().orElseThrow().getKey();
         Direction currentDirection = Direction.SOUTH;
         String currentValue = map.get(currentPosition);
 
@@ -45,7 +45,7 @@ public class Day19 extends Day {
         }
     }
 
-    private Direction getDirectionAfterTurn(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> currentPosition, Direction currentDirection) {
+    private Direction getDirectionAfterTurn(Map<Tuple2<Integer, Integer>, String> map, Tuple2<Integer, Integer> currentPosition, Direction currentDirection) {
         Direction nextDirection = currentDirection.turnLeft();
         if (!isOnRoute(map.get(nextDirection.move(currentPosition, 1)))) {
             nextDirection = currentDirection.turnRight();

@@ -1,7 +1,8 @@
 package de.beachboys.aoc2022;
 
 import de.beachboys.Day;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.function.BiFunction;
 public class Day21 extends Day {
 
     private final Map<String, Long> numbers = new HashMap<>();
-    private final Map<String, Triplet<BiFunction<Long, Long, Long>, String, String>> operationsWithParameters = new HashMap<>();
+    private final Map<String, Tuple3<BiFunction<Long, Long, Long>, String, String>> operationsWithParameters = new HashMap<>();
     private final Map<String, BiFunction<Long, Long, Long>> reverseOperationsToCalculateParameter1 = new HashMap<>();
     private final Map<String, BiFunction<Long, Long, Long>> reverseOperationsToCalculateParameter2 = new HashMap<>();
 
@@ -24,9 +25,9 @@ public class Day21 extends Day {
         parseInput(input);
 
         numbers.remove("humn");
-        Triplet<BiFunction<Long, Long, Long>, String, String> operationOfRoot = operationsWithParameters.get("root");
-        String monkey1 = operationOfRoot.getValue1();
-        String monkey2 = operationOfRoot.getValue2();
+        Tuple3<BiFunction<Long, Long, Long>, String, String> operationOfRoot = operationsWithParameters.get("root");
+        String monkey1 = operationOfRoot.v2;
+        String monkey2 = operationOfRoot.v3;
         long compareValue;
         boolean numberOfMonkey1Known = false;
         try {
@@ -43,8 +44,8 @@ public class Day21 extends Day {
         if (numbers.containsKey(monkey)) {
             return numbers.get(monkey);
         }
-        Triplet<BiFunction<Long, Long, Long>, String, String> operation = operationsWithParameters.get(monkey);
-        Long value = operation.getValue0().apply(getNumberOfMonkey(operation.getValue1()), getNumberOfMonkey(operation.getValue2()));
+        Tuple3<BiFunction<Long, Long, Long>, String, String> operation = operationsWithParameters.get(monkey);
+        Long value = operation.v1.apply(getNumberOfMonkey(operation.v2), getNumberOfMonkey(operation.v3));
         numbers.put(monkey, value);
         return value;
     }
@@ -53,15 +54,15 @@ public class Day21 extends Day {
         if ("humn".equals(monkeyToYellCompareValue)) {
             return compareValue;
         }
-        Triplet<BiFunction<Long, Long, Long>, String, String> operation = operationsWithParameters.get(monkeyToYellCompareValue);
+        Tuple3<BiFunction<Long, Long, Long>, String, String> operation = operationsWithParameters.get(monkeyToYellCompareValue);
         try {
             BiFunction<Long, Long, Long> reverseOperationToCalculateParameter2 = reverseOperationsToCalculateParameter2.get(monkeyToYellCompareValue);
-            long newCompareValue = reverseOperationToCalculateParameter2.apply(compareValue, getNumberOfMonkey(operation.getValue1()));
-            return getNumberToYell(newCompareValue, operation.getValue2());
+            long newCompareValue = reverseOperationToCalculateParameter2.apply(compareValue, getNumberOfMonkey(operation.v2));
+            return getNumberToYell(newCompareValue, operation.v3);
         } catch (NullPointerException e) {
             BiFunction<Long, Long, Long> reverseOperationToCalculateParameter1 = reverseOperationsToCalculateParameter1.get(monkeyToYellCompareValue);
-            long newCompareValue = reverseOperationToCalculateParameter1.apply(compareValue, getNumberOfMonkey(operation.getValue2()));
-            return getNumberToYell(newCompareValue, operation.getValue1());
+            long newCompareValue = reverseOperationToCalculateParameter1.apply(compareValue, getNumberOfMonkey(operation.v3));
+            return getNumberToYell(newCompareValue, operation.v2);
         }
     }
 
@@ -107,7 +108,7 @@ public class Day21 extends Day {
                         throw new IllegalArgumentException();
 
                 }
-                operationsWithParameters.put(monkey, Triplet.with(operation, monkey1, monkey2));
+                operationsWithParameters.put(monkey, Tuple.tuple(operation, monkey1, monkey2));
                 reverseOperationsToCalculateParameter1.put(monkey, reverseOperationForParameter1);
                 reverseOperationsToCalculateParameter2.put(monkey, reverseOperationForParameter2);
             }

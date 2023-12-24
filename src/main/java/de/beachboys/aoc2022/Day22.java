@@ -3,20 +3,21 @@ package de.beachboys.aoc2022;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day22 extends Day {
 
-    private static final Set<Pair<Integer, Integer>> PATTERN_1 = Set.of(Pair.with(2, 0), Pair.with(0, 1), Pair.with(1, 1), Pair.with(2, 1), Pair.with(2, 2), Pair.with(3, 2));
-    private static final Set<Pair<Integer, Integer>> PATTERN_2 = Set.of(Pair.with(1, 0), Pair.with(2, 0), Pair.with(1, 1), Pair.with(0, 2), Pair.with(1, 2), Pair.with(0, 3));
+    private static final Set<Tuple2<Integer, Integer>> PATTERN_1 = Set.of(Tuple.tuple(2, 0), Tuple.tuple(0, 1), Tuple.tuple(1, 1), Tuple.tuple(2, 1), Tuple.tuple(2, 2), Tuple.tuple(3, 2));
+    private static final Set<Tuple2<Integer, Integer>> PATTERN_2 = Set.of(Tuple.tuple(1, 0), Tuple.tuple(2, 0), Tuple.tuple(1, 1), Tuple.tuple(0, 2), Tuple.tuple(1, 2), Tuple.tuple(0, 3));
 
-    private Map<Pair<Integer, Integer>, String> map;
+    private Map<Tuple2<Integer, Integer>, String> map;
     private int mapPartSideLength;
     private final List<MapPart> mapPartList = new ArrayList<>();
-    private final Set<Pair<Integer, Integer>> mapPattern = new HashSet<>();
+    private final Set<Tuple2<Integer, Integer>> mapPattern = new HashSet<>();
 
     public Object part1(List<String> input) {
         return runLogic(input, false);
@@ -31,8 +32,8 @@ public class Day22 extends Day {
         String commandLine = input.get(input.size() - 1);
         State finalState = moveOnMap(commandLine);
 
-        int result = (finalState.pos.getValue1() + 1) * 1000;
-        result += (finalState.pos.getValue0() + 1) * 4;
+        int result = (finalState.pos.v2 + 1) * 1000;
+        result += (finalState.pos.v1 + 1) * 4;
         switch (finalState.dir) {
             case SOUTH:
                 result += 1;
@@ -48,7 +49,7 @@ public class Day22 extends Day {
     }
 
     private State moveOnMap(String commandLine) {
-        Pair<Integer, Integer> startPos = Pair.with(map.keySet().stream().filter(p -> p.getValue1() == 0).mapToInt(Pair::getValue0).min().orElseThrow(), 0);
+        Tuple2<Integer, Integer> startPos = Tuple.tuple(map.keySet().stream().filter(p -> p.v2 == 0).mapToInt(Tuple2::v1).min().orElseThrow(), 0);
         State state = new State(mapPartList.get(0), startPos, Direction.EAST);
         int steps = 0;
         for (int i = 0; i < commandLine.length(); i++) {
@@ -74,14 +75,14 @@ public class Day22 extends Day {
 
     private State moveBySteps(State state, int steps) {
         for (int i = 0; i < steps; i++) {
-            Pair<Integer, Integer> newPos = state.dir.move(state.pos, 1);
+            Tuple2<Integer, Integer> newPos = state.dir.move(state.pos, 1);
             State newState = new State(state.side, newPos, state.dir);
             int posIndex = state.side.borders.get(state.dir).indexOf(state.pos);
             if (posIndex >= 0) {
-                Pair<MapPart, Direction> connectedMapPart = state.side.connectedMapParts.get(state.dir);
-                int positionIndexOnConnectedBorder = isBorderInOtherDirection(state.dir, connectedMapPart.getValue1()) ? mapPartSideLength - 1 - posIndex : posIndex;
-                newPos = connectedMapPart.getValue0().borders.get(connectedMapPart.getValue1()).get(positionIndexOnConnectedBorder);
-                newState = new State(connectedMapPart.getValue0(), newPos, connectedMapPart.getValue1().getOpposite());
+                Tuple2<MapPart, Direction> connectedMapPart = state.side.connectedMapParts.get(state.dir);
+                int positionIndexOnConnectedBorder = isBorderInOtherDirection(state.dir, connectedMapPart.v2) ? mapPartSideLength - 1 - posIndex : posIndex;
+                newPos = connectedMapPart.v1.borders.get(connectedMapPart.v2).get(positionIndexOnConnectedBorder);
+                newState = new State(connectedMapPart.v1, newPos, connectedMapPart.v2.getOpposite());
 
             }
             String tile = map.get(newPos);
@@ -99,8 +100,8 @@ public class Day22 extends Day {
 
     private void parseMap(List<String> input, boolean is3DCube) {
         map = Util.buildImageMap(input.subList(0, input.size() - 2));
-        Set<Pair<Integer, Integer>> set = map.entrySet().stream().filter(e -> " ".equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
-        for (Pair<Integer, Integer> key : set) {
+        Set<Tuple2<Integer, Integer>> set = map.entrySet().stream().filter(e -> " ".equals(e.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
+        for (Tuple2<Integer, Integer> key : set) {
             map.remove(key);
         }
         int tilesPerSide = map.size() / 6;
@@ -111,11 +112,11 @@ public class Day22 extends Day {
     private void fillMapParts(boolean is3DCube) {
         mapPartList.clear();
         mapPattern.clear();
-        int xMax = map.keySet().stream().mapToInt(Pair::getValue0).max().orElseThrow() / mapPartSideLength;
-        int yMax = map.keySet().stream().mapToInt(Pair::getValue1).max().orElseThrow() / mapPartSideLength;
+        int xMax = map.keySet().stream().mapToInt(Tuple2::v1).max().orElseThrow() / mapPartSideLength;
+        int yMax = map.keySet().stream().mapToInt(Tuple2::v2).max().orElseThrow() / mapPartSideLength;
         for (int y = 0; y <= yMax; y++) {
             for (int x = 0; x <= xMax; x++) {
-                if (map.containsKey(Pair.with(x * mapPartSideLength, y * mapPartSideLength))) {
+                if (map.containsKey(Tuple.tuple(x * mapPartSideLength, y * mapPartSideLength))) {
                     MapPart mapPart = new MapPart(mapPartSideLength, x, y);
                     mapPartList.add(mapPart);
                     mapPattern.add(mapPart.positionOnMap);
@@ -180,17 +181,17 @@ public class Day22 extends Day {
     private void connectMapParts(int mapPartIndex1, Direction connectedBorder1, int mapPartIndex2, Direction connectedBorder2) {
         MapPart mapPart1 = mapPartList.get(mapPartIndex1);
         MapPart mapPart2 = mapPartList.get(mapPartIndex2);
-        mapPart1.connectedMapParts.put(connectedBorder1, Pair.with(mapPart2, connectedBorder2));
-        mapPart2.connectedMapParts.put(connectedBorder2, Pair.with(mapPart1, connectedBorder1));
+        mapPart1.connectedMapParts.put(connectedBorder1, Tuple.tuple(mapPart2, connectedBorder2));
+        mapPart2.connectedMapParts.put(connectedBorder2, Tuple.tuple(mapPart1, connectedBorder1));
     }
 
 
     private static class State {
         private final MapPart side;
-        private final Pair<Integer, Integer> pos;
+        private final Tuple2<Integer, Integer> pos;
         private final Direction dir;
 
-        private State(MapPart side, Pair<Integer, Integer> pos, Direction dir) {
+        private State(MapPart side, Tuple2<Integer, Integer> pos, Direction dir) {
             this.side = side;
             this.pos = pos;
             this.dir = dir;
@@ -200,16 +201,16 @@ public class Day22 extends Day {
 
     private static class MapPart {
 
-        private final Map<Direction, List<Pair<Integer, Integer>>> borders = new HashMap<>();
-        private final Map<Direction, Pair<MapPart, Direction>> connectedMapParts = new HashMap<>();
-        private final Pair<Integer, Integer> positionOnMap;
+        private final Map<Direction, List<Tuple2<Integer, Integer>>> borders = new HashMap<>();
+        private final Map<Direction, Tuple2<MapPart, Direction>> connectedMapParts = new HashMap<>();
+        private final Tuple2<Integer, Integer> positionOnMap;
 
         private MapPart(int sideLength, int x, int y) {
-            borders.put(Direction.WEST, Util.drawLine(Pair.with(x * sideLength, y * sideLength), Pair.with(x * sideLength, y * sideLength + sideLength - 1)));
-            borders.put(Direction.EAST, Util.drawLine(Pair.with(x * sideLength + sideLength - 1, y * sideLength), Pair.with(x * sideLength + sideLength - 1, y * sideLength + sideLength - 1)));
-            borders.put(Direction.NORTH, Util.drawLine(Pair.with(x * sideLength, y * sideLength), Pair.with(x * sideLength + sideLength - 1, y * sideLength)));
-            borders.put(Direction.SOUTH, Util.drawLine(Pair.with(x * sideLength, y * sideLength + sideLength - 1), Pair.with(x * sideLength + sideLength - 1, y * sideLength + sideLength - 1)));
-            this.positionOnMap = Pair.with(x, y);
+            borders.put(Direction.WEST, Util.drawLine(Tuple.tuple(x * sideLength, y * sideLength), Tuple.tuple(x * sideLength, y * sideLength + sideLength - 1)));
+            borders.put(Direction.EAST, Util.drawLine(Tuple.tuple(x * sideLength + sideLength - 1, y * sideLength), Tuple.tuple(x * sideLength + sideLength - 1, y * sideLength + sideLength - 1)));
+            borders.put(Direction.NORTH, Util.drawLine(Tuple.tuple(x * sideLength, y * sideLength), Tuple.tuple(x * sideLength + sideLength - 1, y * sideLength)));
+            borders.put(Direction.SOUTH, Util.drawLine(Tuple.tuple(x * sideLength, y * sideLength + sideLength - 1), Tuple.tuple(x * sideLength + sideLength - 1, y * sideLength + sideLength - 1)));
+            this.positionOnMap = Tuple.tuple(x, y);
         }
 
     }

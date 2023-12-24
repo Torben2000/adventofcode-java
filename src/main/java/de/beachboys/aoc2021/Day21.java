@@ -1,8 +1,9 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
-import org.javatuples.Quartet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple4;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Map;
 public class Day21 extends Day {
 
     private final Map<Integer, Integer> throwPossibilitiesPart2 = new HashMap<>();
-    private final Map<Quartet<Integer, Integer, Long, Long>, Pair<Long, Long>> winningUniversesCache = new HashMap<>();
+    private final Map<Tuple4<Integer, Integer, Long, Long>, Tuple2<Long, Long>> winningUniversesCache = new HashMap<>();
 
     public Object part1(List<String> input) {
         int positionPlayer1 = Integer.parseInt(input.get(0).substring("Player 1 starting position: ".length()));
@@ -59,19 +60,19 @@ public class Day21 extends Day {
         }
 
         winningUniversesCache.clear();
-        Pair<Long, Long> result = getWinningUniverses(positionPlayer1, positionPlayer2, 0, 0);
-        if (result.getValue0() > result.getValue1()) {
-            return result.getValue0();
+        Tuple2<Long, Long> result = getWinningUniverses(positionPlayer1, positionPlayer2, 0, 0);
+        if (result.v1 > result.v2) {
+            return result.v1;
         }
-        return result.getValue1();
+        return result.v2;
     }
 
     private int throwThreeDicePart1(int nextDieThrow) {
         return (nextDieThrow + nextDieThrow + 1 + nextDieThrow + 2) % 100;
     }
 
-    private Pair<Long, Long> getWinningUniverses(int positionOfNextPlayer, int positionOfOtherPlayer, long scoreOfNextPlayer, long scoreOfOtherPlayer) {
-        Quartet<Integer, Integer, Long, Long> cacheKey = Quartet.with(positionOfNextPlayer, positionOfOtherPlayer, scoreOfNextPlayer, scoreOfOtherPlayer);
+    private Tuple2<Long, Long> getWinningUniverses(int positionOfNextPlayer, int positionOfOtherPlayer, long scoreOfNextPlayer, long scoreOfOtherPlayer) {
+        Tuple4<Integer, Integer, Long, Long> cacheKey = Tuple.tuple(positionOfNextPlayer, positionOfOtherPlayer, scoreOfNextPlayer, scoreOfOtherPlayer);
         if (winningUniversesCache.containsKey(cacheKey)) {
             return winningUniversesCache.get(cacheKey);
         }
@@ -83,12 +84,12 @@ public class Day21 extends Day {
             if (newScore >= 21) {
                 winningUniversesOfNextPlayer += throwPossibility.getValue();
             } else {
-                Pair<Long, Long> res = getWinningUniverses(positionOfOtherPlayer, newPosition, scoreOfOtherPlayer, newScore);
-                winningUniversesOfNextPlayer += throwPossibility.getValue() * res.getValue1();
-                winningUniversesOfOtherPlayer += throwPossibility.getValue() * res.getValue0();
+                Tuple2<Long, Long> res = getWinningUniverses(positionOfOtherPlayer, newPosition, scoreOfOtherPlayer, newScore);
+                winningUniversesOfNextPlayer += throwPossibility.getValue() * res.v2;
+                winningUniversesOfOtherPlayer += throwPossibility.getValue() * res.v1;
             }
         }
-        Pair<Long, Long> result = Pair.with(winningUniversesOfNextPlayer, winningUniversesOfOtherPlayer);
+        Tuple2<Long, Long> result = Tuple.tuple(winningUniversesOfNextPlayer, winningUniversesOfOtherPlayer);
         winningUniversesCache.put(cacheKey, result);
         return result;
     }

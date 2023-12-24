@@ -2,10 +2,10 @@ package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
-import org.javatuples.Quartet;
-import org.javatuples.Triplet;
-import org.javatuples.Tuple;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
+import org.jooq.lambda.tuple.Tuple4;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +27,8 @@ public class Day17 extends Day {
         return runLogic(input, this::convertToFourDimensions, this::addSurroundingCubesFourDimensions, this::getSurroundingActiveCubesFourDimensions);
     }
 
-    private <T extends Tuple> long runLogic(List<String> input, Function<Pair<Integer, Integer>, T> convertPositionFromTwoDimensions, Function<Map<T, String>, Map<T, String>> buildMapWithSurroundingCubes, BiFunction<Map<T, String>, T, Integer> getSurroundingActiveCubes) {
-        Map<Pair<Integer, Integer>, String> twoDimensionalMap = Util.buildImageMap(input);
+    private <T extends Tuple> long runLogic(List<String> input, Function<Tuple2<Integer, Integer>, T> convertPositionFromTwoDimensions, Function<Map<T, String>, Map<T, String>> buildMapWithSurroundingCubes, BiFunction<Map<T, String>, T, Integer> getSurroundingActiveCubes) {
+        Map<Tuple2<Integer, Integer>, String> twoDimensionalMap = Util.buildImageMap(input);
         Map<T, String> map = twoDimensionalMap.entrySet().stream().collect(Collectors.toMap(e -> convertPositionFromTwoDimensions.apply(e.getKey()), Map.Entry::getValue));
         for (int i = 0; i < 6; i++) {
             map = buildMapWithSurroundingCubes.apply(map);
@@ -51,21 +51,21 @@ public class Day17 extends Day {
         return newMap;
     }
 
-    private Triplet<Integer, Integer, Integer> convertToThreeDimensions(Pair<Integer, Integer> position) {
-        return Triplet.with(position.getValue0(), position.getValue1(), 0);
+    private Tuple3<Integer, Integer, Integer> convertToThreeDimensions(Tuple2<Integer, Integer> position) {
+        return position.concat(0);
     }
 
-    private Quartet<Integer, Integer, Integer, Integer> convertToFourDimensions(Pair<Integer, Integer> position) {
-        return Quartet.with(position.getValue0(), position.getValue1(), 0, 0);
+    private Tuple4<Integer, Integer, Integer, Integer> convertToFourDimensions(Tuple2<Integer, Integer> position) {
+        return position.concat(0).concat(0);
     }
 
-    private Map<Triplet<Integer, Integer, Integer>, String> addSurroundingCubesThreeDimensions(Map<Triplet<Integer, Integer, Integer>, String> map) {
-        Map<Triplet<Integer, Integer, Integer>, String> newMap = new HashMap<>(map);
-        for (Triplet<Integer, Integer, Integer> position : map.keySet()) {
+    private Map<Tuple3<Integer, Integer, Integer>, String> addSurroundingCubesThreeDimensions(Map<Tuple3<Integer, Integer, Integer>, String> map) {
+        Map<Tuple3<Integer, Integer, Integer>, String> newMap = new HashMap<>(map);
+        for (Tuple3<Integer, Integer, Integer> position : map.keySet()) {
             for (int xOffset = -1; xOffset <= 1; xOffset++) {
                 for (int yOffset = -1; yOffset <= 1; yOffset++) {
                     for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                        Triplet<Integer, Integer, Integer> offset = Triplet.with(xOffset, yOffset, zOffset);
+                        Tuple3<Integer, Integer, Integer> offset = Tuple.tuple(xOffset, yOffset, zOffset);
                         addAdjacentPositionToNewMapIfMissingFromMap(map, newMap, position, offset, this::getAdjacentPositionThreeDimensions);
                     }
                 }
@@ -83,14 +83,14 @@ public class Day17 extends Day {
         }
     }
 
-    private Map<Quartet<Integer, Integer, Integer, Integer>, String> addSurroundingCubesFourDimensions(Map<Quartet<Integer, Integer, Integer, Integer>, String> map) {
-        Map<Quartet<Integer, Integer, Integer, Integer>, String> newMap = new HashMap<>(map);
-        for (Quartet<Integer, Integer, Integer, Integer> position : map.keySet()) {
+    private Map<Tuple4<Integer, Integer, Integer, Integer>, String> addSurroundingCubesFourDimensions(Map<Tuple4<Integer, Integer, Integer, Integer>, String> map) {
+        Map<Tuple4<Integer, Integer, Integer, Integer>, String> newMap = new HashMap<>(map);
+        for (Tuple4<Integer, Integer, Integer, Integer> position : map.keySet()) {
             for (int xOffset = -1; xOffset <= 1; xOffset++) {
                 for (int yOffset = -1; yOffset <= 1; yOffset++) {
                     for (int zOffset = -1; zOffset <= 1; zOffset++) {
                         for (int wOffset = -1; wOffset <= 1; wOffset++) {
-                            Quartet<Integer, Integer, Integer, Integer> offset = Quartet.with(xOffset, yOffset, zOffset, wOffset);
+                            Tuple4<Integer, Integer, Integer, Integer> offset = Tuple.tuple(xOffset, yOffset, zOffset, wOffset);
                             addAdjacentPositionToNewMapIfMissingFromMap(map, newMap, position, offset, this::getAdjacentPositionFourDimensions);
                         }
                     }
@@ -104,12 +104,12 @@ public class Day17 extends Day {
         return !tuple.toList().stream().map(o -> (int) o == 0).reduce((a, b) -> a && b).orElseThrow();
     }
 
-    private int getSurroundingActiveCubesThreeDimensions(Map<Triplet<Integer, Integer, Integer>, String> map, Triplet<Integer, Integer, Integer> position) {
+    private int getSurroundingActiveCubesThreeDimensions(Map<Tuple3<Integer, Integer, Integer>, String> map, Tuple3<Integer, Integer, Integer> position) {
         int activeCounter = 0;
         for (int xOffset = -1; xOffset <= 1; xOffset++) {
             for (int yOffset = -1; yOffset <= 1; yOffset++) {
                 for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                    Triplet<Integer, Integer, Integer> offset = Triplet.with(xOffset, yOffset, zOffset);
+                    Tuple3<Integer, Integer, Integer> offset = Tuple.tuple(xOffset, yOffset, zOffset);
                     if (notAllValuesZero(offset)) {
                         if (hasAdjacentActiveCube(map, position, offset, this::getAdjacentPositionThreeDimensions)) {
                             activeCounter++;
@@ -121,13 +121,13 @@ public class Day17 extends Day {
         return activeCounter;
     }
 
-    private int getSurroundingActiveCubesFourDimensions(Map<Quartet<Integer, Integer, Integer, Integer>, String> map, Quartet<Integer, Integer, Integer, Integer> position) {
+    private int getSurroundingActiveCubesFourDimensions(Map<Tuple4<Integer, Integer, Integer, Integer>, String> map, Tuple4<Integer, Integer, Integer, Integer> position) {
         int occupiedCounter = 0;
         for (int xOffset = -1; xOffset <= 1; xOffset++) {
             for (int yOffset = -1; yOffset <= 1; yOffset++) {
                 for (int zOffset = -1; zOffset <= 1; zOffset++) {
                     for (int wOffset = -1; wOffset <= 1; wOffset++) {
-                        Quartet<Integer, Integer, Integer, Integer> offset = Quartet.with(xOffset, yOffset, zOffset, wOffset);
+                        Tuple4<Integer, Integer, Integer, Integer> offset = Tuple.tuple(xOffset, yOffset, zOffset, wOffset);
                         if (notAllValuesZero(offset)) {
                             if (hasAdjacentActiveCube(map, position, offset, this::getAdjacentPositionFourDimensions)) {
                                 occupiedCounter++;
@@ -146,12 +146,12 @@ public class Day17 extends Day {
         return isActiveCube(value);
     }
 
-    private Quartet<Integer, Integer, Integer, Integer> getAdjacentPositionFourDimensions(Quartet<Integer, Integer, Integer, Integer> position, Quartet<Integer, Integer, Integer, Integer> offset) {
-        return Quartet.with(position.getValue0() + offset.getValue0(), position.getValue1() + offset.getValue1(), position.getValue2() + offset.getValue2(), position.getValue3() + offset.getValue3());
+    private Tuple4<Integer, Integer, Integer, Integer> getAdjacentPositionFourDimensions(Tuple4<Integer, Integer, Integer, Integer> position, Tuple4<Integer, Integer, Integer, Integer> offset) {
+        return Tuple.tuple(position.v1 + offset.v1, position.v2 + offset.v2, position.v3 + offset.v3, position.v4 + offset.v4);
     }
 
-    private Triplet<Integer, Integer, Integer> getAdjacentPositionThreeDimensions(Triplet<Integer, Integer, Integer> position, Triplet<Integer, Integer, Integer> offset) {
-        return Triplet.with(position.getValue0() + offset.getValue0(), position.getValue1() + offset.getValue1(), position.getValue2() + offset.getValue2());
+    private Tuple3<Integer, Integer, Integer> getAdjacentPositionThreeDimensions(Tuple3<Integer, Integer, Integer> position, Tuple3<Integer, Integer, Integer> offset) {
+        return Tuple.tuple(position.v1 + offset.v1, position.v2 + offset.v2, position.v3 + offset.v3);
     }
 
     private boolean isActiveCube(String value) {

@@ -3,7 +3,8 @@ package de.beachboys.aoc2019;
 import de.beachboys.Day;
 import de.beachboys.IOHelper;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -40,14 +41,14 @@ public class Day15 extends Day {
             this.pathFromStart.add(this);
             if (positionMap != null) {
                 for (Direction dir : Direction.values()) {
-                    neighbors.put(dir, positionMap.get(Pair.with(x + dir.stepX, y + dir.stepY)));
+                    neighbors.put(dir, positionMap.get(Tuple.tuple(x + dir.stepX, y + dir.stepY)));
                 }
             }
         }
 
         @Override
         public int compareTo(Position o) {
-            return Pair.with(x, y).compareTo(Pair.with(o.x, o.y));
+            return Tuple.tuple(x, y).compareTo(Tuple.tuple(o.x, o.y));
         }
 
         @Override
@@ -65,7 +66,7 @@ public class Day15 extends Day {
     private final IntcodeComputer computer = new IntcodeComputer();
     private int lastOutput;
 
-    private Map<Pair<Integer, Integer>, Position> positionMap;
+    private Map<Tuple2<Integer, Integer>, Position> positionMap;
     private Position currentPosition;
     private Position nextPosition;
 
@@ -94,7 +95,7 @@ public class Day15 extends Day {
     private void init(int initialX, int initialY) {
         lastOutput = -1;
         currentPosition = new Position(initialX, initialY, new Stack<>());
-        positionMap = new HashMap<>(Map.of(Pair.with(initialX, initialY), currentPosition));
+        positionMap = new HashMap<>(Map.of(Tuple.tuple(initialX, initialY), currentPosition));
         positionsToInvestigate = new TreeMap<>(Map.of(0, new TreeSet<>(Set.of(currentPosition))));
         currentPositionToInvestigate = currentPosition;
         navigationPathToCurrentPositionToInvestigate = new ArrayList<>();
@@ -279,7 +280,7 @@ public class Day15 extends Day {
         for (Direction dir : Direction.values()) {
             int newX = position.x + dir.stepX;
             int newY = position.y + dir.stepY;
-            Position nextPosition = positionMap.get(Pair.with(newX, newY));
+            Position nextPosition = positionMap.get(Tuple.tuple(newX, newY));
             if (nextPosition != null) {
                 position.neighbors.put(dir, nextPosition);
                 nextPosition.neighbors.put(OPPOSITE_DIRS.get(dir), position);
@@ -295,7 +296,7 @@ public class Day15 extends Day {
         int newY = currentPosition.y + dir.stepY;
         nextPosition = new Position(newX, newY, currentPosition.pathFromStart);
         currentPosition.neighbors.put(dir, nextPosition);
-        positionMap.put(Pair.with(newX, newY), nextPosition);
+        positionMap.put(Tuple.tuple(newX, newY), nextPosition);
     }
 
     private Set<Position> getSetForPositionToInvestigate(int size) {

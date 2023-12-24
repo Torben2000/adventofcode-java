@@ -1,7 +1,8 @@
 package de.beachboys.aoc2015;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,10 +11,10 @@ import java.util.Set;
 public class Day03 extends Day {
 
     public Object part1(List<String> input) {
-        Set<Pair<Integer, Integer>> houses = new HashSet<>();
+        Set<Tuple2<Integer, Integer>> houses = new HashSet<>();
         int x = 0;
         int y = 0;
-        houses.add(Pair.with(x, y));
+        houses.add(Tuple.tuple(x, y));
         String calls = input.get(0);
         for (int i = 0; i < calls.length(); i++) {
             switch (calls.charAt(i)) {
@@ -30,18 +31,18 @@ public class Day03 extends Day {
                     x += 1;
                     break;
             }
-            houses.add(Pair.with(x, y));
+            houses.add(Tuple.tuple(x, y));
         }
         return houses.size();
     }
 
     public Object part2(List<String> input) {
-        Set<Pair<Integer, Integer>> houses = new HashSet<>();
+        Set<Tuple2<Integer, Integer>> houses = new HashSet<>();
         int x = 0;
         int y = 0;
         int roboX = 0;
         int roboY = 0;
-        houses.add(Pair.with(x, y));
+        houses.add(Tuple.tuple(x, y));
         String calls = input.get(0);
         boolean isSanta = true;
         for (int i = 0; i < calls.length(); i++) {
@@ -60,7 +61,7 @@ public class Day03 extends Day {
                         x += 1;
                         break;
                 }
-                houses.add(Pair.with(x, y));
+                houses.add(Tuple.tuple(x, y));
             } else {
                 switch (calls.charAt(i)) {
                     case '^':
@@ -76,7 +77,7 @@ public class Day03 extends Day {
                         roboX += 1;
                         break;
                 }
-                houses.add(Pair.with(roboX, roboY));
+                houses.add(Tuple.tuple(roboX, roboY));
             }
             isSanta = !isSanta;
         }

@@ -2,7 +2,8 @@ package de.beachboys.aoc2016;
 
 import de.beachboys.Day;
 import de.beachboys.Direction;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -13,12 +14,12 @@ public class Day22 extends Day {
 
     private static class State {
 
-        final Set<Pair<Integer, Integer>> emptyNodes;
-        final Pair<Integer, Integer> nodeWithGoalData;
+        final Set<Tuple2<Integer, Integer>> emptyNodes;
+        final Tuple2<Integer, Integer> nodeWithGoalData;
         final int stepsUntilThisState;
         String stringRepresentation;
 
-        public State(Set<Pair<Integer, Integer>> emptyNodes, Pair<Integer, Integer> nodeWithGoalData, int stepsUntilThisState) {
+        public State(Set<Tuple2<Integer, Integer>> emptyNodes, Tuple2<Integer, Integer> nodeWithGoalData, int stepsUntilThisState) {
             this.emptyNodes = emptyNodes;
             this.nodeWithGoalData = nodeWithGoalData;
             this.stepsUntilThisState = stepsUntilThisState;
@@ -47,13 +48,13 @@ public class Day22 extends Day {
     }
 
     public Object part1(List<String> input) {
-        Map<Pair<Integer, Integer>, Pair<Integer, Integer>> nodes = parseNodes(input);
+        Map<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> nodes = parseNodes(input);
 
         long viablePairCount = 0L;
-        for (Map.Entry<Pair<Integer, Integer>, Pair<Integer, Integer>> innerNode : nodes.entrySet()) {
-            if (innerNode.getValue().getValue0() > 0) {
-                for (Map.Entry<Pair<Integer, Integer>, Pair<Integer, Integer>> outerNode : nodes.entrySet()) {
-                    if (innerNode.getKey() != outerNode.getKey() && innerNode.getValue().getValue0() <= outerNode.getValue().getValue1()) {
+        for (Map.Entry<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> innerNode : nodes.entrySet()) {
+            if (innerNode.getValue().v1 > 0) {
+                for (Map.Entry<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> outerNode : nodes.entrySet()) {
+                    if (innerNode.getKey() != outerNode.getKey() && innerNode.getValue().v1 <= outerNode.getValue().v2) {
                         viablePairCount++;
                     }
                 }
@@ -64,37 +65,37 @@ public class Day22 extends Day {
 
     private final Deque<State> queue = new LinkedList<>();
     private final Set<State> knownStates = new HashSet<>();
-    private final Set<Pair<Integer, Integer>> allUsefulNodes = new HashSet<>();
+    private final Set<Tuple2<Integer, Integer>> allUsefulNodes = new HashSet<>();
 
     @Override
     public Object part2(List<String> input) {
-        Map<Pair<Integer, Integer>, Pair<Integer, Integer>> nodes = parseNodes(input);
-        Pair<Integer, Integer> target = Pair.with(0, 0);
-        int targetSize = nodes.get(target).getValue0() + nodes.get(target).getValue1();
-        int smallestData = nodes.values().stream().map(Pair::getValue0).filter(data -> data != 0).mapToInt(Integer::intValue).min().orElseThrow();
-        Set<Pair<Integer, Integer>> emptyNodes = getInitialEmptyNodesAndFillAllUsefulNodes(nodes, targetSize, smallestData);
+        Map<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> nodes = parseNodes(input);
+        Tuple2<Integer, Integer> target = Tuple.tuple(0, 0);
+        int targetSize = nodes.get(target).v1 + nodes.get(target).v2;
+        int smallestData = nodes.values().stream().map(Tuple2::v1).filter(data -> data != 0).mapToInt(Integer::intValue).min().orElseThrow();
+        Set<Tuple2<Integer, Integer>> emptyNodes = getInitialEmptyNodesAndFillAllUsefulNodes(nodes, targetSize, smallestData);
 
-        Pair<Integer, Integer> source = Pair.with(nodes.keySet().stream().map(Pair::getValue0).max(Comparator.naturalOrder()).orElseThrow(), 0);
+        Tuple2<Integer, Integer> source = Tuple.tuple(nodes.keySet().stream().map(Tuple2::v1).max(Comparator.naturalOrder()).orElseThrow(), 0);
         queue.add(new State(emptyNodes, source, 0));
         return getNumberOfStepsUntilDataAtTargetByHandlingQueue(target);
     }
 
-    private Object getNumberOfStepsUntilDataAtTargetByHandlingQueue(Pair<Integer, Integer> target) {
+    private Object getNumberOfStepsUntilDataAtTargetByHandlingQueue(Tuple2<Integer, Integer> target) {
         while (!queue.isEmpty()) {
             State state = queue.poll();
-            for (Pair<Integer, Integer> emptyNode : state.emptyNodes) {
+            for (Tuple2<Integer, Integer> emptyNode : state.emptyNodes) {
                 for (Direction dir : Direction.values()) {
-                    Pair<Integer, Integer> neighbor = dir.move(emptyNode, 1);
+                    Tuple2<Integer, Integer> neighbor = dir.move(emptyNode, 1);
                     if (allUsefulNodes.contains(neighbor)) {
                         int stepsUntilThisState = state.stepsUntilThisState + 1;
-                        Pair<Integer, Integer> nodeWithGoalData = state.nodeWithGoalData;
+                        Tuple2<Integer, Integer> nodeWithGoalData = state.nodeWithGoalData;
                         if (nodeWithGoalData.equals(neighbor)) {
                             nodeWithGoalData = emptyNode;
                         }
                         if (target.equals(nodeWithGoalData)) {
                             return stepsUntilThisState;
                         }
-                        Set<Pair<Integer, Integer>> newEmpty = new HashSet<>(state.emptyNodes);
+                        Set<Tuple2<Integer, Integer>> newEmpty = new HashSet<>(state.emptyNodes);
                         newEmpty.add(neighbor);
                         newEmpty.remove(emptyNode);
                         State newState = new State(newEmpty, nodeWithGoalData, stepsUntilThisState);
@@ -109,17 +110,17 @@ public class Day22 extends Day {
         return "not possible";
     }
 
-    private Set<Pair<Integer, Integer>> getInitialEmptyNodesAndFillAllUsefulNodes(Map<Pair<Integer, Integer>, Pair<Integer, Integer>> nodes, int targetSize, int smallestData) {
-        Set<Pair<Integer, Integer>> emptyNodes = new HashSet<>();
-        for (Pair<Integer, Integer> node : nodes.keySet()) {
-            Pair<Integer, Integer> content = nodes.get(node);
-            if (content.getValue0() != 0 && content.getValue1() > smallestData) {
+    private Set<Tuple2<Integer, Integer>> getInitialEmptyNodesAndFillAllUsefulNodes(Map<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> nodes, int targetSize, int smallestData) {
+        Set<Tuple2<Integer, Integer>> emptyNodes = new HashSet<>();
+        for (Tuple2<Integer, Integer> node : nodes.keySet()) {
+            Tuple2<Integer, Integer> content = nodes.get(node);
+            if (content.v1 != 0 && content.v2 > smallestData) {
                 throw new IllegalStateException("idea not working");
             }
-            if (content.getValue0() == 0) {
+            if (content.v1 == 0) {
                 emptyNodes.add(node);
             }
-            if (content.getValue0() <= targetSize) {
+            if (content.v1 <= targetSize) {
                 allUsefulNodes.add(node);
             }
         }
@@ -127,9 +128,9 @@ public class Day22 extends Day {
         return emptyNodes;
     }
 
-    private Map<Pair<Integer, Integer>, Pair<Integer, Integer>> parseNodes(List<String> input) {
+    private Map<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> parseNodes(List<String> input) {
         Pattern p = Pattern.compile("/dev/grid/node-x([0-9]+)-y([0-9]+) +([0-9]+)T +([0-9]+)T +([0-9]+)T +([0-9]+)%");
-        Map<Pair<Integer, Integer>, Pair<Integer, Integer>> map = new HashMap<>();
+        Map<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> map = new HashMap<>();
         for (String line : input) {
             Matcher m = p.matcher(line);
             if (m.matches()) {
@@ -137,7 +138,7 @@ public class Day22 extends Day {
                 int y = Integer.parseInt(m.group(2));
                 int used = Integer.parseInt(m.group(4));
                 int avail = Integer.parseInt(m.group(5));
-                map.put(Pair.with(x, y), Pair.with(used, avail));
+                map.put(Tuple.tuple(x, y), Tuple.tuple(used, avail));
             }
         }
         return map;

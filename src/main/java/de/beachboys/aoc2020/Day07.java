@@ -2,14 +2,15 @@ package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day07 extends Day {
 
-    private final Map<String, List<Pair<Long, String>>> bagRelations = new HashMap<>();
+    private final Map<String, List<Tuple2<Long, String>>> bagRelations = new HashMap<>();
 
     public Object part1(List<String> input) {
         buildBagRelations(input);
@@ -20,9 +21,9 @@ public class Day07 extends Day {
 
         while (!uncheckedBagColors.isEmpty()) {
             String bagColorToCheck = uncheckedBagColors.stream().findFirst().orElseThrow();
-            for (Map.Entry<String, List<Pair<Long, String>>> bagRelation : bagRelations.entrySet()) {
+            for (Map.Entry<String, List<Tuple2<Long, String>>> bagRelation : bagRelations.entrySet()) {
                 bagRelation.getValue().forEach(innerBag -> {
-                    String innerBagColor = innerBag.getValue1();
+                    String innerBagColor = innerBag.v2;
                     if (innerBagColor.equals(bagColorToCheck)) {
                         String newOuterBagColor = bagRelation.getKey();
                         if (!checkedBagColors.contains(newOuterBagColor)) {
@@ -48,11 +49,11 @@ public class Day07 extends Day {
 
         while (!bagsToCheck.isEmpty()) {
             String bagColorToCheck = bagsToCheck.keySet().stream().findFirst().orElseThrow();
-            List<Pair<Long, String>> innerBags = bagRelations.get(bagColorToCheck);
-            for (Pair<Long, String> innerBag : innerBags) {
-                long newInnerBagCount = innerBag.getValue0() * bagsToCheck.get(bagColorToCheck);
-                Long existingInnerBagCount = bagsToCheck.getOrDefault(innerBag.getValue1(), 0L);
-                bagsToCheck.put(innerBag.getValue1(), existingInnerBagCount + newInnerBagCount);
+            List<Tuple2<Long, String>> innerBags = bagRelations.get(bagColorToCheck);
+            for (Tuple2<Long, String> innerBag : innerBags) {
+                long newInnerBagCount = innerBag.v1 * bagsToCheck.get(bagColorToCheck);
+                Long existingInnerBagCount = bagsToCheck.getOrDefault(innerBag.v2, 0L);
+                bagsToCheck.put(innerBag.v2, existingInnerBagCount + newInnerBagCount);
             }
             counter += bagsToCheck.get(bagColorToCheck);
             bagsToCheck.remove(bagColorToCheck);
@@ -64,16 +65,16 @@ public class Day07 extends Day {
         for (String relationString : input) {
             String[] relationOuterAndInner = relationString.split(" contain ");
             List<String> innerBagsStringList = Util.parseToList(relationOuterAndInner[1], ", ");
-            List<Pair<Long, String>> innerBags = innerBagsStringList.stream().map(this::buildBagCountAndColor).filter(p -> p.getValue0() != 0L).collect(Collectors.toList());
+            List<Tuple2<Long, String>> innerBags = innerBagsStringList.stream().map(this::buildBagCountAndColor).filter(p -> p.v1 != 0L).collect(Collectors.toList());
             bagRelations.put(getColor(relationOuterAndInner[0]), innerBags);
         }
     }
 
-    private Pair<Long, String> buildBagCountAndColor(String bagString) {
+    private Tuple2<Long, String> buildBagCountAndColor(String bagString) {
         String[] splitBag = bagString.split(" ", 2);
         long count = Long.parseLong(splitBag[0].replace("no", "0"));
         String color = getColor(splitBag[1]);
-        return Pair.with(count, color);
+        return Tuple.tuple(count, color);
     }
 
     private String getColor(String bagWithColor) {

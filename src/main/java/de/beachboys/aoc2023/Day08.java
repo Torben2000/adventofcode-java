@@ -2,7 +2,8 @@ package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,13 +14,13 @@ public class Day08 extends Day {
 
     public Object part1(List<String> input) {
         char[] instructions = input.get(0).toCharArray();
-        Map<String, Pair<String, String>> networkMap = getNetworkMap(input);
+        Map<String, Tuple2<String, String>> networkMap = getNetworkMap(input);
         return runLogic(List.of("AAA"), networkMap, instructions);
     }
 
     public Object part2(List<String> input) {
         char[] instructions = input.get(0).toCharArray();
-        Map<String, Pair<String, String>> networkMap = getNetworkMap(input);
+        Map<String, Tuple2<String, String>> networkMap = getNetworkMap(input);
         List<String> currentNodes = new ArrayList<>();
         for (String node : networkMap.keySet()) {
             if (node.endsWith("A")) {
@@ -29,18 +30,18 @@ public class Day08 extends Day {
         return runLogic(currentNodes, networkMap, instructions);
     }
 
-    private static long runLogic(List<String> currentNodes, Map<String, Pair<String, String>> networkMap, char[] instructions) {
+    private static long runLogic(List<String> currentNodes, Map<String, Tuple2<String, String>> networkMap, char[] instructions) {
         List<Long> steps = new ArrayList<>();
         for (String currentNode : currentNodes) {
             int instructionIndex = 0;
             long stepCounter = 0;
             while (!currentNode.endsWith("Z")) {
                 stepCounter++;
-                Pair<String, String> targetNodes = networkMap.get(currentNode);
+                Tuple2<String, String> targetNodes = networkMap.get(currentNode);
                 if (instructions[instructionIndex] == 'L') {
-                    currentNode = targetNodes.getValue0();
+                    currentNode = targetNodes.v1;
                 } else {
-                    currentNode = targetNodes.getValue1();
+                    currentNode = targetNodes.v2;
                 }
                 instructionIndex = (instructionIndex + 1) % instructions.length;
             }
@@ -49,13 +50,13 @@ public class Day08 extends Day {
         return steps.stream().mapToLong(Long::longValue).reduce(Util::leastCommonMultiple).orElseThrow();
     }
 
-    private static Map<String, Pair<String, String>> getNetworkMap(List<String> input) {
-        Map<String, Pair<String, String>> map = new HashMap<>();
+    private static Map<String, Tuple2<String, String>> getNetworkMap(List<String> input) {
+        Map<String, Tuple2<String, String>> map = new HashMap<>();
         for (int i = 2; i < input.size(); i++) {
             String line = input.get(i);
             String[] startAndTargetStrings = line.split( " = ");
             String[] targetStrings = startAndTargetStrings[1].substring(1, "(BBB, CCC".length()).split(", ");
-            map.put(startAndTargetStrings[0], Pair.with(targetStrings[0], targetStrings[1]));
+            map.put(startAndTargetStrings[0], Tuple.tuple(targetStrings[0], targetStrings[1]));
         }
         return map;
     }

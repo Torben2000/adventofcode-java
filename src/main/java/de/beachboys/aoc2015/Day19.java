@@ -1,7 +1,8 @@
 package de.beachboys.aoc2015;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -15,7 +16,7 @@ public class Day19 extends Day {
     private static final int MAX_LENGTH_CHANGEABLE_END = 16;
 
     private String moleculeFromInput;
-    private final List<Pair<String, String>> rules = new ArrayList<>();
+    private final List<Tuple2<String, String>> rules = new ArrayList<>();
 
     public Object part1(List<String> input) {
         parseRules(input);
@@ -26,14 +27,14 @@ public class Day19 extends Day {
 
     private Map<String, Integer> buildNextMolecules(String initialMolecule, int startIndexOfReplacement, Predicate<String> moleculeFilter) {
         Map<String, Integer> molecules = new HashMap<>();
-        for (Pair<String, String> rule : rules) {
-            int currentIndex = initialMolecule.indexOf(rule.getValue0(), startIndexOfReplacement);
+        for (Tuple2<String, String> rule : rules) {
+            int currentIndex = initialMolecule.indexOf(rule.v1, startIndexOfReplacement);
             while (currentIndex >= 0) {
-                String molecule = initialMolecule.substring(0, currentIndex) + rule.getValue1() + initialMolecule.substring(currentIndex + rule.getValue0().length());
+                String molecule = initialMolecule.substring(0, currentIndex) + rule.v2 + initialMolecule.substring(currentIndex + rule.v1.length());
                 if (moleculeFilter.test(molecule) && (!molecules.containsKey(molecule) || currentIndex < molecules.get(molecule))) {
                     molecules.put(molecule, currentIndex);
                 }
-                currentIndex = initialMolecule.indexOf(rule.getValue0(), currentIndex + 1);
+                currentIndex = initialMolecule.indexOf(rule.v1, currentIndex + 1);
             }
         }
         return molecules;
@@ -69,7 +70,7 @@ public class Day19 extends Day {
     private void parseRules(List<String> input) {
         for (String rule : input.subList(0, input.size() - 2)) {
             String[] leftAndRight = rule.split(" => ");
-            rules.add(Pair.with(leftAndRight[0], leftAndRight[1]));
+            rules.add(Tuple.tuple(leftAndRight[0], leftAndRight[1]));
         }
         moleculeFromInput = input.get(input.size() - 1);
     }

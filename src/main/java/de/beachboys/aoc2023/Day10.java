@@ -3,14 +3,16 @@ package de.beachboys.aoc2023;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Day10 extends Day {
 
-    private Map<Pair<Integer, Integer>, String> map;
-    private final List<Pair<Integer, Integer>> corners = new ArrayList<>();
+    private Map<Tuple2<Integer, Integer>, String> map;
+    private final List<Tuple2<Integer, Integer>> corners = new ArrayList<>();
     private Direction startLeavingDir;
 
 
@@ -26,12 +28,12 @@ public class Day10 extends Day {
 
     private void parseInput(List<String> input) {
         map = Util.buildImageMap(input);
-        Pair<Integer, Integer> start = map.entrySet().stream().filter(e -> "S".equals(e.getValue())).map(Map.Entry::getKey).findFirst().orElseThrow();
+        Tuple2<Integer, Integer> start = map.entrySet().stream().filter(e -> "S".equals(e.getValue())).map(Map.Entry::getKey).findFirst().orElseThrow();
         corners.clear();
         corners.add(start);
-        Pair<Integer, Integer> pos = start;
+        Tuple2<Integer, Integer> pos = start;
         for (Direction dir : Direction.values()) {
-            Pair<Integer, Integer> newPos = dir.move(start, 1);
+            Tuple2<Integer, Integer> newPos = dir.move(start, 1);
             String charAtNewPos = map.getOrDefault(newPos, ".");
             if (canEnter(charAtNewPos, dir)) {
                 pos = newPos;
@@ -62,7 +64,7 @@ public class Day10 extends Day {
                 || "F".equals(pipeCharacter) && (Direction.NORTH.equals(enteringDirection) || Direction.WEST.equals(enteringDirection));
     }
 
-    private Direction getLeavingDirection(Pair<Integer, Integer> pos, Direction enteringDirection) {
+    private Direction getLeavingDirection(Tuple2<Integer, Integer> pos, Direction enteringDirection) {
         switch (map.get(pos)) {
             case "|":
             case "-":

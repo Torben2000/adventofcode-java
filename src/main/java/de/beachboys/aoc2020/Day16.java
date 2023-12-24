@@ -2,7 +2,8 @@ package de.beachboys.aoc2020;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -139,8 +140,8 @@ public class Day16 extends Day {
     }
 
     private boolean valueFulfillsRule(Integer value, Rule rule) {
-        return value >= rule.getRange1().getValue0() && value <= rule.getRange1().getValue1()
-                || value >= rule.getRange2().getValue0() && value <= rule.getRange2().getValue1();
+        return value >= rule.getRange1().v1 && value <= rule.getRange1().v2
+                || value >= rule.getRange2().v1 && value <= rule.getRange2().v2;
     }
 
     private Rule parseRuleFromLine(String line) {
@@ -149,9 +150,9 @@ public class Day16 extends Day {
         return new Rule(fieldNameAndRanges[0], parseRange(rangeStrings[0]), parseRange(rangeStrings[1]));
     }
 
-    private Pair<Integer, Integer> parseRange(String rangeString) {
+    private Tuple2<Integer, Integer> parseRange(String rangeString) {
         String[] rangeSplit = rangeString.split("-");
-        return Pair.with(Integer.parseInt(rangeSplit[0]), Integer.parseInt(rangeSplit[1]));
+        return Tuple.tuple(Integer.parseInt(rangeSplit[0]), Integer.parseInt(rangeSplit[1]));
     }
 
     private enum ParseMode {
@@ -160,10 +161,10 @@ public class Day16 extends Day {
 
     private static class Rule {
         private final String fieldName;
-        private final Pair<Integer, Integer> range1;
-        private final Pair<Integer, Integer> range2;
+        private final Tuple2<Integer, Integer> range1;
+        private final Tuple2<Integer, Integer> range2;
 
-        public Rule(String value0, Pair<Integer, Integer> range1x, Pair<Integer, Integer> range2x) {
+        public Rule(String value0, Tuple2<Integer, Integer> range1x, Tuple2<Integer, Integer> range2x) {
             fieldName = value0;
             range1 = range1x;
             range2 = range2x;
@@ -173,11 +174,11 @@ public class Day16 extends Day {
             return fieldName;
         }
 
-        public Pair<Integer, Integer> getRange1() {
+        public Tuple2<Integer, Integer> getRange1() {
             return range1;
         }
 
-        public Pair<Integer, Integer> getRange2() {
+        public Tuple2<Integer, Integer> getRange2() {
             return range2;
         }
     }

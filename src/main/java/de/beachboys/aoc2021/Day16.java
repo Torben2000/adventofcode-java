@@ -1,7 +1,8 @@
 package de.beachboys.aoc2021;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,16 +31,16 @@ public class Day16 extends Day {
     }
 
     public Object part2(List<String> input) {
-        return runLogic(input).getValue1();
+        return runLogic(input).v2;
     }
 
-    private Pair<Integer, Long> runLogic(List<String> input) {
+    private Tuple2<Integer, Long> runLogic(List<String> input) {
         versionSum = 0;
         String bits = parseBitsFromHex(input.get(0));
         return parsePacket(bits, 0);
     }
 
-    private Pair<Integer, Long> parsePacket(String bits, int pointer) {
+    private Tuple2<Integer, Long> parsePacket(String bits, int pointer) {
         int localPointer = pointer;
         ParseMode parseMode = VERSION;
         int packetType = 0;
@@ -78,17 +79,17 @@ public class Day16 extends Day {
                 case PACKET_LENGTH:
                     int packetEnd = localPointer + value;
                     while (localPointer < packetEnd) {
-                        Pair<Integer, Long> packet = parsePacket(bits, localPointer);
-                        localPointer = packet.getValue0();
-                        values.add(packet.getValue1());
+                        Tuple2<Integer, Long> packet = parsePacket(bits, localPointer);
+                        localPointer = packet.v1;
+                        values.add(packet.v2);
                     }
                     packetEndReached = true;
                     break;
                 case PACKET_COUNT:
                     for (int i = 0; i < value; i++) {
-                        Pair<Integer, Long> packet = parsePacket(bits, localPointer);
-                        localPointer = packet.getValue0();
-                        values.add(packet.getValue1());
+                        Tuple2<Integer, Long> packet = parsePacket(bits, localPointer);
+                        localPointer = packet.v1;
+                        values.add(packet.v2);
                     }
                     packetEndReached = true;
                     break;
@@ -96,7 +97,7 @@ public class Day16 extends Day {
                     throw new IllegalArgumentException();
             }
         }
-        return Pair.with(localPointer, calculatePacketValue(packetType, values));
+        return Tuple.tuple(localPointer, calculatePacketValue(packetType, values));
     }
 
     private long calculatePacketValue(int packetType, List<Long> values) {

@@ -2,15 +2,18 @@ package de.beachboys.aoc2016;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.alg.tour.*;
+import org.jgrapht.alg.tour.HamiltonianCycleAlgorithmBase;
+import org.jgrapht.alg.tour.HeldKarpTSP;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -29,7 +32,7 @@ public class Day24 extends Day {
     }
 
     private int runLogic(List<String> input, Runnable graphManipulator) {
-        Map<Pair<Integer, Integer>, String> map = Util.buildImageMap(input);
+        Map<Tuple2<Integer, Integer>, String> map = Util.buildImageMap(input);
         graph = Util.buildGraphFromMap(map, map.entrySet().stream().filter(e -> START_VERTEX.equals(e.getValue())).map(Map.Entry::getKey).findFirst().orElseThrow());
         addDirectEdgesBetweenNodes();
         removeCrossingVertices();

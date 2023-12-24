@@ -3,14 +3,15 @@ package de.beachboys.aoc2018;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day15 extends Day {
-    private Map<Pair<Integer, Integer>, String> map;
+    private Map<Tuple2<Integer, Integer>, String> map;
     private final List<Unit> units = new ArrayList<>();
     private int elfDamage = 3;
 
@@ -75,45 +76,45 @@ public class Day15 extends Day {
     }
 
     private void move(Unit unit) {
-        Deque<Triplet<Pair<Integer, Integer>, Direction, Integer>> queue = new LinkedList<>();
-        Set<Pair<Integer, Integer>> seenPositions = new HashSet<>();
-        Set<Triplet<Pair<Integer, Integer>, Direction, Integer>> possibleTargetQueueElements = new HashSet<>();
+        Deque<Tuple3<Tuple2<Integer, Integer>, Direction, Integer>> queue = new LinkedList<>();
+        Set<Tuple2<Integer, Integer>> seenPositions = new HashSet<>();
+        Set<Tuple3<Tuple2<Integer, Integer>, Direction, Integer>> possibleTargetQueueElements = new HashSet<>();
         int shortestRange = Integer.MAX_VALUE;
 
-        Pair<Integer, Integer> position = unit.position;
+        Tuple2<Integer, Integer> position = unit.position;
         for (Direction direction : getDirectionsInReadingOrder()) {
-            Pair<Integer, Integer> nextPosition = direction.move(position, 1);
+            Tuple2<Integer, Integer> nextPosition = direction.move(position, 1);
             if (".".equals(map.get(nextPosition))) {
-                queue.add(Triplet.with(nextPosition, direction, 1));
+                queue.add(Tuple.tuple(nextPosition, direction, 1));
             }
         }
         seenPositions.add(position);
 
         while (!queue.isEmpty()) {
-            Triplet<Pair<Integer, Integer>, Direction, Integer> queueElement = queue.poll();
-            if (shortestRange >= queueElement.getValue2()) {
-                if (!getAdjacentTargets(unit.isGoblin, queueElement.getValue0()).isEmpty()) {
-                    shortestRange = queueElement.getValue2();
+            Tuple3<Tuple2<Integer, Integer>, Direction, Integer> queueElement = queue.poll();
+            if (shortestRange >= queueElement.v3) {
+                if (!getAdjacentTargets(unit.isGoblin, queueElement.v1).isEmpty()) {
+                    shortestRange = queueElement.v3;
                     possibleTargetQueueElements.add(queueElement);
                 } else {
                     for (Direction direction : getDirectionsInReadingOrder()) {
-                        Pair<Integer, Integer> nextPosition = direction.move(queueElement.getValue0(), 1);
+                        Tuple2<Integer, Integer> nextPosition = direction.move(queueElement.v1, 1);
                         String nextPositionString = map.get(nextPosition);
                         if (".".equals(nextPositionString) && !seenPositions.contains(nextPosition)) {
                             seenPositions.add(nextPosition);
-                            queue.add(Triplet.with(nextPosition, queueElement.getValue1(), queueElement.getValue2() + 1));
+                            queue.add(Tuple.tuple(nextPosition, queueElement.v2, queueElement.v3 + 1));
                         }
                     }
                 }
             }
         }
         possibleTargetQueueElements.stream()
-                .min(Comparator.comparing(queueElement -> queueElement.getValue2() * 10000 + queueElement.getValue0().getValue1() * 100 + queueElement.getValue0().getValue0()))
+                .min(Comparator.comparing(queueElement -> queueElement.v3 * 10000 + queueElement.v1.v2 * 100 + queueElement.v1.v1))
                 .ifPresent(queueElement -> executeMove(unit, queueElement));
     }
 
-    private void executeMove(Unit unit, Triplet<Pair<Integer, Integer>, Direction, Integer> queueElement) {
-        Pair<Integer, Integer> newPosition = queueElement.getValue1().move(unit.position, 1);
+    private void executeMove(Unit unit, Tuple3<Tuple2<Integer, Integer>, Direction, Integer> queueElement) {
+        Tuple2<Integer, Integer> newPosition = queueElement.v2.move(unit.position, 1);
         map.put(unit.position, ".");
         unit.position = newPosition;
         map.put(unit.position, unit.isGoblin ? "G" : "E");
@@ -127,8 +128,8 @@ public class Day15 extends Day {
         return getAdjacentTargets(unit.isGoblin, unit.position);
     }
 
-    private List<Unit> getAdjacentTargets(boolean isCurrentUnitGoblin, Pair<Integer, Integer> currentPosition) {
-        List<Pair<Integer, Integer>> adjacentPositions = new ArrayList<>();
+    private List<Unit> getAdjacentTargets(boolean isCurrentUnitGoblin, Tuple2<Integer, Integer> currentPosition) {
+        List<Tuple2<Integer, Integer>> adjacentPositions = new ArrayList<>();
         for (Direction direction : Direction.values()) {
             adjacentPositions.add(direction.move(currentPosition, 1));
         }
@@ -146,17 +147,17 @@ public class Day15 extends Day {
     private static class Unit {
         boolean isGoblin;
         int hitPoints = 200;
-        Pair<Integer, Integer> position;
+        Tuple2<Integer, Integer> position;
 
-        public Unit(boolean isGoblin, Pair<Integer, Integer> position) {
+        public Unit(boolean isGoblin, Tuple2<Integer, Integer> position) {
             this.isGoblin = isGoblin;
             this.position = position;
         }
 
         public int compareToByPosition(Unit o) {
-            int yComparison = position.getValue1().compareTo(o.position.getValue1());
+            int yComparison = position.v2.compareTo(o.position.v2);
             if (yComparison == 0) {
-                return position.getValue0().compareTo(o.position.getValue0());
+                return position.v1.compareTo(o.position.v1);
             }
             return yComparison;
         }

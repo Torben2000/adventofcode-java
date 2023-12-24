@@ -2,13 +2,14 @@ package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
-import org.javatuples.Quartet;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
+import org.jooq.lambda.tuple.Tuple4;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -22,7 +23,7 @@ public class Day18 extends Day {
 
     @FunctionalInterface
     private interface GraphAndQueueInitializer {
-        void apply(Map<Pair<Integer, Integer>, String> map, Set<String> allKeys, Pair<Integer, Integer> start);
+        void apply(Map<Tuple2<Integer, Integer>, String> map, Set<String> allKeys, Tuple2<Integer, Integer> start);
     }
 
     public static final String ROOT = "@";
@@ -30,14 +31,14 @@ public class Day18 extends Day {
 
     private int minSteps = Integer.MAX_VALUE;
 
-    private final Map<Pair<String, String>, GraphPath<String, DefaultWeightedEdge>> pathCache = new HashMap<>();
-    private final Map<Pair<String, String>, Set<String>> neededKeysCache = new HashMap<>();
+    private final Map<Tuple2<String, String>, GraphPath<String, DefaultWeightedEdge>> pathCache = new HashMap<>();
+    private final Map<Tuple2<String, String>, Set<String>> neededKeysCache = new HashMap<>();
     private final Map<Integer, DijkstraShortestPath<String, DefaultWeightedEdge>> dijkstraAlgCache = new HashMap<>();
     private final HashMap<Integer, Graph<String, DefaultWeightedEdge>> graphs = new HashMap<>();
 
-    private final PriorityQueue<Pair<Integer, Integer>> queue = new PriorityQueue<>();
-    private final Map<Integer, Quartet<Map<Integer, String>, Integer, Integer, Set<String>>> queueItems = new HashMap<>();
-    private final Map<Quartet<Map<Integer, String>, Integer, Integer, Set<String>>, Pair<Integer, Integer>> queueItemReverse = new HashMap<>();
+    private final PriorityQueue<Tuple2<Integer, Integer>> queue = new PriorityQueue<>();
+    private final Map<Integer, Tuple4<Map<Integer, String>, Integer, Integer, Set<String>>> queueItems = new HashMap<>();
+    private final Map<Tuple4<Map<Integer, String>, Integer, Integer, Set<String>>, Tuple2<Integer, Integer>> queueItemReverse = new HashMap<>();
     private int queueId = 0;
 
     public Object part1(List<String> input) {
@@ -49,22 +50,22 @@ public class Day18 extends Day {
     }
 
     private Object runLogic(List<String> input, GraphAndQueueInitializer initializer) {
-        Map<Pair<Integer, Integer>, String> map = Util.buildImageMap(input);
+        Map<Tuple2<Integer, Integer>, String> map = Util.buildImageMap(input);
 
         Set<String> allKeys = map.values().stream().filter(this::isKey).collect(Collectors.toSet());
 
-        Pair<Integer, Integer> start = map.entrySet().stream().filter(e -> ROOT.equals(e.getValue())).findFirst().orElseThrow().getKey();
+        Tuple2<Integer, Integer> start = map.entrySet().stream().filter(e -> ROOT.equals(e.getValue())).findFirst().orElseThrow().getKey();
 
         initializer.apply(map, allKeys, start);
 
         while (!queue.isEmpty()) {
-            Quartet<Map<Integer, String>, Integer, Integer, Set<String>> cur = queueItems.get(queue.poll().getValue1());
-            findSolutionFromCurrentState(cur.getValue0(), cur.getValue1(), cur.getValue2(), cur.getValue3());
+            Tuple4<Map<Integer, String>, Integer, Integer, Set<String>> cur = queueItems.get(queue.poll().v2);
+            findSolutionFromCurrentState(cur.v1, cur.v2, cur.v3, cur.v4);
         }
         return minSteps;
     }
 
-    private void buildGraphsAndInitialQueueForPart1(Map<Pair<Integer, Integer>, String> map, Set<String> allKeys, Pair<Integer, Integer> start) {
+    private void buildGraphsAndInitialQueueForPart1(Map<Tuple2<Integer, Integer>, String> map, Set<String> allKeys, Tuple2<Integer, Integer> start) {
         int graphId = 0;
         Graph<String, DefaultWeightedEdge> graph = Util.buildGraphFromMap(map, start);
         graphs.put(graphId, graph);
@@ -74,12 +75,12 @@ public class Day18 extends Day {
         addQueueItem(Map.of(graphId, ROOT), graphId, 0, new HashSet<>(allKeys));
     }
 
-    private void buildGraphsAndInitialQueueForPart2(Map<Pair<Integer, Integer>, String> map, Set<String> allKeys, Pair<Integer, Integer> start) {
-        Map<Integer, Pair<Integer, Integer>> startPositions = manipulateMapForPart2(map, start);
+    private void buildGraphsAndInitialQueueForPart2(Map<Tuple2<Integer, Integer>, String> map, Set<String> allKeys, Tuple2<Integer, Integer> start) {
+        Map<Integer, Tuple2<Integer, Integer>> startPositions = manipulateMapForPart2(map, start);
         Map<Integer, String> initialNodeMap = Map.of(0, ROOT, 1, ROOT, 2, ROOT, 3, ROOT);
 
         for (int graphId = 0; graphId < 4; graphId++) {
-            Pair<Integer, Integer> startPosition = startPositions.get(graphId);
+            Tuple2<Integer, Integer> startPosition = startPositions.get(graphId);
             Graph<String, DefaultWeightedEdge> graph = Util.buildGraphFromMap(map, startPosition);
             graphs.put(graphId, graph);
             simplifyGraph(graphId);
@@ -88,23 +89,23 @@ public class Day18 extends Day {
         }
     }
 
-    private Map<Integer, Pair<Integer, Integer>> manipulateMapForPart2(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> start) {
-        int startX = start.getValue0();
-        int startY = start.getValue1();
-        Pair<Integer, Integer> start0 = Pair.with(startX - 1, startY - 1);
-        Pair<Integer, Integer> start1 = Pair.with(startX - 1, startY + 1);
-        Pair<Integer, Integer> start2 = Pair.with(startX + 1, startY - 1);
-        Pair<Integer, Integer> start3 = Pair.with(startX + 1, startY + 1);
+    private Map<Integer, Tuple2<Integer, Integer>> manipulateMapForPart2(Map<Tuple2<Integer, Integer>, String> map, Tuple2<Integer, Integer> start) {
+        int startX = start.v1;
+        int startY = start.v2;
+        Tuple2<Integer, Integer> start0 = Tuple.tuple(startX - 1, startY - 1);
+        Tuple2<Integer, Integer> start1 = Tuple.tuple(startX - 1, startY + 1);
+        Tuple2<Integer, Integer> start2 = Tuple.tuple(startX + 1, startY - 1);
+        Tuple2<Integer, Integer> start3 = Tuple.tuple(startX + 1, startY + 1);
         map.put(start0, ROOT);
-        map.put(Pair.with(startX - 1, startY), WALL);
+        map.put(Tuple.tuple(startX - 1, startY), WALL);
         map.put(start1, ROOT);
-        map.put(Pair.with(startX, startY - 1), WALL);
-        map.put(Pair.with(startX, startY), WALL);
-        map.put(Pair.with(startX, startY + 1), WALL);
+        map.put(Tuple.tuple(startX, startY - 1), WALL);
+        map.put(Tuple.tuple(startX, startY), WALL);
+        map.put(Tuple.tuple(startX, startY + 1), WALL);
         map.put(start2, ROOT);
-        map.put(Pair.with(startX + 1, startY), WALL);
+        map.put(Tuple.tuple(startX + 1, startY), WALL);
         map.put(start3, ROOT);
-        Map<Integer, Pair<Integer, Integer>> startPositions = new HashMap<>();
+        Map<Integer, Tuple2<Integer, Integer>> startPositions = new HashMap<>();
         startPositions.put(0, start0);
         startPositions.put(1, start1);
         startPositions.put(2, start2);
@@ -113,14 +114,14 @@ public class Day18 extends Day {
     }
 
     private void addQueueItem(Map<Integer, String> currentNodes, int graphId, int stepCount, Set<String> keysInInventory) {
-        Quartet<Map<Integer, String>, Integer, Integer, Set<String>> item = Quartet.with(currentNodes, graphId, stepCount, keysInInventory);
-        Pair<Integer, Integer> existingEntry = queueItemReverse.get(item);
-        if (existingEntry == null || existingEntry.getValue0() > stepCount) {
+        Tuple4<Map<Integer, String>, Integer, Integer, Set<String>> item = Tuple.tuple(currentNodes, graphId, stepCount, keysInInventory);
+        Tuple2<Integer, Integer> existingEntry = queueItemReverse.get(item);
+        if (existingEntry == null || existingEntry.v1 > stepCount) {
             if (existingEntry != null) {
                 queue.remove(existingEntry);
             }
             int id = queueId++;
-            Pair<Integer, Integer> key = Pair.with(stepCount, id);
+            Tuple2<Integer, Integer> key = Tuple.tuple(stepCount, id);
             queue.add(key);
             queueItems.put(id, item);
             queueItemReverse.put(item, key);
@@ -154,7 +155,7 @@ public class Day18 extends Day {
     }
 
     private GraphPath<String, DefaultWeightedEdge> getPath(Integer graphId, String from, String to) {
-        Pair<String, String> key = Pair.with(from, to);
+        Tuple2<String, String> key = Tuple.tuple(from, to);
         if (!pathCache.containsKey(key)) {
 
             pathCache.put(key, getDijkstraAlg(graphId).getPath(from, to));
@@ -180,7 +181,7 @@ public class Day18 extends Day {
         if (!getGraph(graphId).vertexSet().contains(to)) {
             return false;
         }
-        Pair<String, String> cacheKey = Pair.with(from, to);
+        Tuple2<String, String> cacheKey = Tuple.tuple(from, to);
         if (!neededKeysCache.containsKey(cacheKey)) {
             GraphPath<String, DefaultWeightedEdge> path = getPath(graphId, from, to);
             Set<String> neededKeys = path.getVertexList().stream().filter(this::isLock).map(String::toLowerCase).collect(Collectors.toSet());

@@ -2,23 +2,24 @@ package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 
 public class Day03 extends Day {
 
-    private final Map<Pair<Integer, Integer>, Integer> wire1Dist = new HashMap<>();
-    private final Map<Pair<Integer, Integer>, Integer> wire2Dist = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, Integer> wire1Dist = new HashMap<>();
+    private final Map<Tuple2<Integer, Integer>, Integer> wire2Dist = new HashMap<>();
 
     @Override
     public Object part1(List<String> input) {
-        Set<Pair<Integer, Integer>> crossings = getCrossings(input);
+        Set<Tuple2<Integer, Integer>> crossings = getCrossings(input);
 
         int returnValue = Integer.MAX_VALUE;
 
-        for (Pair<Integer, Integer> position : crossings) {
-            int dist = Math.abs(position.getValue0()) + Math.abs(position.getValue1());
+        for (Tuple2<Integer, Integer> position : crossings) {
+            int dist = Math.abs(position.v1) + Math.abs(position.v2);
             returnValue = Math.min(returnValue, dist);
         }
 
@@ -27,11 +28,11 @@ public class Day03 extends Day {
 
     @Override
     public Object part2(List<String> input) {
-        Set<Pair<Integer, Integer>> crossings = getCrossings(input);
+        Set<Tuple2<Integer, Integer>> crossings = getCrossings(input);
 
         int returnValue = Integer.MAX_VALUE;
 
-        for (Pair<Integer, Integer> position : crossings) {
+        for (Tuple2<Integer, Integer> position : crossings) {
             int dist = wire1Dist.get(position) + wire2Dist.get(position);
             returnValue = Math.min(returnValue, dist);
         }
@@ -39,21 +40,21 @@ public class Day03 extends Day {
         return returnValue;
     }
 
-    private Set<Pair<Integer, Integer>> getCrossings(List<String> input) {
+    private Set<Tuple2<Integer, Integer>> getCrossings(List<String> input) {
         wire1Dist.clear();
         wire2Dist.clear();
         List<String> wire1 = Util.parseCsv(input.get(0));
         List<String> wire2 = Util.parseCsv(input.get(1));
 
-        Set<Pair<Integer, Integer>> coordinatesWire1 = getWireSet(wire1, wire1Dist);
-        Set<Pair<Integer, Integer>> coordinatesWire2 = getWireSet(wire2, wire2Dist);
+        Set<Tuple2<Integer, Integer>> coordinatesWire1 = getWireSet(wire1, wire1Dist);
+        Set<Tuple2<Integer, Integer>> coordinatesWire2 = getWireSet(wire2, wire2Dist);
 
         coordinatesWire1.retainAll(coordinatesWire2);
         return coordinatesWire1;
     }
 
-    private Set<Pair<Integer, Integer>> getWireSet(List<String> wire, Map<Pair<Integer, Integer>, Integer> wireDist) {
-        Set<Pair<Integer, Integer>> coordinatesWire1 = new HashSet<>();
+    private Set<Tuple2<Integer, Integer>> getWireSet(List<String> wire, Map<Tuple2<Integer, Integer>, Integer> wireDist) {
+        Set<Tuple2<Integer, Integer>> coordinatesWire1 = new HashSet<>();
         int x = 0;
         int y = 0;
         int distCounter = 0;
@@ -76,7 +77,7 @@ public class Day03 extends Day {
                         x++;
                         break;
                 }
-                Pair<Integer, Integer> position = Pair.with(x, y);
+                Tuple2<Integer, Integer> position = Tuple.tuple(x, y);
                 coordinatesWire1.add(position);
                 if (!wireDist.containsKey(position)) {
                     wireDist.put(position, distCounter);

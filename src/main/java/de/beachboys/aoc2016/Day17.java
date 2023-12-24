@@ -3,7 +3,8 @@ package de.beachboys.aoc2016;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,23 +32,23 @@ public class Day17 extends Day {
         String prefix = input.get(0);
         MessageDigest md5 = getMd5MessageDigest();
         Map<Direction, String> movementMap = Map.of(Direction.NORTH, "U", Direction.SOUTH, "D", Direction.WEST, "L", Direction.EAST, "R");
-        Deque<Pair<Pair<Integer, Integer>, String>> queue = new LinkedList<>();
+        Deque<Tuple2<Tuple2<Integer, Integer>, String>> queue = new LinkedList<>();
 
-        queue.add(Pair.with(Pair.with(0, 0), ""));
+        queue.add(Tuple.tuple(Tuple.tuple(0, 0), ""));
         while (!queue.isEmpty()) {
-            Pair<Pair<Integer, Integer>, String> queueEntry = queue.poll();
-            String hashValue = Util.bytesToHex(md5.digest((prefix + queueEntry.getValue1()).getBytes()));
+            Tuple2<Tuple2<Integer, Integer>, String> queueEntry = queue.poll();
+            String hashValue = Util.bytesToHex(md5.digest((prefix + queueEntry.v2).getBytes()));
             for (int i = 0; i < 4; i++) {
                 if (hashValue.charAt(i) > 'a') {
                     Direction direction = Direction.values()[i];
-                    Pair<Integer, Integer> target = direction.move(queueEntry.getValue0(), 1);
-                    String movement = queueEntry.getValue1() + movementMap.get(direction);
-                    if (target.getValue0() == 3 && target.getValue1() == 3) {
+                    Tuple2<Integer, Integer> target = direction.move(queueEntry.v1, 1);
+                    String movement = queueEntry.v2 + movementMap.get(direction);
+                    if (target.v1 == 3 && target.v2 == 3) {
                         if (handleMovementValueAndDecideIfResult.test(movement)) {
                             return movement;
                         }
-                    } else if (target.getValue0() >= 0 && target.getValue1() >= 0 && target.getValue0() <= 3 && target.getValue1() <= 3) {
-                        queue.add(Pair.with(target, movement));
+                    } else if (target.v1 >= 0 && target.v2 >= 0 && target.v1 <= 3 && target.v2 <= 3) {
+                        queue.add(Tuple.tuple(target, movement));
                     }
                 }
             }

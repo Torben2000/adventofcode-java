@@ -2,7 +2,8 @@ package de.beachboys.aoc2016;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -31,7 +32,7 @@ public class Day10 extends Day {
     }
 
     private void runLogic(List<String> input) {
-        Map<Integer, Pair<Pair<TargetType, Integer>, Pair<TargetType, Integer>>> botRules = buildRulesAndFillInitialInput(input);
+        Map<Integer, Tuple2<Tuple2<TargetType, Integer>, Tuple2<TargetType, Integer>>> botRules = buildRulesAndFillInitialInput(input);
 
         Set<Integer> processedBots = new HashSet<>();
         while (processedBots.size() < botRules.size()) {
@@ -39,15 +40,15 @@ public class Day10 extends Day {
             for (Integer bot : botsToProcess) {
                 Integer lowValue = botInputs.get(bot).stream().min(Comparator.naturalOrder()).orElseThrow();
                 Integer highValue = botInputs.get(bot).stream().max(Comparator.naturalOrder()).orElseThrow();
-                setTargetValue(botRules.get(bot).getValue0(), lowValue);
-                setTargetValue(botRules.get(bot).getValue1(), highValue);
+                setTargetValue(botRules.get(bot).v1, lowValue);
+                setTargetValue(botRules.get(bot).v2, highValue);
                 processedBots.add(bot);
             }
         }
     }
 
-    private Map<Integer, Pair<Pair<TargetType, Integer>, Pair<TargetType, Integer>>> buildRulesAndFillInitialInput(List<String> input) {
-        Map<Integer, Pair<Pair<TargetType, Integer>, Pair<TargetType, Integer>>> botRules = new HashMap<>();
+    private Map<Integer, Tuple2<Tuple2<TargetType, Integer>, Tuple2<TargetType, Integer>>> buildRulesAndFillInitialInput(List<String> input) {
+        Map<Integer, Tuple2<Tuple2<TargetType, Integer>, Tuple2<TargetType, Integer>>> botRules = new HashMap<>();
         Pattern inputPattern = Pattern.compile("value ([0-9]+) goes to bot ([0-9]+)");
         Pattern rulePattern = Pattern.compile("bot ([0-9]+) gives low to (bot|output) ([0-9]+) and high to (bot|output) ([0-9]+)");
         for (String line : input) {
@@ -59,7 +60,7 @@ public class Day10 extends Day {
                     int lowTarget = Integer.parseInt(m.group(3));
                     TargetType highTargetType = TargetType.valueOf(m.group(4).toUpperCase());
                     int highTarget = Integer.parseInt(m.group(5));
-                    botRules.put(bot, Pair.with(Pair.with(lowTargetType, lowTarget), Pair.with(highTargetType, highTarget)));
+                    botRules.put(bot, Tuple.tuple(Tuple.tuple(lowTargetType, lowTarget), Tuple.tuple(highTargetType, highTarget)));
                     botInputs.putIfAbsent(bot, new HashSet<>());
                 }
             } else {
@@ -75,11 +76,11 @@ public class Day10 extends Day {
         return botRules;
     }
 
-    private void setTargetValue(Pair<TargetType, Integer> target, Integer value) {
-        if (TargetType.BOT.equals(target.getValue0())) {
-            botInputs.get(target.getValue1()).add(value);
+    private void setTargetValue(Tuple2<TargetType, Integer> target, Integer value) {
+        if (TargetType.BOT.equals(target.v1)) {
+            botInputs.get(target.v2).add(value);
         } else {
-            outputValues.put(target.getValue1(), value);
+            outputValues.put(target.v2, value);
         }
     }
 

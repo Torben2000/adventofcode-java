@@ -2,7 +2,8 @@ package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,11 +47,11 @@ public class Day14 extends Day {
             }
             Reaction reaction = reactions.get(chemical);
             long requirements = requirementsMap.getOrDefault(chemical, 0L);
-            long factor = (long) Math.ceil((double) requirements / reaction.output.getValue0());
+            long factor = (long) Math.ceil((double) requirements / reaction.output.v1);
 
-            requirementsMap.put(chemical, requirements - factor * reaction.output.getValue0());
-            for (Pair<Long, String> inputChemical: reaction.input) {
-                requirementsMap.put(inputChemical.getValue1(), Math.addExact(requirementsMap.getOrDefault(inputChemical.getValue1(), 0L), factor * inputChemical.getValue0()));
+            requirementsMap.put(chemical, requirements - factor * reaction.output.v1);
+            for (Tuple2<Long, String> inputChemical: reaction.input) {
+                requirementsMap.put(inputChemical.v2, Math.addExact(requirementsMap.getOrDefault(inputChemical.v2, 0L), factor * inputChemical.v1));
             }
         }
     }
@@ -58,22 +59,22 @@ public class Day14 extends Day {
     private void buildReactionMap(List<String> input) {
         for (String reactionString : input) {
             String[] reactionInputAndOutput = reactionString.split(" => ");
-            Pair<Long, String> reactionOutput = buildChemicalPair(reactionInputAndOutput[1]);
+            Tuple2<Long, String> reactionOutput = buildChemicalPair(reactionInputAndOutput[1]);
             List<String> reactionInputStringList = Util.parseToList(reactionInputAndOutput[0], ", ");
-            List<Pair<Long, String>> reactionInput = reactionInputStringList.stream().map(this::buildChemicalPair).collect(Collectors.toList());
-            reactions.put(reactionOutput.getValue1(), new Reaction(reactionInput, reactionOutput));
+            List<Tuple2<Long, String>> reactionInput = reactionInputStringList.stream().map(this::buildChemicalPair).collect(Collectors.toList());
+            reactions.put(reactionOutput.v2, new Reaction(reactionInput, reactionOutput));
         }
     }
 
-    private Pair<Long, String> buildChemicalPair(String chemicalString) {
+    private Tuple2<Long, String> buildChemicalPair(String chemicalString) {
         String[] splitChemical = chemicalString.split(" ");
-        return Pair.with(Long.valueOf(splitChemical[0]), splitChemical[1]);
+        return Tuple.tuple(Long.valueOf(splitChemical[0]), splitChemical[1]);
     }
     private static class Reaction {
-        public final Pair<Long, String> output;
-        public final List<Pair<Long, String>> input;
+        public final Tuple2<Long, String> output;
+        public final List<Tuple2<Long, String>> input;
 
-        public Reaction(List<Pair<Long, String>> input, Pair<Long, String> output) {
+        public Reaction(List<Tuple2<Long, String>> input, Tuple2<Long, String> output) {
             this.input = input;
             this.output = output;
         }

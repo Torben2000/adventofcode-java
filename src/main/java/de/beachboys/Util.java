@@ -1,11 +1,13 @@
 package de.beachboys;
 
-import org.javatuples.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
+import org.jooq.lambda.function.Function3;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -41,38 +43,38 @@ public final class Util {
         return parseToLongList(input, ",");
     }
 
-    public static String paintSet(Set<Pair<Integer, Integer>> set) {
+    public static String paintSet(Set<Tuple2<Integer, Integer>> set) {
         return paintMap(set.stream().collect(Collectors.toMap(Function.identity(), position -> "*")));
     }
 
-    public static String paintMap(Map<Pair<Integer, Integer>, String> map) {
+    public static String paintMap(Map<Tuple2<Integer, Integer>, String> map) {
         Map<String, String> valuesToPaint = map.values().stream().distinct().collect(Collectors.toMap(Function.identity(), Function.identity()));
         return paintMap(map, valuesToPaint);
     }
 
-    public static String paintMap(Map<Pair<Integer, Integer>, String> map, Map<String, String> valuesToPaint) {
+    public static String paintMap(Map<Tuple2<Integer, Integer>, String> map, Map<String, String> valuesToPaint) {
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
         int maxY = Integer.MIN_VALUE;
-        Map<Pair<Integer, Integer>, String> filteredMap = new HashMap<>(map);
+        Map<Tuple2<Integer, Integer>, String> filteredMap = new HashMap<>(map);
         map.forEach((point, value) -> {
             if (valuesToPaint != null && !valuesToPaint.containsKey(value)) {
                 filteredMap.remove(point);
             }
         });
-        for (Pair<Integer, Integer> point : filteredMap.keySet()) {
-            minX = Math.min(minX, point.getValue0());
-            minY = Math.min(minY, point.getValue1());
-            maxX = Math.max(maxX, point.getValue0());
-            maxY = Math.max(maxY, point.getValue1());
+        for (Tuple2<Integer, Integer> point : filteredMap.keySet()) {
+            minX = Math.min(minX, point.v1);
+            minY = Math.min(minY, point.v2);
+            maxX = Math.max(maxX, point.v1);
+            maxY = Math.max(maxY, point.v2);
         }
         int width = maxX - minX + 1;
         int height = maxY - minY + 1;
         StringBuilder imageString = new StringBuilder();
         imageString.append(" ".repeat(width*height));
-        for (Pair<Integer, Integer> point : filteredMap.keySet()) {
-            int index = width * (point.getValue1() - minY) + (point.getValue0() - minX);
+        for (Tuple2<Integer, Integer> point : filteredMap.keySet()) {
+            int index = width * (point.v2 - minY) + (point.v1 - minX);
             imageString.replace(index, index + 1, filteredMap.get(point));
         }
         return formatImage(imageString.toString(), width, height, valuesToPaint);
@@ -101,52 +103,52 @@ public final class Util {
         return returnValue.toString();
     }
 
-    public static Map<Pair<Integer, Integer>, String> buildImageMap(String imageWithLineBreaks) {
+    public static Map<Tuple2<Integer, Integer>, String> buildImageMap(String imageWithLineBreaks) {
         return buildImageMap(parseToList(imageWithLineBreaks, "\n"));
     }
 
-    public static Map<Pair<Integer, Integer>, String> buildImageMap(List<String> imageLines) {
-        Map<Pair<Integer, Integer>, String> map = new HashMap<>();
+    public static Map<Tuple2<Integer, Integer>, String> buildImageMap(List<String> imageLines) {
+        Map<Tuple2<Integer, Integer>, String> map = new HashMap<>();
         for (int j = 0; j < imageLines.size(); j++) {
             String line = imageLines.get(j);
             for (int i = 0; i < line.length(); i++) {
-                map.put(Pair.with(i, j), line.substring(i, i + 1));
+                map.put(Tuple.tuple(i, j), line.substring(i, i + 1));
             }
         }
         return map;
     }
 
-    public static Set<Pair<Integer, Integer>> buildConwaySet(List<String> input, String representationOfActiveState) {
+    public static Set<Tuple2<Integer, Integer>> buildConwaySet(List<String> input, String representationOfActiveState) {
         return buildImageMap(input).entrySet().stream().filter(entry -> representationOfActiveState.equals(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
     }
 
-    public static int getManhattanDistance(Pair<Integer, Integer> pos1, Pair<Integer, Integer> pos2) {
-        return Math.abs(pos1.getValue0() - pos2.getValue0()) + Math.abs(pos1.getValue1() - pos2.getValue1());
+    public static int getManhattanDistance(Tuple2<Integer, Integer> pos1, Tuple2<Integer, Integer> pos2) {
+        return Math.abs(pos1.v1 - pos2.v1) + Math.abs(pos1.v2 - pos2.v2);
     }
 
-    public static boolean isInRectangle(Pair<Integer, Integer> positionToCheck, Pair<Integer, Integer> cornerOfRectangle, Pair<Integer, Integer> oppositeCornerOfRectangle) {
+    public static boolean isInRectangle(Tuple2<Integer, Integer> positionToCheck, Tuple2<Integer, Integer> cornerOfRectangle, Tuple2<Integer, Integer> oppositeCornerOfRectangle) {
         boolean returnValue = true;
-        if (positionToCheck.getValue0() < cornerOfRectangle.getValue0() && positionToCheck.getValue0() < oppositeCornerOfRectangle.getValue0()) {
+        if (positionToCheck.v1 < cornerOfRectangle.v1 && positionToCheck.v1 < oppositeCornerOfRectangle.v1) {
             returnValue = false;
         }
-        if (positionToCheck.getValue0() > cornerOfRectangle.getValue0() && positionToCheck.getValue0() > oppositeCornerOfRectangle.getValue0()) {
+        if (positionToCheck.v1 > cornerOfRectangle.v1 && positionToCheck.v1 > oppositeCornerOfRectangle.v1) {
             returnValue = false;
         }
-        if (positionToCheck.getValue1() < cornerOfRectangle.getValue1() && positionToCheck.getValue1() < oppositeCornerOfRectangle.getValue1()) {
+        if (positionToCheck.v2 < cornerOfRectangle.v2 && positionToCheck.v2 < oppositeCornerOfRectangle.v2) {
             returnValue = false;
         }
-        if (positionToCheck.getValue1() > cornerOfRectangle.getValue1() && positionToCheck.getValue1() > oppositeCornerOfRectangle.getValue1()) {
+        if (positionToCheck.v2 > cornerOfRectangle.v2 && positionToCheck.v2 > oppositeCornerOfRectangle.v2) {
             returnValue = false;
         }
         return returnValue;
     }
 
-    public static List<Pair<Integer, Integer>> drawLine(Pair<Integer, Integer> start, Pair<Integer, Integer> end) {
-        List<Pair<Integer, Integer>> line = new ArrayList<>();
-        if (start.getValue0().equals(end.getValue0()) || start.getValue1().equals(end.getValue1()) || Math.abs(start.getValue0() - end.getValue0()) == Math.abs(start.getValue1() - end.getValue1())) {
-            int xIncrement = end.getValue0().compareTo(start.getValue0());
-            int yIncrement = end.getValue1().compareTo(start.getValue1());
-            for (Pair<Integer, Integer> linePoint = start; !end.equals(linePoint); linePoint = Pair.with(linePoint.getValue0() + xIncrement, linePoint.getValue1() + yIncrement)) {
+    public static List<Tuple2<Integer, Integer>> drawLine(Tuple2<Integer, Integer> start, Tuple2<Integer, Integer> end) {
+        List<Tuple2<Integer, Integer>> line = new ArrayList<>();
+        if (start.v1.equals(end.v1) || start.v2.equals(end.v2) || Math.abs(start.v1 - end.v1) == Math.abs(start.v2 - end.v2)) {
+            int xIncrement = end.v1.compareTo(start.v1);
+            int yIncrement = end.v2.compareTo(start.v2);
+            for (Tuple2<Integer, Integer> linePoint = start; !end.equals(linePoint); linePoint = Tuple.tuple(linePoint.v1 + xIncrement, linePoint.v2 + yIncrement)) {
                 line.add(linePoint);
             }
             line.add(end);
@@ -156,13 +158,13 @@ public final class Util {
         return line;
     }
 
-    public static long getPolygonSize(List<Pair<Integer, Integer>> polygonPoints, boolean withLines) {
+    public static long getPolygonSize(List<Tuple2<Integer, Integer>> polygonPoints, boolean withLines) {
         // inner size up to middle of line
         long result = 0;
         for (int i = 0; i < polygonPoints.size(); i++) {
-            Pair<Integer, Integer> p1 = polygonPoints.get(i);
-            Pair<Integer, Integer> p2 = polygonPoints.get((i + 1) % polygonPoints.size());
-            result += (long) p2.getValue1() * p1.getValue0() - (long) p1.getValue1() * p2.getValue0();
+            Tuple2<Integer, Integer> p1 = polygonPoints.get(i);
+            Tuple2<Integer, Integer> p2 = polygonPoints.get((i + 1) % polygonPoints.size());
+            result += (long) p2.v2 * p1.v1 - (long) p1.v2 * p2.v1;
         }
         result = Math.abs(result) / 2;
 
@@ -176,30 +178,30 @@ public final class Util {
         return result + 1;
     }
 
-    public static long getPolygonLineLength(List<Pair<Integer, Integer>> polygonPoints) {
+    public static long getPolygonLineLength(List<Tuple2<Integer, Integer>> polygonPoints) {
         long result = 0;
         for (int i = 0; i < polygonPoints.size(); i++) {
-            Pair<Integer, Integer> p1 = polygonPoints.get(i);
-            Pair<Integer, Integer> p2 = polygonPoints.get((i + 1) % polygonPoints.size());
+            Tuple2<Integer, Integer> p1 = polygonPoints.get(i);
+            Tuple2<Integer, Integer> p2 = polygonPoints.get((i + 1) % polygonPoints.size());
             result += getManhattanDistance(p1, p2);
         }
         return result;
     }
 
 
-    public static int getShortestPath(Set<Pair<Integer, Integer>> start, Set<Pair<Integer, Integer>> end, BiPredicate<Pair<Integer, Integer>, Pair<Integer, Integer>> canGoFromPositionToNeighbor, TriFunction<Integer, Pair<Integer, Integer>, Pair<Integer, Integer>, Integer> getNeighborDistanceFromPositionDistance) {
-        Set<Pair<Integer, Integer>> seenPositions = new HashSet<>();
-        Map<Integer, Set<Pair<Integer, Integer>>> queue = new HashMap<>();
+    public static int getShortestPath(Set<Tuple2<Integer, Integer>> start, Set<Tuple2<Integer, Integer>> end, BiPredicate<Tuple2<Integer, Integer>, Tuple2<Integer, Integer>> canGoFromPositionToNeighbor, Function3<Integer, Tuple2<Integer, Integer>, Tuple2<Integer, Integer>, Integer> getNeighborDistanceFromPositionDistance) {
+        Set<Tuple2<Integer, Integer>> seenPositions = new HashSet<>();
+        Map<Integer, Set<Tuple2<Integer, Integer>>> queue = new HashMap<>();
         queue.put(0, start);
         for (int currentDistance = 0; currentDistance < Integer.MAX_VALUE; currentDistance++) {
-            for (Pair<Integer, Integer> pos : queue.getOrDefault(currentDistance, Set.of())) {
+            for (Tuple2<Integer, Integer> pos : queue.getOrDefault(currentDistance, Set.of())) {
                 if (end.contains(pos)) {
                     return currentDistance;
                 }
-                for (Pair<Integer, Integer> directNeighbor : Direction.getDirectNeighbors(pos)) {
+                for (Tuple2<Integer, Integer> directNeighbor : Direction.getDirectNeighbors(pos)) {
                     if (!seenPositions.contains(directNeighbor) && canGoFromPositionToNeighbor.test(pos, directNeighbor)) {
                         int neighborDistance = getNeighborDistanceFromPositionDistance.apply(currentDistance, pos, directNeighbor);
-                        Set<Pair<Integer, Integer>> set = queue.getOrDefault(neighborDistance, new HashSet<>());
+                        Set<Tuple2<Integer, Integer>> set = queue.getOrDefault(neighborDistance, new HashSet<>());
                         set.add(directNeighbor);
                         queue.put(neighborDistance, set);
                         seenPositions.add(directNeighbor);
@@ -210,16 +212,16 @@ public final class Util {
         return Integer.MAX_VALUE;
     }
 
-    public static Pair<Integer, Integer> getNormalizedPositionOnRepeatingPattern(Pair<Integer, Integer> pos, int width, int height) {
-        int normalizedX = pos.getValue0() % width;
+    public static Tuple2<Integer, Integer> getNormalizedPositionOnRepeatingPattern(Tuple2<Integer, Integer> pos, int width, int height) {
+        int normalizedX = pos.v1 % width;
         while (normalizedX < 0) {
             normalizedX += width;
         }
-        int normalizedY = pos.getValue1() % height;
+        int normalizedY = pos.v2 % height;
         while (normalizedY < 0) {
             normalizedY += height;
         }
-        return Pair.with(normalizedX, normalizedY);
+        return Tuple.tuple(normalizedX, normalizedY);
     }
 
     public static long greatestCommonDivisor(long long1, long long2) {
@@ -275,13 +277,13 @@ public final class Util {
         return x;
     }
 
-    public static long chineseRemainderTheorem(List<Pair<Long, Long>> numbersAndRemainders) {
+    public static long chineseRemainderTheorem(List<Tuple2<Long, Long>> numbersAndRemainders) {
         long[] numbers = new long[numbersAndRemainders.size()];
         long[] remainders = new long[numbersAndRemainders.size()];
         for (int i = 0; i < numbersAndRemainders.size(); i++) {
-            Pair<Long, Long> numberAndRemainder = numbersAndRemainders.get(i);
-            numbers[i] = numberAndRemainder.getValue0();
-            remainders[i] = numberAndRemainder.getValue1();
+            Tuple2<Long, Long> numberAndRemainder = numbersAndRemainders.get(i);
+            numbers[i] = numberAndRemainder.v1;
+            remainders[i] = numberAndRemainder.v2;
         }
 
         return chineseRemainderTheorem(numbers, remainders);
@@ -307,11 +309,11 @@ public final class Util {
         return result % product;
     }
 
-    public static Graph<String, DefaultWeightedEdge> buildGraphFromMap(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> startPosition) {
+    public static Graph<String, DefaultWeightedEdge> buildGraphFromMap(Map<Tuple2<Integer, Integer>, String> map, Tuple2<Integer, Integer> startPosition) {
         return buildGraphFromMap(map, startPosition, new GraphConstructionHelper(map));
     }
 
-    public static Graph<String, DefaultWeightedEdge> buildGraphFromMap(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> startPosition, GraphConstructionHelper helper) {
+    public static Graph<String, DefaultWeightedEdge> buildGraphFromMap(Map<Tuple2<Integer, Integer>, String> map, Tuple2<Integer, Integer> startPosition, GraphConstructionHelper helper) {
         Graph<String, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
         Queue<GraphBuilderQueueElement> queue = new LinkedList<>();
         queue.add(new GraphBuilderQueueElement(startPosition, Util.findPossibleNextSteps(map, startPosition, null, helper), null, 0));
@@ -322,7 +324,7 @@ public final class Util {
         return graph;
     }
 
-    private static void buildGraph(Queue<GraphBuilderQueueElement> queue, Graph<String, DefaultWeightedEdge> graph, Map<Pair<Integer, Integer>, String> map, GraphBuilderQueueElement queueElement, GraphConstructionHelper helper) {
+    private static void buildGraph(Queue<GraphBuilderQueueElement> queue, Graph<String, DefaultWeightedEdge> graph, Map<Tuple2<Integer, Integer>, String> map, GraphBuilderQueueElement queueElement, GraphConstructionHelper helper) {
         String newNodeName = helper.getNodeName(queueElement.getNodePosition(), queueElement.getParentNode());
         if (newNodeName == null || newNodeName.equals(queueElement.getParentNode())) {
             return;
@@ -341,13 +343,13 @@ public final class Util {
             }
             addEdge(graph, queueElement.getParentNode(), newNodeName, newEdgeWeight);
         }
-        for (Pair<Integer, Integer> nextStep : queueElement.getNextSteps()) {
+        for (Tuple2<Integer, Integer> nextStep : queueElement.getNextSteps()) {
             int stepCounter = 0;
-            Pair<Integer, Integer> previousPosition = queueElement.getNodePosition();
-            Pair<Integer, Integer> currentPosition = nextStep;
+            Tuple2<Integer, Integer> previousPosition = queueElement.getNodePosition();
+            Tuple2<Integer, Integer> currentPosition = nextStep;
 
             while (true) {
-                List<Pair<Integer, Integer>> nextNextSteps = findPossibleNextSteps(map, currentPosition, Set.of(previousPosition), helper);
+                List<Tuple2<Integer, Integer>> nextNextSteps = findPossibleNextSteps(map, currentPosition, Set.of(previousPosition), helper);
                 if (helper.createNodeForPosition(currentPosition) || nextNextSteps.size() > 1) {
                     queue.add(new GraphBuilderQueueElement(currentPosition, nextNextSteps, newNodeName, stepCounter));
                     break;
@@ -362,7 +364,7 @@ public final class Util {
         }
     }
 
-    public static List<Pair<Integer, Integer>> findPossibleNextSteps(Map<Pair<Integer, Integer>, String> map, Pair<Integer, Integer> start, Set<Pair<Integer, Integer>> sources, GraphConstructionHelper helper) {
+    public static List<Tuple2<Integer, Integer>> findPossibleNextSteps(Map<Tuple2<Integer, Integer>, String> map, Tuple2<Integer, Integer> start, Set<Tuple2<Integer, Integer>> sources, GraphConstructionHelper helper) {
         return helper.getPossibleNavigationPositions(start)
                 .stream()
                 .filter(pos -> (sources == null || !sources.contains(pos)) && map.get(pos) != null && helper.isPossibleNextStep(pos))
@@ -462,23 +464,23 @@ public final class Util {
     }
 
     private static class GraphBuilderQueueElement {
-        private final Pair<Integer, Integer> nodePosition;
-        private final List<Pair<Integer, Integer>> nextSteps;
+        private final Tuple2<Integer, Integer> nodePosition;
+        private final List<Tuple2<Integer, Integer>> nextSteps;
         private final String parentNode;
         private final int distanceToParent;
 
-        private GraphBuilderQueueElement(Pair<Integer, Integer> nodePosition, List<Pair<Integer, Integer>> nextSteps, String parentNode, int distanceToParent) {
+        private GraphBuilderQueueElement(Tuple2<Integer, Integer> nodePosition, List<Tuple2<Integer, Integer>> nextSteps, String parentNode, int distanceToParent) {
             this.nodePosition = nodePosition;
             this.nextSteps = nextSteps;
             this.parentNode = parentNode;
             this.distanceToParent = distanceToParent;
         }
 
-        public Pair<Integer, Integer> getNodePosition() {
+        public Tuple2<Integer, Integer> getNodePosition() {
             return nodePosition;
         }
 
-        public List<Pair<Integer, Integer>> getNextSteps() {
+        public List<Tuple2<Integer, Integer>> getNextSteps() {
             return nextSteps;
         }
 

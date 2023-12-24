@@ -1,7 +1,8 @@
 package de.beachboys.aoc2018;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -14,7 +15,7 @@ public class Day03 extends Day {
     }
 
     public Object part2(List<String> input) {
-        Map<Pair<Integer, Integer>, Set<Integer>> positionToClaimIds = getPositionToClaimIds(input);
+        Map<Tuple2<Integer, Integer>, Set<Integer>> positionToClaimIds = getPositionToClaimIds(input);
         final Set<Integer> claimsThatAreAloneAtAnyPosition = positionToClaimIds.values().stream().filter(set -> set.size() == 1).reduce(new HashSet<>(), (set1, set2) -> {
             set1.addAll(set2);
             return set1;
@@ -28,8 +29,8 @@ public class Day03 extends Day {
         return claimsThatAreAloneAtAnyPosition.stream().findFirst().orElseThrow();
     }
 
-    private Map<Pair<Integer, Integer>, Set<Integer>> getPositionToClaimIds(List<String> input) {
-        Map<Pair<Integer, Integer>, Set<Integer>> positionToClaimIds = new HashMap<>();
+    private Map<Tuple2<Integer, Integer>, Set<Integer>> getPositionToClaimIds(List<String> input) {
+        Map<Tuple2<Integer, Integer>, Set<Integer>> positionToClaimIds = new HashMap<>();
         Pattern p = Pattern.compile("#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)");
         for (String line : input) {
             Matcher m = p.matcher(line);
@@ -41,7 +42,7 @@ public class Day03 extends Day {
                 int h = Integer.parseInt(m.group(5));
                 for (int i = x; i < x + w; i++) {
                     for (int j = y; j < y + h; j++) {
-                        Pair<Integer, Integer> position = Pair.with(i, j);
+                        Tuple2<Integer, Integer> position = Tuple.tuple(i, j);
                         positionToClaimIds.putIfAbsent(position, new HashSet<>());
                         positionToClaimIds.get(position).add(id);
                     }

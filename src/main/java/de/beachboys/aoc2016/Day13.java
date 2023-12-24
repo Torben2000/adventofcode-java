@@ -3,22 +3,23 @@ package de.beachboys.aoc2016;
 import de.beachboys.Day;
 import de.beachboys.Direction;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 
 public class Day13 extends Day {
 
-    private Pair<Integer, Integer> target = Pair.with(-1, -1);
+    private Tuple2<Integer, Integer> target = Tuple.tuple(-1, -1);
     private int maxSteps = Integer.MAX_VALUE;
     private int favoriteNumber;
-    private final Set<Pair<Integer, Integer>> visitedPositions = new HashSet<>();
-    private final Deque<Pair<Integer, Pair<Integer, Integer>>> positionsToCheck = new LinkedList<>();
+    private final Set<Tuple2<Integer, Integer>> visitedPositions = new HashSet<>();
+    private final Deque<Tuple2<Integer, Tuple2<Integer, Integer>>> positionsToCheck = new LinkedList<>();
 
     public Object part1(List<String> input) {
         int targetX = Util.getIntValueFromUser("Target coordinate X", 31, io);
         int targetY = Util.getIntValueFromUser("Target coordinate Y", 39, io);
-        target = Pair.with(targetX, targetY);
+        target = Tuple.tuple(targetX, targetY);
         return runLogicAndReturnNumberOfStepsToReachTarget(input);
     }
 
@@ -30,18 +31,18 @@ public class Day13 extends Day {
 
     private int runLogicAndReturnNumberOfStepsToReachTarget(List<String> input) {
         favoriteNumber = Integer.parseInt(input.get(0));
-        Pair<Integer, Integer> start = Pair.with(1, 1);
+        Tuple2<Integer, Integer> start = Tuple.tuple(1, 1);
         queueNextPosition(start, 0);
         while (!positionsToCheck.isEmpty()) {
-            Pair<Integer, Pair<Integer, Integer>> positionToCheck = positionsToCheck.poll();
-            if (positionToCheck.getValue0() < maxSteps) {
+            Tuple2<Integer, Tuple2<Integer, Integer>> positionToCheck = positionsToCheck.poll();
+            if (positionToCheck.v1 < maxSteps) {
                 for (Direction dir : Direction.values()) {
-                    Pair<Integer, Integer> nextPosition = dir.move(positionToCheck.getValue1(), 1);
+                    Tuple2<Integer, Integer> nextPosition = dir.move(positionToCheck.v2, 1);
                     if (target.equals(nextPosition)) {
-                        return positionToCheck.getValue0() + 1;
+                        return positionToCheck.v1 + 1;
                     }
                     if (isValidPosition(nextPosition) && !visitedPositions.contains(nextPosition) && isOpenSpace(nextPosition)) {
-                        queueNextPosition(nextPosition, positionToCheck.getValue0() + 1);
+                        queueNextPosition(nextPosition, positionToCheck.v1 + 1);
                     }
                 }
             }
@@ -49,18 +50,18 @@ public class Day13 extends Day {
         return -1;
     }
 
-    private void queueNextPosition(Pair<Integer, Integer> nextPosition, int numberOfStepsToReachNextPosition) {
+    private void queueNextPosition(Tuple2<Integer, Integer> nextPosition, int numberOfStepsToReachNextPosition) {
         visitedPositions.add(nextPosition);
-        positionsToCheck.add(Pair.with(numberOfStepsToReachNextPosition, nextPosition));
+        positionsToCheck.add(Tuple.tuple(numberOfStepsToReachNextPosition, nextPosition));
     }
 
-    private boolean isValidPosition(Pair<Integer, Integer> position) {
-        return position.getValue0() >= 0 && position.getValue1() >= 0;
+    private boolean isValidPosition(Tuple2<Integer, Integer> position) {
+        return position.v1 >= 0 && position.v2 >= 0;
     }
 
-    private boolean isOpenSpace(Pair<Integer, Integer> position) {
-        int x = position.getValue0();
-        int y = position.getValue1();
+    private boolean isOpenSpace(Tuple2<Integer, Integer> position) {
+        int x = position.v1;
+        int y = position.v2;
         int sum = x*x + 3*x + 2*x*y + y + y*y + favoriteNumber;
         String binaryString = Integer.toBinaryString(sum);
         int numberOfOnes = binaryString.replace("0", "").length();

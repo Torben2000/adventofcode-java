@@ -2,7 +2,8 @@ package de.beachboys.aoc2022;
 
 import de.beachboys.Day;
 import de.beachboys.Util;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 
@@ -17,23 +18,23 @@ public class Day14 extends Day {
     }
 
     private static int runLogic(List<String> input, boolean stopBelowLowestLine) {
-        Set<Pair<Integer, Integer>> rocks = parseRocks(input);
-        int lowestLineOfRocks = rocks.stream().map(Pair::getValue1).max(Integer::compareTo).orElseThrow();
+        Set<Tuple2<Integer, Integer>> rocks = parseRocks(input);
+        int lowestLineOfRocks = rocks.stream().map(Tuple2::v2).max(Integer::compareTo).orElseThrow();
 
-        Set<Pair<Integer, Integer>> sands = new HashSet<>();
+        Set<Tuple2<Integer, Integer>> sands = new HashSet<>();
         while (true) {
-            Pair<Integer, Integer> newSandPosition = Pair.with(500, 0);
-            Pair<Integer, Integer> oldSandPosition = null;
+            Tuple2<Integer, Integer> newSandPosition = Tuple.tuple(500, 0);
+            Tuple2<Integer, Integer> oldSandPosition = null;
             while (!newSandPosition.equals(oldSandPosition)) {
                 oldSandPosition = newSandPosition;
-                if (oldSandPosition.getValue1() > lowestLineOfRocks) {
+                if (oldSandPosition.v2 > lowestLineOfRocks) {
                     if (stopBelowLowestLine) {
                         return sands.size();
                     }
                     break;
                 }
                 for (int xOffset : new int[]{0, -1, 1}) {
-                    Pair<Integer, Integer> possibleNewSandPosition = Pair.with(oldSandPosition.getValue0() + xOffset, oldSandPosition.getValue1() + 1);
+                    Tuple2<Integer, Integer> possibleNewSandPosition = Tuple.tuple(oldSandPosition.v1 + xOffset, oldSandPosition.v2 + 1);
                     if (!rocks.contains(possibleNewSandPosition) && !sands.contains(possibleNewSandPosition)) {
                         newSandPosition = possibleNewSandPosition;
                         break;
@@ -51,14 +52,14 @@ public class Day14 extends Day {
         return sands.size();
     }
 
-    private static Set<Pair<Integer, Integer>> parseRocks(List<String> input) {
-        Set<Pair<Integer, Integer>> rocks = new HashSet<>();
+    private static Set<Tuple2<Integer, Integer>> parseRocks(List<String> input) {
+        Set<Tuple2<Integer, Integer>> rocks = new HashSet<>();
         for (String line : input) {
             String[] cornersAsStrings = line.split(" -> ");
-            List<Pair<Integer, Integer>> corners = new ArrayList<>();
+            List<Tuple2<Integer, Integer>> corners = new ArrayList<>();
             for (String cornerAsString : cornersAsStrings) {
                 String[] cornerAsStringArray = cornerAsString.split(",");
-                corners.add(Pair.with(Integer.parseInt(cornerAsStringArray[0]), Integer.parseInt(cornerAsStringArray[1])));
+                corners.add(Tuple.tuple(Integer.parseInt(cornerAsStringArray[0]), Integer.parseInt(cornerAsStringArray[1])));
             }
             for (int j = 0; j < corners.size() - 1; j++) {
                 rocks.addAll(Util.drawLine(corners.get(j), corners.get(j + 1)));
@@ -67,12 +68,12 @@ public class Day14 extends Day {
         return rocks;
     }
 
-    private static void paintRocksAndSands(Set<Pair<Integer, Integer>> rocks, Set<Pair<Integer, Integer>> sands) {
-        Map<Pair<Integer, Integer>, String> map = new HashMap<>();
-        for (Pair<Integer, Integer> rock : rocks) {
+    private static void paintRocksAndSands(Set<Tuple2<Integer, Integer>> rocks, Set<Tuple2<Integer, Integer>> sands) {
+        Map<Tuple2<Integer, Integer>, String> map = new HashMap<>();
+        for (Tuple2<Integer, Integer> rock : rocks) {
             map.put(rock, "*");
         }
-        for (Pair<Integer, Integer> rock : sands) {
+        for (Tuple2<Integer, Integer> rock : sands) {
             map.put(rock, "o");
         }
         System.out.println(Util.paintMap(map));

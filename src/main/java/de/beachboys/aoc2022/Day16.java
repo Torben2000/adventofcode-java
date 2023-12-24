@@ -1,7 +1,8 @@
 package de.beachboys.aoc2022;
 
 import de.beachboys.Day;
-import org.javatuples.*;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 public class Day16 extends Day {
 
     private static final Pattern LINE_PATTERN = Pattern.compile("Valve ([A-Z]+) has flow rate=([0-9]+); tunnel(s*) lead(s*) to valve(s*) (.*)");
-    private final Map<Triplet<String, Integer, Set<String>>, Integer> cache = new HashMap<>();
+    private final Map<Tuple3<String, Integer, Set<String>>, Integer> cache = new HashMap<>();
     private final Map<String, Integer> flowValues = new HashMap<>();
     private final Map<String, Map<String, Integer>> distances = new HashMap<>();
     public Object part1(List<String> input) {
@@ -58,7 +59,7 @@ public class Day16 extends Day {
         if (remainingTime <= 0) {
             return 0;
         }
-        Triplet<String, Integer, Set<String>> cacheKey = Triplet.with(currentValve, remainingTime, closedValves);
+        Tuple3<String, Integer, Set<String>> cacheKey = Tuple.tuple(currentValve, remainingTime, closedValves);
         if (!cache.containsKey(cacheKey)) {
             int returnValue = 0;
             HashSet<String> newClosedValves = new HashSet<>(closedValves);

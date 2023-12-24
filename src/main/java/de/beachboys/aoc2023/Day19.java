@@ -1,7 +1,9 @@
 package de.beachboys.aoc2023;
 
 import de.beachboys.Day;
-import org.javatuples.Pair;
+import org.jooq.lambda.tuple.Range;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -31,26 +33,26 @@ public class Day19 extends Day {
     public Object part2(List<String> input) {
         parseInput(input);
 
-        Deque<Pair<String, RatingRanges>> queue = new LinkedList<>();
+        Deque<Tuple2<String, RatingRanges>> queue = new LinkedList<>();
         Set<RatingRanges> acceptedRanges = new HashSet<>();
-        queue.add(Pair.with("in", new RatingRanges(1, 4000, 1, 4000, 1, 4000, 1, 4000)));
+        queue.add(Tuple.tuple("in", new RatingRanges(1, 4000, 1, 4000, 1, 4000, 1, 4000)));
 
         while (!queue.isEmpty()) {
-            Pair<String, RatingRanges> queueEntry = queue.poll();
-            RatingRanges ranges = queueEntry.getValue1();
-            if ("A".equals(queueEntry.getValue0())) {
-                acceptedRanges.add(queueEntry.getValue1());
-            } else if (!"R".equals(queueEntry.getValue0())) {
-                List<Rule> rules = workflows.get(queueEntry.getValue0());
+            Tuple2<String, RatingRanges> queueEntry = queue.poll();
+            RatingRanges ranges = queueEntry.v2;
+            if ("A".equals(queueEntry.v1)) {
+                acceptedRanges.add(queueEntry.v2);
+            } else if (!"R".equals(queueEntry.v1)) {
+                List<Rule> rules = workflows.get(queueEntry.v1);
                 for (Rule rule : rules) {
                     if (rule.hasCondition) {
-                        Pair<Integer, Integer> newRange = getNewRange(rule.comparator, rule.compareValue, ranges.getRange(rule.varName));
+                        Range<Integer> newRange = getNewRange(rule.comparator, rule.compareValue, ranges.getRange(rule.varName));
                         RatingRanges newRanges = new RatingRanges(ranges);
                         newRanges.setRange(rule.varName, newRange);
-                        queue.add(Pair.with(rule.resultingWorkflowName, newRanges));
+                        queue.add(Tuple.tuple(rule.resultingWorkflowName, newRanges));
                         ranges.setRange(rule.varName, getRemainingRange(ranges.getRange(rule.varName), newRange));
                     } else {
-                        queue.add(Pair.with(rule.resultingWorkflowName, ranges));
+                        queue.add(Tuple.tuple(rule.resultingWorkflowName, ranges));
                     }
                 }
             }
@@ -89,19 +91,19 @@ public class Day19 extends Day {
         }
     }
 
-    private static Pair<Integer, Integer> getRemainingRange(Pair<Integer, Integer> oldRange, Pair<Integer, Integer> newRange) {
-        if (Objects.equals(oldRange.getValue0(), newRange.getValue0())) {
-            return Pair.with(newRange.getValue1() + 1, oldRange.getValue1());
+    private static Range<Integer> getRemainingRange(Range<Integer> oldRange, Range<Integer> newRange) {
+        if (Objects.equals(oldRange.v1, newRange.v1)) {
+            return Tuple.range(newRange.v2 + 1, oldRange.v2);
         } else {
-            return Pair.with(oldRange.getValue0(), newRange.getValue0() - 1);
+            return Tuple.range(oldRange.v1, newRange.v1 - 1);
         }
     }
 
-    private Pair<Integer, Integer> getNewRange(char comparator, int compareValue, Pair<Integer, Integer> oldRange) {
+    private Range<Integer> getNewRange(char comparator, int compareValue, Range<Integer> oldRange) {
         if (comparator == '>') {
-            return Pair.with(Math.max(compareValue + 1, oldRange.getValue0()), oldRange.getValue1());
+            return Tuple.range(Math.max(compareValue + 1, oldRange.v1), oldRange.v2);
         } else {
-            return Pair.with(oldRange.getValue0(), Math.min(compareValue - 1, oldRange.getValue1()));
+            return Tuple.range(oldRange.v1, Math.min(compareValue - 1, oldRange.v2));
         }
     }
 
@@ -201,18 +203,18 @@ public class Day19 extends Day {
             this(r.minX, r.maxX, r.minM, r.maxM, r.minA, r.maxA, r.minS, r.maxS);
         }
 
-        public Pair<Integer, Integer> getRange(char varName) {
+        public Range<Integer> getRange(char varName) {
             switch (varName) {
-                case 'x' -> {return Pair.with(minX, maxX);}
-                case 'm' -> {return Pair.with(minM, maxM);}
-                case 'a' -> {return Pair.with(minA, maxA);}
-                case 's' -> {return Pair.with(minS, maxS);}
+                case 'x' -> {return Tuple.range(minX, maxX);}
+                case 'm' -> {return Tuple.range(minM, maxM);}
+                case 'a' -> {return Tuple.range(minA, maxA);}
+                case 's' -> {return Tuple.range(minS, maxS);}
                 default -> throw new IllegalArgumentException();
             }
         }
 
-        public void setRange(char varName, Pair<Integer, Integer> range) {
-            setRange(varName, range.getValue0(), range.getValue1());
+        public void setRange(char varName, Range<Integer> range) {
+            setRange(varName, range.v1, range.v2);
         }
 
         public void setRange(char varName, int min, int max) {
