@@ -17,26 +17,17 @@ public class Day12 extends Day {
             String op = command.substring(0, 1);
             int intValue = Integer.parseInt(command.substring(1));
             switch (op) {
-                case "N":
-                    pos = Tuple.tuple(pos.v1, pos.v2 - intValue);
-                    break;
-                case "S":
-                    pos = Tuple.tuple(pos.v1, pos.v2 + intValue);
-                    break;
-                case "E":
-                    pos = Tuple.tuple(pos.v1 + intValue, pos.v2);
-                    break;
-                case "W":
-                    pos = Tuple.tuple(pos.v1 - intValue, pos.v2);
+                case "N", "W", "E", "S":
+                    pos = Direction.fromString(op).moveLong(pos, intValue);
                     break;
                 case "L":
-                    curDir = turnShip(true, curDir, intValue / 90);
+                    curDir = curDir.turnLeft( intValue / 90);
                     break;
                 case "R":
-                    curDir = turnShip(false, curDir, intValue / 90);
+                    curDir = curDir.turnRight( intValue / 90);
                     break;
                 case "F":
-                    pos = moveInDirection(pos, curDir, intValue);
+                    pos = curDir.moveLong(pos, intValue);
                     break;
             }
         }
@@ -50,17 +41,8 @@ public class Day12 extends Day {
             String op = command.substring(0, 1);
             int intValue = Integer.parseInt(command.substring(1));
             switch (op) {
-                case "N":
-                    wayPoint = Tuple.tuple(wayPoint.v1, wayPoint.v2 - intValue);
-                    break;
-                case "S":
-                    wayPoint = Tuple.tuple(wayPoint.v1, wayPoint.v2 + intValue);
-                    break;
-                case "E":
-                    wayPoint = Tuple.tuple(wayPoint.v1 + intValue, wayPoint.v2);
-                    break;
-                case "W":
-                    wayPoint = Tuple.tuple(wayPoint.v1 - intValue, wayPoint.v2);
+                case "N", "W", "E", "S":
+                    wayPoint = Direction.fromString(op).moveLong(wayPoint, intValue);
                     break;
                 case "L":
                     wayPoint = turnWayPoint(true, wayPoint, intValue / 90);
@@ -76,14 +58,6 @@ public class Day12 extends Day {
         return Math.abs(pos.v1) + Math.abs(pos.v2);
     }
 
-    private Direction turnShip(boolean turnLeft, Direction currentDirection, int turnCount) {
-        Direction newDirection = currentDirection;
-        for (int i = 0; i < turnCount; i++) {
-            newDirection = turnShip(turnLeft, newDirection);
-        }
-        return newDirection;
-    }
-
     private Tuple2<Long, Long> turnWayPoint(boolean turnLeft, Tuple2<Long, Long> currentWayPoint, int turnCount) {
         Tuple2<Long, Long> newWayPoint = currentWayPoint;
         for (int i = 0; i < turnCount; i++) {
@@ -92,28 +66,10 @@ public class Day12 extends Day {
         return newWayPoint;
     }
 
-    private Direction turnShip(boolean turnLeft, Direction currentDirection) {
-        return switch (currentDirection) {
-            case NORTH -> turnLeft ? Direction.WEST : Direction.EAST;
-            case EAST -> turnLeft ? Direction.NORTH : Direction.SOUTH;
-            case SOUTH -> turnLeft ? Direction.EAST : Direction.WEST;
-            case WEST -> turnLeft ? Direction.SOUTH : Direction.NORTH;
-        };
-    }
-
     private Tuple2<Long, Long> turnWayPoint(boolean turnLeft, Tuple2<Long, Long> currentWayPoint) {
         long newX = turnLeft ? currentWayPoint.v2 : currentWayPoint.v2 * -1;
         long newY = turnLeft ? currentWayPoint.v1 * -1 : currentWayPoint.v1;
         return Tuple.tuple(newX, newY);
-    }
-
-    private Tuple2<Long, Long> moveInDirection(Tuple2<Long, Long> currentPosition, Direction direction, Integer distance) {
-        return switch (direction) {
-            case NORTH -> Tuple.tuple(currentPosition.v1, currentPosition.v2 - distance);
-            case EAST -> Tuple.tuple(currentPosition.v1 + distance, currentPosition.v2);
-            case SOUTH -> Tuple.tuple(currentPosition.v1, currentPosition.v2 + distance);
-            case WEST -> Tuple.tuple(currentPosition.v1 - distance, currentPosition.v2);
-        };
     }
 
 }

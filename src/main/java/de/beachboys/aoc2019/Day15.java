@@ -1,6 +1,7 @@
 package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
+import de.beachboys.Direction;
 import de.beachboys.IOHelper;
 import de.beachboys.Util;
 import org.jooq.lambda.tuple.Tuple;
@@ -12,56 +13,36 @@ import java.util.stream.Collectors;
 
 public class Day15 extends Day {
 
-    private enum Direction {
-        NORTH(0, -1, 1), SOUTH(0, 1, 2), WEST(-1, 0, 3), EAST(1, 0, 4);
-
-        public final String command;
-        public final int stepX;
-        public final int stepY;
-
-        Direction(int stepX, int stepY, int command) {
-            this.stepX = stepX;
-            this.stepY = stepY;
-            this.command = command + "";
-        }
-    }
-
     private class Position implements Comparable<Position> {
 
-        public final int x;
-        public final int y;
+        public final Tuple2<Integer, Integer> pos;
         public final List<Position> pathFromStart;
         public boolean isWall;
         public final Map<Direction, Position> neighbors = new HashMap<>();
 
-        public Position(int x, int y, List<Position> parentPathFromStart) {
-            this.x = x;
-            this.y = y;
+        public Position(Tuple2<Integer, Integer> pos, List<Position> parentPathFromStart) {
+            this.pos = pos;
             this.pathFromStart = new ArrayList<>(parentPathFromStart);
             this.pathFromStart.add(this);
             if (positionMap != null) {
                 for (Direction dir : Direction.values()) {
-                    neighbors.put(dir, positionMap.get(Tuple.tuple(x + dir.stepX, y + dir.stepY)));
+                    neighbors.put(dir, positionMap.get(dir.move(pos, 1)));
                 }
             }
         }
 
         @Override
         public int compareTo(Position o) {
-            return Tuple.tuple(x, y).compareTo(Tuple.tuple(o.x, o.y));
+            return pos.compareTo(o.pos);
         }
 
         @Override
         public String toString() {
-            return "{[" + x + ", " + y + "] wall:" + isWall + '}';
+            return "{" + pos + " wall:" + isWall + '}';
         }
     }
 
-    private static final Map<Direction, Direction> OPPOSITE_DIRS = Map.of(
-            Direction.NORTH, Direction.SOUTH,
-            Direction.SOUTH, Direction.NORTH,
-            Direction.WEST, Direction.EAST,
-            Direction.EAST, Direction.WEST);
+    Map<Direction, String> commandMap = Map.of(Direction.NORTH, "1", Direction.SOUTH, "2", Direction.WEST, "3", Direction.EAST, "4");
 
     private final IntcodeComputer computer = new IntcodeComputer();
     private int lastOutput;
@@ -78,7 +59,7 @@ public class Day15 extends Day {
 
     public Object part1(List<String> input) {
         List<Long> list = Util.parseLongCsv(input.getFirst());
-        init(0, 0);
+        init(Tuple.tuple(0, 0));
         runComputer(list, this::handleFoundOxygenSystemPart1);
         paintMap();
         return oxygenSystemPosition.pathFromStart.size() - 1;
@@ -86,16 +67,16 @@ public class Day15 extends Day {
 
     public Object part2(List<String> input) {
         List<Long> list = Util.parseLongCsv(input.getFirst());
-        init(0, 0);
+        init(Tuple.tuple(0, 0));
         runComputer(list, this::handleFoundOxygenSystemPart2);
         paintMap();
         return positionsToInvestigate.lastKey() - 2;
     }
 
-    private void init(int initialX, int initialY) {
+    private void init(Tuple2<Integer, Integer> initialPos) {
         lastOutput = -1;
-        currentPosition = new Position(initialX, initialY, new Stack<>());
-        positionMap = new HashMap<>(Map.of(Tuple.tuple(initialX, initialY), currentPosition));
+        currentPosition = new Position(initialPos, new Stack<>());
+        positionMap = new HashMap<>(Map.of(initialPos, currentPosition));
         positionsToInvestigate = new TreeMap<>(Map.of(0, new TreeSet<>(Set.of(currentPosition))));
         currentPositionToInvestigate = currentPosition;
         navigationPathToCurrentPositionToInvestigate = new ArrayList<>();
@@ -152,7 +133,7 @@ public class Day15 extends Day {
         oxygenSystemPosition = nextPosition;
         computer.setKillSwitch(true);
         // don't care about last direction
-        return Direction.NORTH.command;
+        return commandMap.get(Direction.NORTH);
     }
 
     private String handleFoundOxygenSystemPart2() {
@@ -160,7 +141,7 @@ public class Day15 extends Day {
             return handleSuccessfulMove();
         } else {
             oxygenSystemPosition = nextPosition;
-            init(oxygenSystemPosition.x, oxygenSystemPosition.y);
+            init(oxygenSystemPosition.pos);
             return investigateCurrentPosition();
         }
     }
@@ -170,7 +151,7 @@ public class Day15 extends Day {
         if (!dirs.isEmpty()) {
             Direction dir = dirs.getFirst();
             prepareMoveToDirectionWithUnknownTarget(dir);
-            return dir.command;
+            return commandMap.get(dir);
         } else {
             return moveToNextPositionToInvestigate();
         }
@@ -196,7 +177,7 @@ public class Day15 extends Day {
     }
 
     private String getNavigationCommand() {
-        return getDirectionForPosition(nextPosition).command;
+        return commandMap.get(getDirectionForPosition(nextPosition));
     }
 
     private String moveAlongPathToPositionToInvestigate() {
@@ -273,12 +254,10 @@ public class Day15 extends Day {
     private List<Direction> getPossibleTarget(Position position) {
         List<Direction> dirs = new ArrayList<>();
         for (Direction dir : Direction.values()) {
-            int newX = position.x + dir.stepX;
-            int newY = position.y + dir.stepY;
-            Position nextPosition = positionMap.get(Tuple.tuple(newX, newY));
+            Position nextPosition = positionMap.get(dir.move(position.pos, 1));
             if (nextPosition != null) {
                 position.neighbors.put(dir, nextPosition);
-                nextPosition.neighbors.put(OPPOSITE_DIRS.get(dir), position);
+                nextPosition.neighbors.put(dir.getOpposite(), position);
             } else {
                 dirs.add(dir);
             }
@@ -287,11 +266,10 @@ public class Day15 extends Day {
     }
 
     private void prepareMoveToDirectionWithUnknownTarget(Direction dir) {
-        int newX = currentPosition.x + dir.stepX;
-        int newY = currentPosition.y + dir.stepY;
-        nextPosition = new Position(newX, newY, currentPosition.pathFromStart);
+        Tuple2<Integer, Integer> newPos = dir.move(currentPosition.pos, 1);
+        nextPosition = new Position(newPos, currentPosition.pathFromStart);
         currentPosition.neighbors.put(dir, nextPosition);
-        positionMap.put(Tuple.tuple(newX, newY), nextPosition);
+        positionMap.put(newPos, nextPosition);
     }
 
     private Set<Position> getSetForPositionToInvestigate(int size) {

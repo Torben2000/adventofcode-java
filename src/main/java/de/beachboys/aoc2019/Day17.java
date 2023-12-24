@@ -1,9 +1,9 @@
 package de.beachboys.aoc2019;
 
 import de.beachboys.Day;
+import de.beachboys.Direction;
 import de.beachboys.IOHelper;
 import de.beachboys.Util;
-import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
@@ -15,18 +15,6 @@ import java.util.stream.Collectors;
 
 public class Day17 extends Day {
 
-    private enum Direction {
-        NORTH(0, -1), SOUTH(0, 1), WEST(-1, 0), EAST(1, 0);
-
-        public final int stepX;
-        public final int stepY;
-
-        Direction(int stepX, int stepY) {
-            this.stepX = stepX;
-            this.stepY = stepY;
-        }
-
-    }
     private String imageString = "";
 
     private Map<Tuple2<Integer, Integer>, String> imageMap = new HashMap<>();
@@ -141,12 +129,11 @@ public class Day17 extends Day {
     protected int calculateAlignmentSum(Map<Tuple2<Integer, Integer>, String> imageMap) {
         int total = 0;
         for (Tuple2<Integer, Integer> point : imageMap.keySet()) {
-            String self = imageMap.get(point);
-            String north = imageMap.get(Tuple.tuple(point.v1, point.v2 - 1));
-            String south = imageMap.get(Tuple.tuple(point.v1, point.v2 + 1));
-            String west = imageMap.get(Tuple.tuple(point.v1 - 1, point.v2));
-            String east = imageMap.get(Tuple.tuple(point.v1 + 1, point.v2));
-            if (isScaffold(self) && isScaffold(north) && isScaffold(south) && isScaffold(west) && isScaffold(east)) {
+            boolean scaffold = isScaffold(imageMap.get(point));
+            for (Direction dir : Direction.values()) {
+                scaffold &= isScaffold(imageMap.get(dir.move(point, 1)));
+            }
+            if (scaffold) {
                 total += point.v1 * point.v2;
             }
         }
@@ -164,7 +151,7 @@ public class Day17 extends Day {
     protected String buildUnoptimizedInputString(Map<Tuple2<Integer, Integer>, String> imageMap) {
         StringBuilder inputString = new StringBuilder();
         Map.Entry<Tuple2<Integer, Integer>, String> robot = imageMap.entrySet().stream().filter(entry -> isRobot(entry.getValue())).findFirst().orElseThrow();
-        Direction currentDirection = getRobotDirection(robot.getValue());
+        Direction currentDirection = Direction.fromString(robot.getValue());
         Tuple2<Integer, Integer> currentPosition = robot.getKey();
         Direction newDirection = getNewDirection(imageMap, currentDirection, currentPosition);
         while (newDirection != null) {
@@ -187,22 +174,16 @@ public class Day17 extends Day {
         Tuple2<Integer, Integer> nextPosition = currentPosition;
         do {
             newPosition = nextPosition;
-            nextPosition = getNewPosition(newPosition, direction);
+            nextPosition = direction.move(newPosition, 1);
         } while (isScaffold(imageMap.get(nextPosition)));
         return newPosition;
     }
 
     private String getTurnCommand(Direction currentDirection, Direction newDirection) {
-        if (currentDirection == Direction.NORTH && newDirection == Direction.EAST
-                || currentDirection == Direction.EAST && newDirection == Direction.SOUTH
-                || currentDirection == Direction.SOUTH && newDirection == Direction.WEST
-                || currentDirection == Direction.WEST && newDirection == Direction.NORTH) {
+        if (newDirection == currentDirection.turnRight()) {
             return "R";
         }
-        if (currentDirection == Direction.NORTH && newDirection == Direction.WEST
-                || currentDirection == Direction.WEST && newDirection == Direction.SOUTH
-                || currentDirection == Direction.SOUTH && newDirection == Direction.EAST
-                || currentDirection == Direction.EAST && newDirection == Direction.NORTH) {
+        if (newDirection == currentDirection.turnLeft()) {
             return "L";
         }
         throw new IllegalArgumentException("Turn not possible");
@@ -217,26 +198,12 @@ public class Day17 extends Day {
 
     private Direction getNewDirection(Map<Tuple2<Integer, Integer>, String> imageMap, Tuple2<Integer, Integer> currentPosition, List<Direction> possibleNewDirections) {
         for (Direction newDirection : possibleNewDirections) {
-            Tuple2<Integer, Integer> newPosition = getNewPosition(currentPosition, newDirection);
+            Tuple2<Integer, Integer> newPosition = newDirection.move(currentPosition, 1);
             if (isScaffold(imageMap.get(newPosition))) {
                 return newDirection;
             }
         }
         return null;
-    }
-
-    private Tuple2<Integer, Integer> getNewPosition(Tuple2<Integer, Integer> currentPosition, Direction direction) {
-        return Tuple.tuple(currentPosition.v1 + direction.stepX, currentPosition.v2 + direction.stepY);
-    }
-
-    private Direction getRobotDirection(String mapString) {
-        return switch (mapString) {
-            case "^" -> Direction.NORTH;
-            case "v" -> Direction.SOUTH;
-            case "<" -> Direction.WEST;
-            case ">" -> Direction.EAST;
-            default -> throw new IllegalArgumentException("Unknown robot String");
-        };
     }
 
 }

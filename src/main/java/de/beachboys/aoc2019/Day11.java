@@ -1,9 +1,6 @@
 package de.beachboys.aoc2019;
 
-import de.beachboys.Day;
-import de.beachboys.IOHelper;
-import de.beachboys.OCR;
-import de.beachboys.Util;
+import de.beachboys.*;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -14,17 +11,13 @@ import java.util.Map;
 
 public class Day11 extends Day {
 
-    private enum Direction {
-        UP, DOWN, RIGHT, LEFT
-    }
-
     private final IntcodeComputer computer = new IntcodeComputer();
 
     private final Map<Tuple2<Integer, Integer>, String> colorMap = new HashMap<>();
 
     private Tuple2<Integer, Integer> robotPosition = Tuple.tuple(0, 0);
 
-    private Direction currentDirection = Direction.UP;
+    private Direction currentDirection = Direction.NORTH;
 
     private boolean isInNavigationMode = false;
 
@@ -60,37 +53,11 @@ public class Day11 extends Day {
 
     private void turnRobot(Object turnInfo) {
         boolean turnLeft = turnInfo.toString().equals("0");
-        switch (currentDirection) {
-            case UP:
-                currentDirection = turnLeft ? Direction.LEFT : Direction.RIGHT;
-                break;
-            case RIGHT:
-                currentDirection = turnLeft ? Direction.UP : Direction.DOWN;
-                break;
-            case DOWN:
-                currentDirection = turnLeft ? Direction.RIGHT : Direction.LEFT;
-                break;
-            case LEFT:
-                currentDirection = turnLeft ? Direction.DOWN : Direction.UP;
-                break;
-        }
+        currentDirection = currentDirection.turn(turnLeft);
     }
 
     private void moveRobot() {
-        switch (currentDirection) {
-            case UP:
-                robotPosition = Tuple.tuple(robotPosition.v1, robotPosition.v2 - 1);
-                break;
-            case RIGHT:
-                robotPosition = Tuple.tuple(robotPosition.v1 + 1, robotPosition.v2);
-                break;
-            case DOWN:
-                robotPosition = Tuple.tuple(robotPosition.v1, robotPosition.v2 + 1);
-                break;
-            case LEFT:
-                robotPosition = Tuple.tuple(robotPosition.v1 - 1, robotPosition.v2);
-                break;
-        }
+        robotPosition = currentDirection.move(robotPosition, 1);
     }
 
     private String getCurrentColor() {

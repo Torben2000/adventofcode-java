@@ -32,11 +32,27 @@ public enum Direction {
         return Tuple.tuple(currentPosition.v1 + distance * stepX, currentPosition.v2 + distance * stepY);
     }
 
+    public Tuple2<Long, Long> moveLong(Tuple2<Long, Long> currentPosition, long distance) {
+        return Tuple.tuple(currentPosition.v1 + distance * stepX, currentPosition.v2 + distance * stepY);
+    }
+
     public Direction turn(boolean left) {
+        return turn(left, 1);
+    }
+
+    public Direction turn(boolean left, int count) {
         if (left) {
-            return turnLeft();
+            return turnLeft(count);
         }
-        return turnRight();
+        return turnRight(count);
+    }
+
+    public Direction turnLeft(int count) {
+        Direction newDir = this;
+        for (int i = 0; i < count % values().length; i++) {
+            newDir = newDir.turnLeft();
+        }
+        return newDir;
     }
 
     public Direction turnLeft() {
@@ -46,6 +62,14 @@ public enum Direction {
             case SOUTH -> EAST;
             case EAST -> NORTH;
         };
+    }
+
+    public Direction turnRight(int count) {
+        Direction newDir = this;
+        for (int i = 0; i < count % values().length; i++) {
+            newDir = newDir.turnRight();
+        }
+        return newDir;
     }
 
     public Direction turnRight() {
