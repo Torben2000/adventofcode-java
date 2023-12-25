@@ -15,15 +15,25 @@ public class Day25Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("jqt: rhn xhk nvd",
+                        "rsh: frs pzl lsr",
+                        "xhk: hfx",
+                        "cmg: qnr nvd lhk bvb",
+                        "rhn: xhk bvb hfx",
+                        "bvb: xhk hfx",
+                        "pzl: lsr hfx nvd",
+                        "qnr: nvd",
+                        "ntq: jqt hfx bvb xhk",
+                        "nvd: lhk",
+                        "lsr: lhk",
+                        "rzs: qnr cmg lsr rsh",
+                        "frs: qnr lhk lsr"), 54, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("Nothing to see here"), "There is no puzzle! :-)", null)
         );
     }
 
