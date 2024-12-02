@@ -15,16 +15,24 @@ public class Day02Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("7 6 4 2 1",
+                        "1 2 7 8 9",
+                        "9 7 6 2 1",
+                        "1 3 2 4 5",
+                        "8 6 4 4 1",
+                        "1 3 6 7 9"), 2, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
-        );
+                Arguments.of(List.of("7 6 4 2 1",
+                        "1 2 7 8 9",
+                        "9 7 6 2 1",
+                        "1 3 2 4 5",
+                        "8 6 4 4 1",
+                        "1 3 6 7 9"), 4, null)        );
     }
 
     @ParameterizedTest
