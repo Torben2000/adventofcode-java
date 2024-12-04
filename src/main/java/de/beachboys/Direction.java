@@ -91,11 +91,34 @@ public enum Direction {
     }
 
     public static Set<Tuple2<Integer, Integer>> getDirectNeighbors(Tuple2<Integer, Integer> position) {
+        return getDirectNeighbors(position, false);
+    }
+
+    private static Set<Tuple2<Integer, Integer>> getDirectNeighbors(Tuple2<Integer, Integer> position, boolean includingDiagonally) {
         Set<Tuple2<Integer, Integer>> neighbors = new HashSet<>();
         for (Direction dir : values()) {
             neighbors.add(dir.move(position, 1));
+            if (includingDiagonally) {
+                neighbors.add(dir.moveDiagonallyRight(position, 1));
+            }
         }
         return neighbors;
+    }
+
+    public Tuple2<Integer, Integer> moveDiagonallyLeft(Tuple2<Integer, Integer> currentPosition, int distance) {
+        return turnLeft().move(move(currentPosition, distance), distance);
+    }
+
+    public Tuple2<Integer, Integer> moveDiagonallyRight(Tuple2<Integer, Integer> currentPosition, int distance) {
+        return turnRight().move(move(currentPosition, distance), distance);
+    }
+
+    public Tuple2<Long, Long> moveDiagonallyLeftLong(Tuple2<Long, Long> currentPosition, int distance) {
+        return turnLeft().moveLong(moveLong(currentPosition, distance), distance);
+    }
+
+    public Tuple2<Long, Long> moveDiagonallyRightLong(Tuple2<Long, Long> currentPosition, int distance) {
+        return turnRight().moveLong(moveLong(currentPosition, distance), distance);
     }
 
 }

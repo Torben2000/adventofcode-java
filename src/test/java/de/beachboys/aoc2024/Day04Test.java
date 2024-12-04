@@ -15,15 +15,31 @@ public class Day04Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("MMMSXXMASM",
+                        "MSAMXMSMSA",
+                        "AMXSXMAAMM",
+                        "MSAMASMSMX",
+                        "XMASAMXAMM",
+                        "XXAMMXXAMA",
+                        "SMSMSASXSS",
+                        "SAXAMASAAA",
+                        "MAMMMXMMMM",
+                        "MXMXAXMASX"), "18", null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("MMMSXXMASM",
+                        "MSAMXMSMSA",
+                        "AMXSXMAAMM",
+                        "MSAMASMSMX",
+                        "XMASAMXAMM",
+                        "XXAMMXXAMA",
+                        "SMSMSASXSS",
+                        "SAXAMASAAA",
+                        "MAMMMXMMMM",
+                        "MXMXAXMASX"), "9", null)
         );
     }
 
