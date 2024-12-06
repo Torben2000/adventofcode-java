@@ -7,6 +7,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Day05 extends Day {
 
@@ -73,7 +74,7 @@ public class Day05 extends Day {
             } else if (parsingModeSwitchedToUpdate) {
                 updates.add(Util.parseIntCsv(line));
             } else {
-                String[] split = line.split("\\|");
+                String[] split = line.split(Pattern.quote("|"));
                 rules.add(Tuple.tuple(Integer.parseInt(split[0]), Integer.parseInt(split[1])));
             }
         }
