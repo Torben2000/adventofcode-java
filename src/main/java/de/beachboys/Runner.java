@@ -21,6 +21,7 @@ public class Runner {
     // use the session id from your browser session (long hex string)
     private static final String BROWSER_SESSION = "secret";
     private static final String DATA_FOLDER = "c:/temp/";
+    private static final String FOLDER_OF_YEAR = DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/";
 
     public static void main(String[] args) {
         int currentPartAsInt = CURRENT_PART;
@@ -68,12 +69,17 @@ public class Runner {
         } else {
             System.out.println("Result: " + result);
         }
-        copyToClipboard(result.toString());
+        copyToClipboard(result);
+        try {
+            appendToTodaysHistory(result);
+        } catch (IOException e) {
+            System.err.println("Adding history entry failed");
+        }
     }
 
-    static void copyToClipboard(String text) {
+    private static void copyToClipboard(Object newClipboardContent) {
         java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
-                .setContents(new java.awt.datatransfer.StringSelection(text), null);
+                .setContents(new java.awt.datatransfer.StringSelection(newClipboardContent.toString()), null);
     }
 
     private static void printCurrentState(int currentPartAsInt) {
@@ -91,29 +97,42 @@ public class Runner {
     }
 
     private static void downloadInput() throws Exception {
-        Files.createDirectories(Paths.get(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/"));
+        Files.createDirectories(Paths.get(FOLDER_OF_YEAR));
         HttpURLConnection con = (HttpURLConnection) new URI("https://adventofcode.com/" + CURRENT_YEAR + "/day/" + CURRENT_DAY + "/input").toURL().openConnection();
         con.setRequestMethod("GET");
         con.addRequestProperty("Cookie", "session=" + BROWSER_SESSION);
-        try (BufferedInputStream in = new BufferedInputStream(con.getInputStream());
-            FileOutputStream fileOutputStream = new FileOutputStream(DATA_FOLDER + "/aoc" + CURRENT_YEAR + "/" + getInputFileName())) {
-            byte[] dataBuffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-                fileOutputStream.write(dataBuffer, 0, bytesRead);
+        try (BufferedInputStream in = new BufferedInputStream(con.getInputStream())) {
+            try (FileOutputStream fileOutputStream = new FileOutputStream(FOLDER_OF_YEAR + getInputFileName())) {
+                byte[] dataBuffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+                }
             }
         }
     }
 
     private static List<String> loadInputLines() throws IOException {
-        String fileNameWithPath = DATA_FOLDER + "aoc" + CURRENT_YEAR + "/" + getInputFileName();
+        String fileNameWithPath = FOLDER_OF_YEAR + getInputFileName();
         try (BufferedReader r = new BufferedReader((new FileReader(fileNameWithPath)))) {
             return Util.removeEmptyTrailingStrings(r.lines().collect(toList()));
+        }
+    }
+
+    private static void appendToTodaysHistory(Object newHistoryEntry) throws IOException {
+        String stringToWrite = "\n" + newHistoryEntry;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FOLDER_OF_YEAR + getHistoryFileName(), true))) {
+            writer.write(stringToWrite);
         }
     }
 
     private static String getInputFileName() {
         return "day" + String.format("%02d", CURRENT_DAY) + ".txt";
     }
+
+    private static String getHistoryFileName() {
+        return "day" + String.format("%02d", CURRENT_DAY) + "-history.txt";
+    }
+
 
 }
