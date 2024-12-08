@@ -68,6 +68,12 @@ public class Runner {
         } else {
             System.out.println("Result: " + result);
         }
+        copyToClipboard(result.toString());
+    }
+
+    static void copyToClipboard(String text) {
+        java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
+                .setContents(new java.awt.datatransfer.StringSelection(text), null);
     }
 
     private static void printCurrentState(int currentPartAsInt) {
