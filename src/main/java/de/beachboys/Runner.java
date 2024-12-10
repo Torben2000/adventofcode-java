@@ -1,6 +1,7 @@
 package de.beachboys;
 
 import com.google.common.base.Stopwatch;
+import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.util.List;
@@ -20,12 +21,19 @@ public class Runner {
     private static final String AOC_BROWSER_SESSION = "secret";
     private static final String AOC_DATA_FOLDER = "c:/temp/";
 
-    private static PuzzleType currentPuzzleType = initPuzzleType();
+    private static PuzzleTypeEnum currentPuzzleTypeEnum = CURRENT_PUZZLE_TYPE;
+    private static final PuzzleType currentPuzzleType = initPuzzleType();
     private static int currentYear = CURRENT_YEAR;
     private static int currentDayOrQuest = CURRENT_DAY;
     private static int currentPartAsInt = CURRENT_PART;
 
     public static void main(String[] args) {
+        try {
+            parseCommandLine(args);
+        } catch (ParseException e) {
+            // no cool handling, but it should be fine
+            e.printStackTrace();
+        }
         printCurrentState();
         Function<List<String>, Object> currentPart = currentPuzzleType.getPart(currentYear, currentDayOrQuest, currentPartAsInt);
         Scanner in = new Scanner(System.in);
@@ -106,11 +114,47 @@ public class Runner {
     }
 
     private static PuzzleType initPuzzleType() {
-        return switch (CURRENT_PUZZLE_TYPE) {
+        return switch (currentPuzzleTypeEnum) {
             case ADVENT_OF_CODE -> new AdventOfCode(AOC_BROWSER_SESSION, AOC_DATA_FOLDER);
             case EVERYBODY_CODES -> throw new IllegalArgumentException();
             default -> throw new IllegalArgumentException();
         };
+    }
+
+    private static void parseCommandLine(String[] args) throws ParseException {
+        Options options = new Options();
+        Option puzzleType = Option.builder("t").argName("puzzleType").longOpt("type").hasArg().desc("Puzzle type: AOC or EC").build();
+        options.addOption(puzzleType);
+        Option year = Option.builder().argName("year").longOpt("year").hasArg().desc("Year").build();
+        options.addOption(year);
+        Option dayOrQuest = Option.builder("d").argName("dayOrQuest").longOpt("day").hasArg().desc("Day or quest").build();
+        options.addOption(dayOrQuest);
+        Option part = Option.builder("p").argName("part").longOpt("part").hasArg().desc("Part of day/quest").build();
+        options.addOption(part);
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse(options, args);
+
+        if (cmd.hasOption(puzzleType)) {
+            String puzzleTypeArg = cmd.getOptionValue(puzzleType);
+            currentPuzzleTypeEnum = switch (puzzleTypeArg.toLowerCase()) {
+                case "aoc" -> PuzzleTypeEnum.ADVENT_OF_CODE;
+                case "ec" -> PuzzleTypeEnum.EVERYBODY_CODES;
+                default -> throw new IllegalArgumentException("Unsupported puzzle type");
+            };
+            initPuzzleType();
+        }
+        if (cmd.hasOption(year)) {
+            String yearArg = cmd.getOptionValue(year);
+            currentYear = Integer.parseInt(yearArg);
+        }
+        if (cmd.hasOption(dayOrQuest)) {
+            String dayOrQuestArg = cmd.getOptionValue(dayOrQuest);
+            currentDayOrQuest = Integer.parseInt(dayOrQuestArg);
+        }
+        if (cmd.hasOption(part)) {
+            String partArg = cmd.getOptionValue(part);
+            currentPartAsInt = Integer.parseInt(partArg);
+        }
     }
 
     private enum PuzzleTypeEnum {
