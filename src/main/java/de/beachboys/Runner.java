@@ -21,6 +21,9 @@ public class Runner {
     private static final String AOC_BROWSER_SESSION = "secret";
     private static final String AOC_DATA_FOLDER = "c:/temp/";
 
+    private static final String EC_DOWNLOAD_FOLDER = System.getProperty("user.home") + "/Downloads/";
+    private static final String EC_HISTORY_DATA_FOLDER = "c:/temp/";
+
     private static PuzzleTypeEnum currentPuzzleTypeEnum = CURRENT_PUZZLE_TYPE;
     private static final PuzzleType currentPuzzleType = initPuzzleType();
     private static int currentYear = CURRENT_YEAR;
@@ -116,7 +119,7 @@ public class Runner {
     private static PuzzleType initPuzzleType() {
         return switch (currentPuzzleTypeEnum) {
             case ADVENT_OF_CODE -> new AdventOfCode(AOC_BROWSER_SESSION, AOC_DATA_FOLDER);
-            case EVERYBODY_CODES -> throw new IllegalArgumentException();
+            case EVERYBODY_CODES -> new EverybodyCodes(EC_DOWNLOAD_FOLDER, EC_HISTORY_DATA_FOLDER);
             default -> throw new IllegalArgumentException();
         };
     }
