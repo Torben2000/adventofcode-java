@@ -2,6 +2,7 @@ package de.beachboys;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.file.Files;
@@ -40,7 +41,6 @@ public class AdventOfCode implements PuzzleType {
 
     @Override
     public void downloadInput(int year, int dayOrQuest, int part) throws Exception {
-        Files.createDirectories(Paths.get(getFolderofYear(year)));
         HttpURLConnection con = (HttpURLConnection) new URI("https://adventofcode.com/" + year + "/day/" + dayOrQuest + "/input").toURL().openConnection();
         con.setRequestMethod("GET");
         con.addRequestProperty("Cookie", "session=" + browserSession);
@@ -55,13 +55,15 @@ public class AdventOfCode implements PuzzleType {
         }
     }
 
-    private String getFolderofYear(int year) {
-        return dataFolder + "/aoc" + year + "/";
+    private String getFolderOfYear(int year) throws IOException {
+        String folderName = dataFolder + "/aoc" + year + "/";
+        Files.createDirectories(Paths.get(folderName));
+        return folderName;
     }
 
     @Override
-    public String getInputFilePath(int year, int dayOrQuest, int part) {
-        return getFolderofYear(year) + getInputFileName(dayOrQuest);
+    public String getInputFilePath(int year, int dayOrQuest, int part) throws IOException {
+        return getFolderOfYear(year) + getInputFileName(dayOrQuest);
     }
 
     private static String getInputFileName(int day) {
@@ -69,8 +71,8 @@ public class AdventOfCode implements PuzzleType {
     }
 
     @Override
-    public String getHistoryFilePath(int year, int dayOrQuest, int part) {
-        return getFolderofYear(year) + getHistoryFileName(dayOrQuest);
+    public String getHistoryFilePath(int year, int dayOrQuest, int part) throws IOException {
+        return getFolderOfYear(year) + getHistoryFileName(dayOrQuest);
     }
     private static String getHistoryFileName(int day) {
         return "day" + String.format("%02d", day) + "-history.txt";
