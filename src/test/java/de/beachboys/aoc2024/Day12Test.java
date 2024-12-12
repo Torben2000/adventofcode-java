@@ -15,15 +15,60 @@ public class Day12Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("AAAA",
+                        "BBCD",
+                        "BBCC",
+                        "EEEC"), 140, null),
+                Arguments.of(List.of("OOOOO",
+                        "OXOXO",
+                        "OOOOO",
+                        "OXOXO",
+                        "OOOOO"), 772, null),
+                Arguments.of(List.of("RRRRIICCFF",
+                        "RRRRIICCCF",
+                        "VVRRRCCFFF",
+                        "VVRCCCJFFF",
+                        "VVVVCJJCFE",
+                        "VVIVCCJJEE",
+                        "VVIIICJJEE",
+                        "MIIIIIJJEE",
+                        "MIIISIJEEE",
+                        "MMMISSJEEE"), 1930, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("AAAA",
+                        "BBCD",
+                        "BBCC",
+                        "EEEC"), 80, null),
+                Arguments.of(List.of("OOOOO",
+                        "OXOXO",
+                        "OOOOO",
+                        "OXOXO",
+                        "OOOOO"), 436, null),
+                Arguments.of(List.of("EEEEE",
+                        "EXXXX",
+                        "EEEEE",
+                        "EXXXX",
+                        "EEEEE"), 236, null),
+                Arguments.of(List.of("AAAAAA",
+                        "AAABBA",
+                        "AAABBA",
+                        "ABBAAA",
+                        "ABBAAA",
+                        "AAAAAA"), 368, null),
+                Arguments.of(List.of("RRRRIICCFF",
+                        "RRRRIICCCF",
+                        "VVRRRCCFFF",
+                        "VVRCCCJFFF",
+                        "VVVVCJJCFE",
+                        "VVIVCCJJEE",
+                        "VVIIICJJEE",
+                        "MIIIIIJJEE",
+                        "MIIISIJEEE",
+                        "MMMISSJEEE"), 1206, null)
         );
     }
 
