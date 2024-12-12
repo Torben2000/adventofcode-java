@@ -21,32 +21,12 @@ public class Day12 extends Day {
     public Object part2(List<String> input) {
         long result = 0;
         for (Set<Tuple2<Integer, Integer>> region : parseRegions(input)) {
-            Set<Tuple2<Tuple2<Integer, Integer>, Direction>> unvisitedEdges = getEdgesOfRegion(region);
-            int totalSides = 0;
-            while (!unvisitedEdges.isEmpty()) {
-                Tuple2<Tuple2<Integer, Integer>, Direction> initialPosAndDir = unvisitedEdges.stream().findAny().orElseThrow();
-                Tuple2<Integer, Integer> initialPos = initialPosAndDir.v1;
-                Direction initialDir = initialPosAndDir.v2.turnRight();
-
-                Tuple2<Integer, Integer> pos = initialPos;
-                Direction dir = initialDir;
-                int sides = 0;
-                while (!initialPos.equals(pos) || !initialDir.equals(dir) || sides == 0) {
-                    unvisitedEdges.remove(Tuple.tuple(pos, dir.turnLeft()));
-                    Tuple2<Integer, Integer> next = dir.move(pos, 1);
-                    Tuple2<Integer, Integer> diagonallyLeft = dir.moveDiagonallyLeft(pos, 1);
-                    if (region.contains(diagonallyLeft)) {
-                        dir = dir.turnLeft();
-                        pos = diagonallyLeft;
-                        sides++;
-                    } else if (!region.contains(next)) {
-                        dir = dir.turnRight();
-                        sides++;
-                    } else {
-                        pos = next;
-                    }
+            Set<Tuple2<Tuple2<Integer, Integer>, Direction>> edges = getEdgesOfRegion(region);
+            int totalSides = edges.size();
+            for (Tuple2<Tuple2<Integer, Integer>, Direction> edge : edges) {
+                if (edges.contains(Tuple.tuple(edge.v2.turnLeft().move(edge.v1, 1), edge.v2))) {
+                    totalSides--;
                 }
-                totalSides += sides;
             }
             result += (long) region.size() * totalSides;
         }
