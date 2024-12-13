@@ -1,8 +1,11 @@
 package de.beachboys.aoc2024;
 
 import de.beachboys.Day;
+import de.beachboys.Util;
+import de.beachboys.Util.SolutionForSystemOfLinearEquation;
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple2;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -23,22 +26,15 @@ public class Day13 extends Day {
         List<Machine> machines = parseInput(input);
 
         for (Machine m : machines) {
-            long a1 = m.ax;
-            long a2 = m.ay;
-            long b1 = m.bx;
-            long b2 = m.by;
-            long c1 = m.px + offset;
-            long c2 = m.py + offset;
+            List<Tuple2<List<Long>, Long>> system = new ArrayList<>();
+            system.add(Tuple.tuple(List.of((long) m.ax, (long) m.bx), m.px + offset));
+            system.add(Tuple.tuple(List.of((long) m.ay, (long) m.by), m.py + offset));
 
-            long det = a1 * b2 - a2 * b1;
-            if (det == 0) {
-                continue;
-            }
-            BigDecimal[] x1 = BigDecimal.valueOf(c1 * b2 - c2 * b1).divideAndRemainder(BigDecimal.valueOf(det));
-            BigDecimal[] x2 = BigDecimal.valueOf(a1 * c2 - a2 * c1).divideAndRemainder(BigDecimal.valueOf(det));
-
-            if (x1[0].longValue() >= 0 && x2[0].longValue() >= 0 && x1[1].longValue() == 0 && x2[1].longValue() == 0) {
-                result += 3 * x1[0].longValue() + x2[0].longValue();
+            List<SolutionForSystemOfLinearEquation> solution = Util.solveSystemOfLinearEquations(system);
+            if (solution != null
+                    && solution.getFirst().longValue() >= 0 && solution.getLast().longValue() >= 0
+                    && solution.getFirst().remainder() == 0 && solution.getLast().remainder() == 0) {
+                result += 3 * solution.getFirst().longValue() + solution.getLast().longValue();
             }
         }
         return result;

@@ -1,5 +1,6 @@
 package de.beachboys;
 
+import com.microsoft.z3.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
@@ -11,6 +12,7 @@ import org.jooq.lambda.tuple.Tuple2;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -452,6 +454,111 @@ public final class Util {
             history.put(state, currentRound);
         }
         return state;
+    }
+
+    public static List<SolutionForSystemOfLinearEquation> solveSystemOfLinearEquations(List<Tuple2<List<Long>, Long>> system) {
+        int size = system.size();
+        for (Tuple2<List<Long>, Long> line : system) {
+            if (line.v1.size() != size) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        return switch(size) {
+            case 1 -> solveSystemOfOneLinearEquation(system);
+            case 2 -> solveSystemOfTwoLinearEquations(system);
+            default -> solveSystemOfLinearEquationsWithZ3(system, size);
+        };
+    }
+
+    private static List<SolutionForSystemOfLinearEquation> solveSystemOfOneLinearEquation(List<Tuple2<List<Long>, Long>> system) {
+        // a*x=b
+        BigInteger a = BigInteger.valueOf(system.getFirst().v1.getFirst());
+        BigInteger b = BigInteger.valueOf(system.getFirst().v2);
+        if (BigInteger.ZERO.equals(a)) {
+            return null;
+        }
+        BigInteger[] x = b.divideAndRemainder(a);
+        return List.of(new SolutionForSystemOfLinearEquation(x[0].longValueExact(), x[1].longValueExact(), a.longValueExact()));
+    }
+
+    private static List<SolutionForSystemOfLinearEquation> solveSystemOfTwoLinearEquations(List<Tuple2<List<Long>, Long>> system) {
+        // a1*x1+b1*x2=c1
+        // a2*x1+b2*x2=c2
+        BigInteger a1 = BigInteger.valueOf(system.getFirst().v1.getFirst());
+        BigInteger b1 = BigInteger.valueOf(system.getFirst().v1.getLast());
+        BigInteger c1 = BigInteger.valueOf(system.getFirst().v2);
+        BigInteger a2 = BigInteger.valueOf(system.getLast().v1.getFirst());
+        BigInteger b2 = BigInteger.valueOf(system.getLast().v1.getLast());
+        BigInteger c2 = BigInteger.valueOf(system.getLast().v2);
+        BigInteger det = a1.multiply(b2).subtract(a2.multiply(b1));
+        if (BigInteger.ZERO.equals(det)) {
+            return null;
+        }
+        BigInteger[] x1 = c1.multiply(b2).subtract(c2.multiply(b1)).divideAndRemainder(det);
+        BigInteger[] x2 = a1.multiply(c2).subtract(a2.multiply(c1)).divideAndRemainder(det);
+
+        int remainderMultiplier = det.compareTo(BigInteger.ZERO);
+
+        return List.of(new SolutionForSystemOfLinearEquation(x1[0].longValueExact(), remainderMultiplier * x1[1].longValueExact(), remainderMultiplier * det.longValueExact()),
+                new SolutionForSystemOfLinearEquation(x2[0].longValueExact(), remainderMultiplier * x2[1].longValueExact(), remainderMultiplier * det.longValueExact()));
+    }
+
+    private static List<SolutionForSystemOfLinearEquation> solveSystemOfLinearEquationsWithZ3(List<Tuple2<List<Long>, Long>> system, int size) {
+        Context z3Context = getZ3Context();
+        List<RealExpr> vars = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            vars.add(z3Context.mkRealConst("x" + i));
+        }
+
+        Solver z3Solver = getZ3Solver();
+        for (Tuple2<List<Long>, Long> equation : system) {
+            List<ArithExpr<RealSort>> terms = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                RealExpr a = z3Context.mkReal(equation.v1.get(i));
+                ArithExpr<RealSort> aX = z3Context.mkMul(a, vars.get(i));
+                terms.add(aX);
+            }
+            @SuppressWarnings("unchecked") ArithExpr<RealSort> left = z3Context.mkAdd(terms.toArray(new ArithExpr[0]));
+            RealExpr b = z3Context.mkReal(equation.v2);
+            z3Solver.add(z3Context.mkEq(left, b));
+        }
+
+        if (Status.SATISFIABLE.equals(z3Solver.check())) {
+            Model z3Model = z3Solver.getModel();
+            List<SolutionForSystemOfLinearEquation> result = new ArrayList<>(size);
+            for (RealExpr var : vars) {
+                RatNum valueAsRationalNumber = (RatNum) z3Model.eval(var, false);
+                BigInteger[] valueAndRemainder = valueAsRationalNumber.getBigIntNumerator().divideAndRemainder(valueAsRationalNumber.getBigIntDenominator());
+                result.add(new SolutionForSystemOfLinearEquation(valueAndRemainder[0].longValueExact(), valueAndRemainder[1].longValueExact(), valueAsRationalNumber.getBigIntDenominator().longValueExact()));
+            }
+
+            return result;
+        } else {
+            return null;
+        }
+    }
+
+    private static Context z3Context;
+    private static Context getZ3Context() {
+        // this is not ideal because it is never closed
+        // ...but reusing this and the solver improves performance
+        if (z3Context == null) {
+            z3Context = new Context();
+        }
+        return z3Context;
+    }
+
+    private static Solver z3Solver;
+    private static Solver getZ3Solver() {
+        if (z3Solver == null) {
+            z3Solver = getZ3Context().mkSolver();
+        }
+        z3Solver.reset();
+        return z3Solver;
+    }
+
+    public record SolutionForSystemOfLinearEquation(long longValue, long remainder, long remainderDenominator) {
     }
 
     private record GraphBuilderQueueElement(Tuple2<Integer, Integer> nodePosition,
