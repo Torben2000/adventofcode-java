@@ -2,8 +2,8 @@ package de.beachboys.aoc2023;
 
 import com.microsoft.z3.*;
 import de.beachboys.Day;
+import de.beachboys.MixedFraction;
 import de.beachboys.Util;
-import de.beachboys.Util.SolutionForSystemOfLinearEquation;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
@@ -27,14 +27,14 @@ public class Day24 extends Day {
                 Tuple2<Tuple3<Long, Long, Long>, Tuple3<Long, Long, Long>> hailstone2 = hailstones.get(j);
 
                 // p1+t1*v1=p2+t2*v2 => v1*t1-v2*t2=p2-p1
-                List<SolutionForSystemOfLinearEquation> solution = Util.solveSystemOfLinearEquations(List.of(
+                List<MixedFraction> solution = Util.solveSystemOfLinearEquations(List.of(
                         Tuple.tuple(List.of(hailstone1.v2.v1, -1L * hailstone2.v2.v1), hailstone2.v1.v1 - hailstone1.v1.v1),
                         Tuple.tuple(List.of(hailstone1.v2.v2, -1L * hailstone2.v2.v2), hailstone2.v1.v2 - hailstone1.v1.v2)));
 
-                if (solution != null && solution.getFirst().longValue() >= 0 && solution.getLast().longValue() >= 0) {
-                    SolutionForSystemOfLinearEquation t1 = solution.getFirst();
-                    double x = hailstone1.v1.v1 + t1.longValue() * hailstone1.v2.v1 + (double) t1.remainder() * hailstone1.v2.v1 / t1.remainderDenominator();
-                    double y = hailstone1.v1.v2 + t1.longValue() * hailstone1.v2.v2 + (double) t1.remainder() * hailstone1.v2.v2 / t1.remainderDenominator();
+                if (solution != null && solution.getFirst().getIntegralPartLong() >= 0 && solution.getLast().getIntegralPartLong() >= 0) {
+                    MixedFraction t1 = solution.getFirst();
+                    double x = hailstone1.v1.v1 + t1.getValueDouble() * hailstone1.v2.v1;
+                    double y = hailstone1.v1.v2 + t1.getValueDouble() * hailstone1.v2.v2;
                     if (x >= min && x <= max && y >= min && y <= max) {
                         result++;
                     }

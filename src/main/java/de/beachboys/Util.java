@@ -456,7 +456,7 @@ public final class Util {
         return state;
     }
 
-    public static List<SolutionForSystemOfLinearEquation> solveSystemOfLinearEquations(List<Tuple2<List<Long>, Long>> system) {
+    public static List<MixedFraction> solveSystemOfLinearEquations(List<Tuple2<List<Long>, Long>> system) {
         int size = system.size();
         for (Tuple2<List<Long>, Long> line : system) {
             if (line.v1.size() != size) {
@@ -471,18 +471,17 @@ public final class Util {
         };
     }
 
-    private static List<SolutionForSystemOfLinearEquation> solveSystemOfOneLinearEquation(List<Tuple2<List<Long>, Long>> system) {
+    private static List<MixedFraction> solveSystemOfOneLinearEquation(List<Tuple2<List<Long>, Long>> system) {
         // a*x=b
         BigInteger a = BigInteger.valueOf(system.getFirst().v1.getFirst());
         BigInteger b = BigInteger.valueOf(system.getFirst().v2);
         if (BigInteger.ZERO.equals(a)) {
             return null;
         }
-        BigInteger[] x = b.divideAndRemainder(a);
-        return List.of(new SolutionForSystemOfLinearEquation(x[0].longValueExact(), x[1].longValueExact(), a.longValueExact()));
+        return List.of(new MixedFraction(b, a));
     }
 
-    private static List<SolutionForSystemOfLinearEquation> solveSystemOfTwoLinearEquations(List<Tuple2<List<Long>, Long>> system) {
+    private static List<MixedFraction> solveSystemOfTwoLinearEquations(List<Tuple2<List<Long>, Long>> system) {
         // a1*x1+b1*x2=c1
         // a2*x1+b2*x2=c2
         BigInteger a1 = BigInteger.valueOf(system.getFirst().v1.getFirst());
@@ -498,13 +497,13 @@ public final class Util {
         BigInteger[] x1 = c1.multiply(b2).subtract(c2.multiply(b1)).divideAndRemainder(det);
         BigInteger[] x2 = a1.multiply(c2).subtract(a2.multiply(c1)).divideAndRemainder(det);
 
-        int remainderMultiplier = det.compareTo(BigInteger.ZERO);
+        BigInteger remainderMultiplier = BigInteger.valueOf(det.compareTo(BigInteger.ZERO));
 
-        return List.of(new SolutionForSystemOfLinearEquation(x1[0].longValueExact(), remainderMultiplier * x1[1].longValueExact(), remainderMultiplier * det.longValueExact()),
-                new SolutionForSystemOfLinearEquation(x2[0].longValueExact(), remainderMultiplier * x2[1].longValueExact(), remainderMultiplier * det.longValueExact()));
+        return List.of(new MixedFraction(x1[0], remainderMultiplier.multiply(x1[1]), remainderMultiplier.multiply(det)),
+                new MixedFraction(x2[0], remainderMultiplier.multiply(x2[1]), remainderMultiplier.multiply(det)));
     }
 
-    private static List<SolutionForSystemOfLinearEquation> solveSystemOfLinearEquationsWithZ3(List<Tuple2<List<Long>, Long>> system, int size) {
+    private static List<MixedFraction> solveSystemOfLinearEquationsWithZ3(List<Tuple2<List<Long>, Long>> system, int size) {
         Context z3Context = getZ3Context();
         List<RealExpr> vars = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -526,11 +525,10 @@ public final class Util {
 
         if (Status.SATISFIABLE.equals(z3Solver.check())) {
             Model z3Model = z3Solver.getModel();
-            List<SolutionForSystemOfLinearEquation> result = new ArrayList<>(size);
+            List<MixedFraction> result = new ArrayList<>(size);
             for (RealExpr var : vars) {
                 RatNum valueAsRationalNumber = (RatNum) z3Model.eval(var, false);
-                BigInteger[] valueAndRemainder = valueAsRationalNumber.getBigIntNumerator().divideAndRemainder(valueAsRationalNumber.getBigIntDenominator());
-                result.add(new SolutionForSystemOfLinearEquation(valueAndRemainder[0].longValueExact(), valueAndRemainder[1].longValueExact(), valueAsRationalNumber.getBigIntDenominator().longValueExact()));
+                result.add(new MixedFraction(valueAsRationalNumber.getBigIntNumerator(), valueAsRationalNumber.getBigIntDenominator()));
             }
 
             return result;
@@ -556,9 +554,6 @@ public final class Util {
         }
         z3Solver.reset();
         return z3Solver;
-    }
-
-    public record SolutionForSystemOfLinearEquation(long longValue, long remainder, long remainderDenominator) {
     }
 
     private record GraphBuilderQueueElement(Tuple2<Integer, Integer> nodePosition,

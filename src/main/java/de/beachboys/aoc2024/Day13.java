@@ -1,8 +1,8 @@
 package de.beachboys.aoc2024;
 
 import de.beachboys.Day;
+import de.beachboys.MixedFraction;
 import de.beachboys.Util;
-import de.beachboys.Util.SolutionForSystemOfLinearEquation;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 
@@ -30,11 +30,11 @@ public class Day13 extends Day {
             system.add(Tuple.tuple(List.of((long) m.ax, (long) m.bx), m.px + offset));
             system.add(Tuple.tuple(List.of((long) m.ay, (long) m.by), m.py + offset));
 
-            List<SolutionForSystemOfLinearEquation> solution = Util.solveSystemOfLinearEquations(system);
+            List<MixedFraction> solution = Util.solveSystemOfLinearEquations(system);
             if (solution != null
-                    && solution.getFirst().longValue() >= 0 && solution.getLast().longValue() >= 0
-                    && solution.getFirst().remainder() == 0 && solution.getLast().remainder() == 0) {
-                result += 3 * solution.getFirst().longValue() + solution.getLast().longValue();
+                    && solution.getFirst().getIntegralPartLong() >= 0 && solution.getLast().getIntegralPartLong() >= 0
+                    && solution.getFirst().getNumeratorLong() == 0 && solution.getLast().getNumeratorLong() == 0) {
+                result += 3 * solution.getFirst().getIntegralPartLong() + solution.getLast().getIntegralPartLong();
             }
         }
         return result;

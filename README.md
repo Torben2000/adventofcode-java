@@ -14,6 +14,8 @@
     - try out different inputs for the current puzzle
     - download your puzzle input
     - run your logic with your puzzle input
+    - copy the result automatically to clipboard
+    - create a history of results per day
 - Tuples with up to 16 elements via jOOλ
 - Functional interfaces with up to 16 parameters via jOOλ
 - JSON parsing/writing etc. via json.org lib
@@ -25,6 +27,7 @@
 - Calculating polygon sizes and line lengths
 - Math util functions for least common multiple and greatest common divisor
 - Math util functions for chinese remainder theorem
+- Math util function to solve systems of linear equations
 - Advanced solving of logic/arithmetic/... problems with Z3
 - Graph support
     - Integrate JGraphT
