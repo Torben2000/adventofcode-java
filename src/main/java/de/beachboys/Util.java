@@ -467,6 +467,7 @@ public final class Util {
         return switch(size) {
             case 1 -> solveSystemOfOneLinearEquation(system);
             case 2 -> solveSystemOfTwoLinearEquations(system);
+            case 3 -> solveSystemOfThreeLinearEquations(system);
             default -> solveSystemOfLinearEquationsWithZ3(system, size);
         };
     }
@@ -494,13 +495,56 @@ public final class Util {
         if (BigInteger.ZERO.equals(det)) {
             return null;
         }
-        BigInteger[] x1 = c1.multiply(b2).subtract(c2.multiply(b1)).divideAndRemainder(det);
-        BigInteger[] x2 = a1.multiply(c2).subtract(a2.multiply(c1)).divideAndRemainder(det);
+        return List.of(new MixedFraction(c1.multiply(b2).subtract(c2.multiply(b1)), det),
+                new MixedFraction(a1.multiply(c2).subtract(a2.multiply(c1)), det));
+    }
 
-        BigInteger remainderMultiplier = BigInteger.valueOf(det.compareTo(BigInteger.ZERO));
-
-        return List.of(new MixedFraction(x1[0], remainderMultiplier.multiply(x1[1]), remainderMultiplier.multiply(det)),
-                new MixedFraction(x2[0], remainderMultiplier.multiply(x2[1]), remainderMultiplier.multiply(det)));
+    private static List<MixedFraction> solveSystemOfThreeLinearEquations(List<Tuple2<List<Long>, Long>> system) {
+        // a1*x1+b1*x2+c1*x3=d1
+        // a2*x1+b2*x2+c2*x3=d2
+        // a3*x1+b3*x2+c2*x3=d3
+        BigInteger a1 = BigInteger.valueOf(system.get(0).v1.get(0));
+        BigInteger b1 = BigInteger.valueOf(system.get(0).v1.get(1));
+        BigInteger c1 = BigInteger.valueOf(system.get(0).v1.get(2));
+        BigInteger d1 = BigInteger.valueOf(system.get(0).v2);
+        BigInteger a2 = BigInteger.valueOf(system.get(1).v1.get(0));
+        BigInteger b2 = BigInteger.valueOf(system.get(1).v1.get(1));
+        BigInteger c2 = BigInteger.valueOf(system.get(1).v1.get(2));
+        BigInteger d2 = BigInteger.valueOf(system.get(1).v2);
+        BigInteger a3 = BigInteger.valueOf(system.get(2).v1.get(0));
+        BigInteger b3 = BigInteger.valueOf(system.get(2).v1.get(1));
+        BigInteger c3 = BigInteger.valueOf(system.get(2).v1.get(2));
+        BigInteger d3 = BigInteger.valueOf(system.get(2).v2);
+        BigInteger det = a1.multiply(b2).multiply(c3)
+                .add(b1.multiply(c2).multiply(a3))
+                .add(c1.multiply(a2).multiply(b3))
+                .subtract(c1.multiply(b2).multiply(a3))
+                .subtract(b1.multiply(a2).multiply(c3))
+                .subtract(a1.multiply(c2).multiply(b3));
+        if (BigInteger.ZERO.equals(det)) {
+            return null;
+        }
+        BigInteger x1Num = d1.multiply(b2).multiply(c3)
+                .add(b1.multiply(c2).multiply(d3))
+                .add(c1.multiply(d2).multiply(b3))
+                .subtract(c1.multiply(b2).multiply(d3))
+                .subtract(b1.multiply(d2).multiply(c3))
+                .subtract(d1.multiply(c2).multiply(b3));
+        BigInteger x2Num = a1.multiply(d2).multiply(c3)
+                .add(d1.multiply(c2).multiply(a3))
+                .add(c1.multiply(a2).multiply(d3))
+                .subtract(c1.multiply(d2).multiply(a3))
+                .subtract(d1.multiply(a2).multiply(c3))
+                .subtract(a1.multiply(c2).multiply(d3));
+        BigInteger x3Num = a1.multiply(b2).multiply(d3)
+                .add(b1.multiply(d2).multiply(a3))
+                .add(d1.multiply(a2).multiply(b3))
+                .subtract(d1.multiply(b2).multiply(a3))
+                .subtract(b1.multiply(a2).multiply(d3))
+                .subtract(a1.multiply(d2).multiply(b3));
+        return List.of(new MixedFraction(x1Num, det),
+                new MixedFraction(x2Num, det),
+                new MixedFraction(x3Num, det));
     }
 
     private static List<MixedFraction> solveSystemOfLinearEquationsWithZ3(List<Tuple2<List<Long>, Long>> system, int size) {
