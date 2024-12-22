@@ -206,15 +206,25 @@ public final class Util {
     }
 
     public static Tuple2<Integer, Integer> getNormalizedPositionOnRepeatingPattern(Tuple2<Integer, Integer> pos, int width, int height) {
-        int normalizedX = pos.v1 % width;
-        while (normalizedX < 0) {
-            normalizedX += width;
-        }
-        int normalizedY = pos.v2 % height;
-        while (normalizedY < 0) {
-            normalizedY += height;
-        }
+        int normalizedX = modPositive(pos.v1, width);
+        int normalizedY = modPositive(pos.v2, height);
         return Tuple.tuple(normalizedX, normalizedY);
+    }
+
+    public static int modPositive(int value, int mod) {
+        int returnValue = value % mod;
+        while (returnValue < 0) {
+            returnValue += mod;
+        }
+        return returnValue;
+    }
+
+    public static long modPositive(long value, long mod) {
+        long returnValue = value % mod;
+        while (returnValue < 0) {
+            returnValue += mod;
+        }
+        return returnValue;
     }
 
     public static long greatestCommonDivisor(long long1, long long2) {
