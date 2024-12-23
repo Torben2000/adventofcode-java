@@ -15,15 +15,75 @@ public class Day23Test extends DayTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("kh-tc",
+                        "qp-kh",
+                        "de-cg",
+                        "ka-co",
+                        "yn-aq",
+                        "qp-ub",
+                        "cg-tb",
+                        "vc-aq",
+                        "tb-ka",
+                        "wh-tc",
+                        "yn-cg",
+                        "kh-ub",
+                        "ta-co",
+                        "de-co",
+                        "tc-td",
+                        "tb-wq",
+                        "wh-td",
+                        "ta-ka",
+                        "td-qp",
+                        "aq-cg",
+                        "wq-ub",
+                        "ub-vc",
+                        "de-ta",
+                        "wq-aq",
+                        "wq-vc",
+                        "wh-yn",
+                        "ka-de",
+                        "kh-ta",
+                        "co-tc",
+                        "wh-qp",
+                        "tb-vc",
+                        "td-yn"), 7, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("kh-tc",
+                        "qp-kh",
+                        "de-cg",
+                        "ka-co",
+                        "yn-aq",
+                        "qp-ub",
+                        "cg-tb",
+                        "vc-aq",
+                        "tb-ka",
+                        "wh-tc",
+                        "yn-cg",
+                        "kh-ub",
+                        "ta-co",
+                        "de-co",
+                        "tc-td",
+                        "tb-wq",
+                        "wh-td",
+                        "ta-ka",
+                        "td-qp",
+                        "aq-cg",
+                        "wq-ub",
+                        "ub-vc",
+                        "de-ta",
+                        "wq-aq",
+                        "wq-vc",
+                        "wh-yn",
+                        "ka-de",
+                        "kh-ta",
+                        "co-tc",
+                        "wh-qp",
+                        "tb-vc",
+                        "td-yn"), "co,de,ka,ta", null)
         );
     }
 
