@@ -16,6 +16,16 @@ public class Day24Test extends DayTest {
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
                 Arguments.of(List.of("x00: 1",
+                        "x01: 1",
+                        "x02: 1",
+                        "y00: 0",
+                        "y01: 1",
+                        "y02: 0",
+                        "",
+                        "x00 AND y00 -> z00",
+                        "x01 XOR y01 -> z01",
+                        "x02 OR y02 -> z02"), 4, null),
+                Arguments.of(List.of("x00: 1",
                         "x01: 0",
                         "x02: 1",
                         "x03: 1",
