@@ -41,4 +41,4 @@
 The general structure is based on https://github.com/dave-burke/advent-of-code-java-starter/
 
 ## Existing solutions within this repo
-- Every solution for the years 2015-2023
+- Every solution for the years 2015-2024
