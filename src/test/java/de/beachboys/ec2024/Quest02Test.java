@@ -16,21 +16,42 @@ public class Quest02Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("WORDS:THE,OWE,MES,ROD,HER",
+                        "",
+                        "AWAKEN THE POWER ADORNED WITH THE FLAMES BRIGHT IRE"), 4, null),
+                Arguments.of(List.of("WORDS:THE,OWE,MES,ROD,HER",
+                        "",
+                        "THE FLAME SHIELDED THE HEART OF THE KINGS"), 3, null),
+                Arguments.of(List.of("WORDS:THE,OWE,MES,ROD,HER",
+                        "",
+                        "POWE PO WER P OWE R"), 2, null),
+                Arguments.of(List.of("WORDS:THE,OWE,MES,ROD,HER",
+                        "",
+                        "THERE IS THE END"), 3, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("WORDS:THE,OWE,MES,ROD,HER,QAQ",
+                        "",
+                        "AWAKEN THE POWE ADORNED WITH THE FLAMES BRIGHT IRE",
+                        "THE FLAME SHIELDED THE HEART OF THE KINGS",
+                        "POWE PO WER P OWE R",
+                        "THERE IS THE END",
+                        "QAQAQ"), 42, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
+                Arguments.of(List.of("WORDS:THE,OWE,MES,ROD,RODEO",
+                        "",
+                        "HELWORLT",
+                        "ENIGWDXL",
+                        "TRODEOAL"), 10, null)
 
         );
     }
