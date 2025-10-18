@@ -94,7 +94,7 @@ public enum Direction {
         return getDirectNeighbors(position, false);
     }
 
-    private static Set<Tuple2<Integer, Integer>> getDirectNeighbors(Tuple2<Integer, Integer> position, boolean includingDiagonally) {
+    public static Set<Tuple2<Integer, Integer>> getDirectNeighbors(Tuple2<Integer, Integer> position, boolean includingDiagonally) {
         Set<Tuple2<Integer, Integer>> neighbors = new HashSet<>();
         for (Direction dir : values()) {
             neighbors.add(dir.move(position, 1));
