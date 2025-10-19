@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 
 public class Runner {
 
-    private static final PuzzleTypeEnum CURRENT_PUZZLE_TYPE = PuzzleTypeEnum.ADVENT_OF_CODE;
+    private static final PuzzleTypeEnum CURRENT_PUZZLE_TYPE = PuzzleTypeEnum.EVERYBODY_CODES;
     private static final int CURRENT_YEAR = 2024;
     private static final int CURRENT_DAY = 1;
     private static final int CURRENT_PART = 1;
@@ -21,6 +21,10 @@ public class Runner {
     private static final String AOC_BROWSER_SESSION = "secret";
     private static final String AOC_DATA_FOLDER = "c:/temp/";
 
+    // use the session id from your browser session (long hex string)
+    private static final String EC_BROWSER_SESSION = "secret";
+    // if you fill this value (it is constant for your account), it will speed up downloads
+    private static final Integer EC_SEED = null;
     private static final String EC_DOWNLOAD_FOLDER = System.getProperty("user.home") + "/Downloads/";
     private static final String EC_HISTORY_DATA_FOLDER = "c:/temp/";
 
@@ -119,7 +123,7 @@ public class Runner {
     private static PuzzleType initPuzzleType() {
         return switch (currentPuzzleTypeEnum) {
             case ADVENT_OF_CODE -> new AdventOfCode(AOC_BROWSER_SESSION, AOC_DATA_FOLDER);
-            case EVERYBODY_CODES -> new EverybodyCodes(EC_DOWNLOAD_FOLDER, EC_HISTORY_DATA_FOLDER);
+            case EVERYBODY_CODES -> new EverybodyCodes(EC_BROWSER_SESSION, EC_SEED, EC_DOWNLOAD_FOLDER, EC_HISTORY_DATA_FOLDER);
             default -> throw new IllegalArgumentException();
         };
     }

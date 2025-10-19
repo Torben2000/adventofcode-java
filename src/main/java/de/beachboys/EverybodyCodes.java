@@ -1,9 +1,23 @@
 package de.beachboys;
 
+import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
+import org.json.JSONObject;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -45,10 +59,15 @@ public class EverybodyCodes implements PuzzleType {
         return quests;
     }
 
+    private final String browserSession;
     private final String downloadFolder;
     private final String historyDataFolder;
+    private Integer seed;
+    private final Map<Tuple3<Integer, Integer, Integer>, String> inputCache = new HashMap<>();
 
-    public EverybodyCodes(String downloadFolder, String historyDataFolder) {
+    public EverybodyCodes(String browserSession, Integer seed, String downloadFolder, String historyDataFolder) {
+        this.browserSession = browserSession;
+        this.seed = seed;
         this.downloadFolder = downloadFolder;
         this.historyDataFolder = historyDataFolder;
     }
@@ -78,8 +97,60 @@ public class EverybodyCodes implements PuzzleType {
     }
 
     @Override
-    public void downloadInput(int year, int dayOrQuest, int part) {
-        throw new UnsupportedOperationException();
+    public void downloadInput(int year, int dayOrQuest, int part) throws Exception {
+        String encodedInput = getEncryptedInput(year, dayOrQuest, part);
+        String aesKey = downloadJson("https://everybody.codes/api/event/" + year + "/quest/" + dayOrQuest).getString("key" + part);
+        String input = decryptInput(aesKey, encodedInput);
+
+        try (PrintWriter out = new PrintWriter(getInputFilePath(year, dayOrQuest, part))) {
+            out.println(input);
+        }
+    }
+
+    private String getEncryptedInput(int year, int dayOrQuest, int part) {
+        Tuple3<Integer, Integer, Integer> cacheKey = Tuple.tuple(year, dayOrQuest, part);
+        if (!inputCache.containsKey(cacheKey)) {
+            JSONObject json = downloadJson("https://everybody-codes.b-cdn.net/assets/" + year + "/" + dayOrQuest + "/input/" + getSeed() + ".json");
+            inputCache.put(Tuple.tuple(year, dayOrQuest, 1), json.getString("1"));
+            inputCache.put(Tuple.tuple(year, dayOrQuest, 2), json.getString("2"));
+            inputCache.put(Tuple.tuple(year, dayOrQuest, 3), json.getString("3"));
+        }
+        return inputCache.get(cacheKey);
+    }
+
+    private int getSeed() {
+        if (seed == null) {
+            JSONObject json = downloadJson("https://everybody.codes/api/user/me");
+            seed = json.getInt("seed");
+        }
+        return seed;
+    }
+
+    private JSONObject downloadJson(String url) {
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Cookie", "everybody-codes=" + browserSession)
+                    .build();
+
+            String responseBody = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(HttpResponse::body)
+                    .join();
+            return new JSONObject(responseBody);
+        }
+    }
+
+    private static String decryptInput(String aesKey, String encryptedInput) throws Exception {
+        byte[] encryptedBytes = HexFormat.of().parseHex(encryptedInput);
+        byte[] keyBytes = aesKey.getBytes(StandardCharsets.UTF_8);
+        byte[] ivBytes = aesKey.substring(0, 16).getBytes(StandardCharsets.UTF_8);
+
+        SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(ivBytes));
+
+        byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+        return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 
     @Override
