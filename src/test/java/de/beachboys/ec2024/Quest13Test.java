@@ -16,22 +16,35 @@ public class Quest13Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("#######",
+                        "#6769##",
+                        "S50505E",
+                        "#97434#",
+                        "#######"), 28, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("#######",
+                        "#6769##",
+                        "S50505E",
+                        "#97434#",
+                        "#######"), 28, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
-
+                Arguments.of(List.of("SSSSSSSSSSS",
+                        "S674345621S",
+                        "S###6#4#18S",
+                        "S53#6#4532S",
+                        "S5450E0485S",
+                        "S##7154532S",
+                        "S2##314#18S",
+                        "S971595#34S",
+                        "SSSSSSSSSSS"), 14, null)
         );
     }
 
