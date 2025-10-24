@@ -16,22 +16,46 @@ public class Quest10Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("**PCBS**",
+                        "**RLNW**",
+                        "BV....PT",
+                        "CR....HZ",
+                        "FL....JW",
+                        "SG....MN",
+                        "**FTZV**",
+                        "**GMJH**"), "PTBVRCZHFLJWGMNS", null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("**PCBS**",
+                        "**RLNW**",
+                        "BV....PT",
+                        "CR....HZ",
+                        "FL....JW",
+                        "SG....MN",
+                        "**FTZV**",
+                        "**GMJH**"), 1851, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
-
+                Arguments.of(List.of("**XFZB**DCST**",
+                        "**LWQK**GQJH**",
+                        "?G....WL....DQ",
+                        "BS....H?....CN",
+                        "P?....KJ....TV",
+                        "NM....Z?....SG",
+                        "**NSHM**VKWZ**",
+                        "**PJGV**XFNL**",
+                        "WQ....?L....YS",
+                        "FX....DJ....HV",
+                        "?Y....WM....?J",
+                        "TJ....YK....LP",
+                        "**XRTK**BMSP**",
+                        "**DWZN**GCJV**"), 3889, null)
         );
     }
 
