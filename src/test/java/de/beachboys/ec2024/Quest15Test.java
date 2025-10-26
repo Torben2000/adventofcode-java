@@ -16,21 +16,45 @@ public class Quest15Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("#####.#####",
+                        "#.........#",
+                        "#.######.##",
+                        "#.........#",
+                        "###.#.#####",
+                        "#H.......H#",
+                        "###########"), 26, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("##########.##########",
+                        "#...................#",
+                        "#.###.##.###.##.#.#.#",
+                        "#..A#.#..~~~....#A#.#",
+                        "#.#...#.~~~~~...#.#.#",
+                        "#.#.#.#.~~~~~.#.#.#.#",
+                        "#...#.#.B~~~B.#.#...#",
+                        "#...#....BBB..#....##",
+                        "#C............#....C#",
+                        "#####################"), 38, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
+                Arguments.of(List.of("##########.##########",
+                        "#.....#.......#.....#",
+                        "#.###.##.###.##.#.#.#",
+                        "#..A#.#..~~~..#.#C#.#",
+                        "#.#...#.~~~~~.K.#.#.#",
+                        "#.#.#.#.~~~~~.#.#.#.#",
+                        "#...#.#.B~~~B.#.#...#",
+                        "#...#.#..BBB..#....##",
+                        "#A....K.......#....C#",
+                        "#####################"), 58, null)
 
         );
     }
