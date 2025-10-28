@@ -16,21 +16,39 @@ public class Quest16Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("1,2,3",
+                        "",
+                        "^_^ -.- ^,-",
+                        ">.- ^_^ >.<",
+                        "-_- -.- >.<",
+                        "    -.^ ^_^",
+                        "    >.>"), ">.- -.- ^,-", null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("1,2,3",
+                        "",
+                        "^_^ -.- ^,-",
+                        ">.- ^_^ >.<",
+                        "-_- -.- >.<",
+                        "    -.^ ^_^",
+                        "    >.>"), 280014668134L, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
+                Arguments.of(List.of("1,2,3",
+                        "",
+                        "^_^ -.- ^,-",
+                        ">.- ^_^ >.<",
+                        "-_- -.- ^.^",
+                        "    -.^ >.<",
+                        "    >.>"), "627 128", null)
 
         );
     }
