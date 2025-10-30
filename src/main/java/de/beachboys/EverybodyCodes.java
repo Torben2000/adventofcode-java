@@ -32,6 +32,7 @@ public class EverybodyCodes implements PuzzleType {
 
     private static void buildStaticMapOfQuests() {
         YEARS.put(2024, getQuests2024());
+        YEARS.put(2025, getQuests2025());
     }
 
     private static Map<Integer, Quest> getQuests2024() {
@@ -56,6 +57,31 @@ public class EverybodyCodes implements PuzzleType {
         quests.put(18, new de.beachboys.ec2024.Quest18());
         quests.put(19, new de.beachboys.ec2024.Quest19());
         quests.put(20, new de.beachboys.ec2024.Quest20());
+        return quests;
+    }
+
+    private static Map<Integer, Quest> getQuests2025() {
+        Map<Integer, Quest> quests = new HashMap<>();
+        quests.put(1, new de.beachboys.ec2025.Quest01());
+        quests.put(2, new de.beachboys.ec2025.Quest02());
+        quests.put(3, new de.beachboys.ec2025.Quest03());
+        quests.put(4, new de.beachboys.ec2025.Quest04());
+        quests.put(5, new de.beachboys.ec2025.Quest05());
+        quests.put(6, new de.beachboys.ec2025.Quest06());
+        quests.put(7, new de.beachboys.ec2025.Quest07());
+        quests.put(8, new de.beachboys.ec2025.Quest08());
+        quests.put(9, new de.beachboys.ec2025.Quest09());
+        quests.put(10, new de.beachboys.ec2025.Quest10());
+        quests.put(11, new de.beachboys.ec2025.Quest11());
+        quests.put(12, new de.beachboys.ec2025.Quest12());
+        quests.put(13, new de.beachboys.ec2025.Quest13());
+        quests.put(14, new de.beachboys.ec2025.Quest14());
+        quests.put(15, new de.beachboys.ec2025.Quest15());
+        quests.put(16, new de.beachboys.ec2025.Quest16());
+        quests.put(17, new de.beachboys.ec2025.Quest17());
+        quests.put(18, new de.beachboys.ec2025.Quest18());
+        quests.put(19, new de.beachboys.ec2025.Quest19());
+        quests.put(20, new de.beachboys.ec2025.Quest20());
         return quests;
     }
 
