@@ -227,6 +227,18 @@ public final class Util {
         return returnValue;
     }
 
+    public static List<Long> getPrimeFactors(long number) {
+        long n = number;
+        List<Long> factors = new ArrayList<>();
+        for (long i = 2; i <= n; i++) {
+            while (n % i == 0) {
+                factors.add(i);
+                n /= i;
+            }
+        }
+        return factors;
+    }
+
     public static long greatestCommonDivisor(long long1, long long2) {
         if (long1 == long2 || long2 == 0) {
             return long1;
