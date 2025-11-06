@@ -16,22 +16,47 @@ public class Quest04Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
-        );
+                Arguments.of(List.of("128",
+                        "64",
+                        "32",
+                        "16",
+                        "8"), 32400, null),
+                Arguments.of(List.of("102",
+                        "75",
+                        "50",
+                        "35",
+                        "13"), 15888, null)
+       );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("128",
+                        "64",
+                        "32",
+                        "16",
+                        "8"), 625000000000L, null),
+                Arguments.of(List.of("102",
+                        "75",
+                        "50",
+                        "35",
+                        "13"), 1274509803922L, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
-
+                Arguments.of(List.of("5",
+                        "5|10",
+                        "10|20",
+                        "5"), 400, null),
+                Arguments.of(List.of("5",
+                        "7|21",
+                        "18|36",
+                        "27|27",
+                        "10|50",
+                        "10|50",
+                        "11"), 6818, null)
         );
     }
 
