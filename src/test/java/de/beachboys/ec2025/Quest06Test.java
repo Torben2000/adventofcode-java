@@ -1,6 +1,7 @@
 package de.beachboys.ec2025;
 
 import de.beachboys.IOHelper;
+import de.beachboys.IOHelperForTests;
 import de.beachboys.Quest;
 import de.beachboys.QuestTest;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,22 +17,23 @@ public class Quest06Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("ABabACacBCbca"), 5, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("ABabACacBCbca"), 11, null)
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
-
+                Arguments.of(List.of("AABCBABCABCabcabcABCCBAACBCa"), 34, new IOHelperForTests(List.of("1", "10"), null)),
+                Arguments.of(List.of("AABCBABCABCabcabcABCCBAACBCa"), 72, new IOHelperForTests(List.of("2", "10"), null)),
+                Arguments.of(List.of("AABCBABCABCabcabcABCCBAACBCa"), 3442321, new IOHelperForTests(List.of("1000", "1000"), null))
         );
     }
 
