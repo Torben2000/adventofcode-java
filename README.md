@@ -1,13 +1,13 @@
-# Advent of Code
+# Advent of Code (and Everybody Codes)
 [![CircleCI build status](https://circleci.com/gh/Torben2000/adventofcode-java.svg?style=shield)](https://circleci.com/gh/Torben2000/adventofcode-java)
 
 ## Disclaimer
-- Code might be ugly as it is just there to solve the puzzles of https://adventofcode.com/. :-)
+- Code might be ugly as it is just there to solve the puzzles of https://adventofcode.com/ and https://everybody.codes. :-)
 - Code for "early" puzzles might evolve over time because later puzzles sometimes require refactoring for reusability or
   add some additional features to existing code
 
 ## What is in here (besides the implemented puzzle solutions)
-- General framework for every day incl. unit tests
+- General framework for every day/quest incl. unit tests
 - Testing includes additional input & output values, not just the method parameters + return value
 - Everything (except input) is quite type insensitive to avoid unnecessary conversions
 - Command line tool to 
@@ -35,10 +35,14 @@
     - Export to DOT to render it
 - Support of multiple years
 - Command line tool to
-    - add support for other years
+    - add support for other years (currently only Advent of Code)
     - reset your implementation for a desired year to start from scratch
 
 The general structure is based on https://github.com/dave-burke/advent-of-code-java-starter/
 
 ## Existing solutions within this repo
-- Every solution for the years 2015-2024
+- Advent of Code: Every solution for the years 2015-2024
+- Everybody Codes: Every solution for the years 2024-2025
+
+## Missing solutions
+- Everybody Codes Stories
