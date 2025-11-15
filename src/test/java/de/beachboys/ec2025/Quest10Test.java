@@ -1,6 +1,7 @@
 package de.beachboys.ec2025;
 
 import de.beachboys.IOHelper;
+import de.beachboys.IOHelperForTests;
 import de.beachboys.Quest;
 import de.beachboys.QuestTest;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,21 +17,69 @@ public class Quest10Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
+                Arguments.of(List.of("...SSS.......",
+                        ".S......S.SS.",
+                        "..S....S...S.",
+                        "..........SS.",
+                        "..SSSS...S...",
+                        ".....SS..S..S",
+                        "SS....D.S....",
+                        "S.S..S..S....",
+                        "....S.......S",
+                        ".SSS..SS.....",
+                        ".........S...",
+                        ".......S....S",
+                        "SS.....S..S.."), 27, new IOHelperForTests(List.of("3"), null))
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
+                Arguments.of(List.of("...SSS##.....",
+                        ".S#.##..S#SS.",
+                        "..S.##.S#..S.",
+                        ".#..#S##..SS.",
+                        "..SSSS.#.S.#.",
+                        ".##..SS.#S.#S",
+                        "SS##.#D.S.#..",
+                        "S.S..S..S###.",
+                        ".##.S#.#....S",
+                        ".SSS.#SS..##.",
+                        "..#.##...S##.",
+                        ".#...#.S#...S",
+                        "SS...#.S.#S.."), 27, new IOHelperForTests(List.of("3"), null))
 
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
+                Arguments.of(List.of("SSS",
+                        "..#",
+                        "#.#",
+                        "#D."), 15, null),
+                Arguments.of(List.of("SSS",
+                        "..#",
+                        "..#",
+                        ".##",
+                        ".D#"), 8, null),
+                Arguments.of(List.of("..S..",
+                        ".....",
+                        "..#..",
+                        ".....",
+                        "..D.."), 44, null),
+                Arguments.of(List.of(".SS.S",
+                        "#...#",
+                        "...#.",
+                        "##..#",
+                        ".####",
+                        "##D.#"), 4406, null),
+                Arguments.of(List.of("SSS.S",
+                        ".....",
+                        "#.#.#",
+                        ".#.#.",
+                        "#.D.#"), 13033988838L, null)
 
         );
     }
