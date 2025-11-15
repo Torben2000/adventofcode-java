@@ -8,11 +8,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class Quest10 extends Quest {
 
-    private final Map<Tuple3<Set<Tuple2<Integer, Integer>>, Tuple2<Integer, Integer>, Boolean>, Long> uniqueSequenceCache = new HashMap<>();
+    private final Map<Tuple3<Set<Tuple2<Integer, Integer>>, Tuple2<Integer, Integer>, Boolean>, Long> uniqueSequenceCache = new ConcurrentHashMap<>();
     private Map<Tuple2<Integer, Integer>, String> map;
     private Set<Tuple2<Integer, Integer>> hiding;
     private Set<Tuple2<Integer, Integer>> sheepStartPositions;
@@ -89,7 +90,7 @@ public class Quest10 extends Quest {
         if (sheepPositions.isEmpty()) {
             return 1;
         }
-        long result = 0;
+        List<ForkJoinTask<Long>> subTasks = new ArrayList<>();
         if (nextTurnIsSheep) {
             boolean sheepCanMove = false;
             for (Tuple2<Integer, Integer> sheep : sheepPositions) {
@@ -101,26 +102,41 @@ public class Quest10 extends Quest {
                     Set<Tuple2<Integer, Integer>> newSheep = new HashSet<>(sheepPositions);
                     newSheep.remove(sheep);
                     newSheep.add(newSheepPos);
-                    result += getUniqueSequences(newSheep, dragonPosition, false);
+                    subTasks.add(new RecursiveTask<>() {
+                        @Override
+                        protected Long compute() {
+                            return getUniqueSequences(newSheep, dragonPosition, false);
+                        }
+                    });
                     sheepCanMove = true;
                 }
             }
             if (!sheepCanMove) {
-                result += getUniqueSequences(sheepPositions, dragonPosition, false);
+                subTasks.add(new RecursiveTask<>() {
+                    @Override
+                    protected Long compute() {
+                        return getUniqueSequences(sheepPositions, dragonPosition, false);
+                    }
+                });
             }
         } else {
             for (Tuple2<Integer, Integer> newDragonPos : getNextDragonPositions(dragonPosition)) {
                 if (map.containsKey(newDragonPos)) {
-                    Set<Tuple2<Integer, Integer>> newSheep = sheepPositions;
+                    Set<Tuple2<Integer, Integer>> newSheep = new HashSet<>(sheepPositions);
                     if (!hiding.contains(newDragonPos) && sheepPositions.contains(newDragonPos)) {
-                        newSheep = new HashSet<>(sheepPositions);
                         newSheep.remove(newDragonPos);
                     }
-                    result += getUniqueSequences(newSheep, newDragonPos, true);
+                    subTasks.add(new RecursiveTask<>() {
+                        @Override
+                        protected Long compute() {
+                            return getUniqueSequences(newSheep, newDragonPos, true);
+                        }
+                    });
                 }
             }
         }
 
+        long result = ForkJoinTask.invokeAll(subTasks).stream().mapToLong(ForkJoinTask::join).sum();
         uniqueSequenceCache.put(cacheKey, result);
         return result;
     }
