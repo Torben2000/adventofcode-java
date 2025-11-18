@@ -120,6 +120,17 @@ public final class Util {
         return map;
     }
 
+    public static Map<Tuple2<Integer, Integer>, Integer> buildIntImageMap(List<String> imageLines) {
+        Map<Tuple2<Integer, Integer>, Integer> map = new HashMap<>();
+        for (int j = 0; j < imageLines.size(); j++) {
+            String line = imageLines.get(j);
+            for (int i = 0; i < line.length(); i++) {
+                map.put(Tuple.tuple(i, j), Integer.parseInt(line.substring(i, i + 1)));
+            }
+        }
+        return map;
+    }
+
     public static Set<Tuple2<Integer, Integer>> buildConwaySet(List<String> input, String representationOfActiveState) {
         return buildImageMap(input).entrySet().stream().filter(entry -> representationOfActiveState.equals(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
     }
