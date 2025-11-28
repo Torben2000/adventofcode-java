@@ -136,7 +136,7 @@ public class EverybodyCodes implements PuzzleType {
     private String getEncryptedInput(int year, int dayOrQuest, int part) {
         Tuple3<Integer, Integer, Integer> cacheKey = Tuple.tuple(year, dayOrQuest, part);
         if (!inputCache.containsKey(cacheKey)) {
-            JSONObject json = downloadJson("https://everybody-codes.b-cdn.net/assets/" + year + "/" + dayOrQuest + "/input/" + getSeed() + ".json");
+            JSONObject json = downloadJson("https://everybody.codes/assets/" + year + "/" + dayOrQuest + "/input/" + getSeed() + ".json");
             inputCache.put(Tuple.tuple(year, dayOrQuest, 1), json.getString("1"));
             inputCache.put(Tuple.tuple(year, dayOrQuest, 2), json.getString("2"));
             inputCache.put(Tuple.tuple(year, dayOrQuest, 3), json.getString("3"));
