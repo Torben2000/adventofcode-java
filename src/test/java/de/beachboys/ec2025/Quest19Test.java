@@ -16,22 +16,38 @@ public class Quest19Test extends QuestTest {
 
     private static Stream<Arguments> provideTestDataForPart1() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), "part1result", null)
-
+                Arguments.of(List.of("7,7,2",
+                        "12,0,4",
+                        "15,5,3",
+                        "24,1,6",
+                        "28,5,5",
+                        "40,8,2"), 24, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart2() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 2, null)
-
+                Arguments.of(List.of("7,7,2",
+                        "7,1,3",
+                        "12,0,4",
+                        "15,5,3",
+                        "24,1,6",
+                        "28,5,5",
+                        "40,3,3",
+                        "40,8,2"), 22, null)
         );
     }
 
     private static Stream<Arguments> provideTestDataForPart3() {
         return Stream.of(
-                Arguments.of(List.of("inputLines"), 3, null)
-
+                Arguments.of(List.of("7,7,2",
+                        "7,1,3",
+                        "12,0,4",
+                        "15,5,3",
+                        "24,1,6",
+                        "28,5,5",
+                        "40,3,3",
+                        "40,8,2"), 22, null)
         );
     }
 
