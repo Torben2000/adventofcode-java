@@ -16,6 +16,7 @@ public class YearMaps {
     }
 
     private static void buildStaticMapOfDays() {
+        YEARS.put(2025, getDays2025());
         YEARS.put(2024, getDays2024());
         YEARS.put(2023, getDays2023());
         YEARS.put(2022, getDays2022());
@@ -28,6 +29,22 @@ public class YearMaps {
         YEARS.put(2015, getDays2015());
     }
 
+    private static Map<Integer, Day> getDays2025() {
+        Map<Integer, Day> days = new HashMap<>();
+        days.put(1, new de.beachboys.aoc2025.Day01());
+        days.put(2, new de.beachboys.aoc2025.Day02());
+        days.put(3, new de.beachboys.aoc2025.Day03());
+        days.put(4, new de.beachboys.aoc2025.Day04());
+        days.put(5, new de.beachboys.aoc2025.Day05());
+        days.put(6, new de.beachboys.aoc2025.Day06());
+        days.put(7, new de.beachboys.aoc2025.Day07());
+        days.put(8, new de.beachboys.aoc2025.Day08());
+        days.put(9, new de.beachboys.aoc2025.Day09());
+        days.put(10, new de.beachboys.aoc2025.Day10());
+        days.put(11, new de.beachboys.aoc2025.Day11());
+        days.put(12, new de.beachboys.aoc2025.Day12());
+        return days;
+    }
     private static Map<Integer, Day> getDays2024() {
         Map<Integer, Day> days = new HashMap<>();
         days.put(1, new de.beachboys.aoc2024.Day01());

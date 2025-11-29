@@ -41,7 +41,7 @@
 The general structure is based on https://github.com/dave-burke/advent-of-code-java-starter/
 
 ## Existing solutions within this repo
-- Advent of Code: Every solution for the years 2015-2024
+- Advent of Code: Every solution for the years 2015-2025
 - Everybody Codes: Every solution for the years 2024-2025
 
 ## Missing solutions
