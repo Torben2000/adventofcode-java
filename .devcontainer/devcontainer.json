@@ -1,0 +1,20 @@
+{
+  "name": "Java Development",
+  "image": "mcr.microsoft.com/devcontainers/java",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "installMaven": true,
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack"
+      ]
+    }
+  },
+  "runArgs": [ "--tmpfs=/tmp:rw,exec,nosuid,nodev,mode=1777" ]
+}
