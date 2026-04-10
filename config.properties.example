@@ -1,0 +1,7 @@
+# Advent of Code credentials
+aoc.browserSession=your_aoc_session_token_here
+
+# Everybody Codes credentials
+ec.browserSession=your_ec_session_token_here
+# Optional: your EC seed (speeds up downloads)
+ec.seed=
